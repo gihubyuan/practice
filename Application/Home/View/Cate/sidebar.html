@@ -1,0 +1,13 @@
+<ul class="list-group">
+	<volist name="sidebar_lists" id="sidebar_item">
+		<eq name="current" value="$sidebar_item['id']">
+			<li class="list-group-item">
+				<a class="text-danger" href="{:U($sidebar_item['url'])}">{$sidebar_item.cat_name}</a>
+			</li>
+			<else/>
+			<li class="list-group-item">
+				<a href="{:U($sidebar_item['url'])}">{$sidebar_item.cat_name}</a>
+			</li>
+	  </eq>
+	</volist>
+</ul>

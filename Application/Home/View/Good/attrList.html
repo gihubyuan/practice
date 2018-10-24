@@ -1,0 +1,37 @@
+<extend name="public:base" />
+<block name="sidebar">
+{:W('Cate/sidebar', array(3))}
+</block>
+<block name="body">
+	<div class="table-responsive">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>gaid</th>
+					<th>gtid</th>
+					<th>type_name</th>
+					<th>attribute_name</th>
+					<th>attr_insert_type</th>
+					<th>insert_type_values</th>
+				</tr>
+			</thead>
+			<tbody>
+				<volist name="attrlist" id="alist">
+					<tr>
+						<td>{$alist.gaid}</td>
+						<td>{$alist.gtid}</td>
+						<td>{$alist.type_name}</td>
+						<td>{$alist.attribute_name}</td>
+						<td><a href="{:U('Good/modifyAttr', array('id'=>$alist['gaid']))}">{$alist.insert_type_id|get_insert_type_name}</a></td>
+						
+						<eq name="$alist['insert_type_values']" value="">
+							<td>&nbsp;</td>
+							<else/>
+							<td>{$alist.insert_type_values}</td>
+						</eq>
+					</tr>
+			</volist>
+			</tbody>
+		</table>
+	</div>
+</block>

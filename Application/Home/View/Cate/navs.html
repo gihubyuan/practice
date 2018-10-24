@@ -1,0 +1,15 @@
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
+		<div class="container">
+			<a class="navbar-brand" href="#">LOGO</a>
+			<ul class="nav navbar-nav">
+				<volist name="navs" id="nav">
+					<li>
+						<a href="{:U($nav['url'])}">{$nav.nav_name}</a>
+					</li>
+				</volist>
+				<li>
+					<a href="{:U('Good/addGood', array('act'=>'add'))}">添加商品</a>
+				</li>
+			</ul>
+		</div>
+</nav>

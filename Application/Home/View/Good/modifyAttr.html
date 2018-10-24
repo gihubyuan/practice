@@ -1,0 +1,128 @@
+<extend name="public:base" />
+<block name="sidebar">
+</block>
+<block name="body">
+
+	<form  method="POST" class="form-horizontal" role="form">
+			<div class="form-group">
+				<legend>Form title</legend>
+			</div>
+	
+			<div class="form-group">
+				<label for="">attribute name:</label>
+			<input type="text" name="attribute_name" value="{$attr.attribute_name}" class="form-control">
+		  </div>
+
+		  <div class="form-group">
+		  	<switch name="attr['insert_type_id']">
+		  		<case value="1">
+		  			<div class="radio">
+				  		<label>
+				  			<input type="radio" name="insert_type_id" id="input" value="1" checked="checked">
+				  			手工录入
+				  		</label>
+							<label>
+				  			<input type="radio" name="insert_type_id" id="input" value="2">
+				  			从列表选择
+				  		</label>
+			 			 </div>
+		  		</case>
+		  		<case value="2">
+		  			<div class="radio">
+				  		<label>
+				  			<input type="radio" name="insert_type_id" id="input" value="1">
+				  			手工录入
+				  		</label>
+							<label>
+				  			<input type="radio" name="insert_type_id" id="input" value="2" checked="checked">
+				  			从列表选择
+				  		</label>
+			 			 </div>
+		  		</case>
+			</switch>
+		</div>
+
+		 <div class="form-group">
+		  	<switch name="attr['attr_index']">
+		  		<case value="0">
+		  			<div class="radio">
+				  		<label>
+				  			<input type="radio" name="attr_index" id="input" value="0" checked="checked">
+				  			无索引
+				  		</label>
+							<label>
+				  			<input type="radio" name="attr_index" id="input" value="1">
+				  			查询索引
+				  		</label>
+			 			 </div>
+		  		</case>
+		  		<case value="1">
+		  			<div class="radio">
+				  		<label>
+				  			<input type="radio" name="attr_index" id="input" value="0">
+				  			无索引
+				  		</label>
+							<label>
+				  			<input type="radio" name="attr_index" id="input" value="1" checked="checked">
+				  			查询索引
+				  		</label>
+			 			 </div>
+		  		</case>
+			</switch>
+		</div>
+
+		  <div class="form-group">
+		  	<eq name="attr['status']" value="1">
+			  	<div class="radio">
+			  		<label>
+			  			<input type="radio" name="status" id="input" value="0">
+			  			禁用
+			  		</label>
+			  		<label>
+			  			<input type="radio" name="status" id="input" value="1" checked="checked">
+			  			启用
+			  		</label>
+			  </div>
+			  <else/>
+				  <div class="radio">
+				  		<label>
+				  			<input type="radio" name="status" id="input" value="0" checked="checked">
+				  			禁用
+				  		</label>
+				  		<label>
+				  			<input type="radio" name="status" id="input" value="1">
+				  			启用
+				  		</label>
+				  </div>
+			</eq>
+		</div>
+
+		  	<div class="form-group">
+		  		(,分割)
+		  		<textarea name="insert_type_values"  id="input" class="form-control" rows="3">{$attr.insert_type_values}</textarea>
+		  </div>
+		  	
+	
+			<div class="form-group">
+				<div class="col-sm-10 col-sm-offset-2">
+					<input type="hidden" name="id" value="{$attr.id}">
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</div>
+			</div>
+	</form>
+</block>
+<block name="script">
+	<script>
+	(function($){
+		$('.form-horizontal').on('submit', function(){
+				if($('input[name="insert_type_id"]:checked').val() == 2) {
+					if($('textarea').val() == '') {
+						 alert('需要录入值');
+						 $('textarea').focus();
+						 return false;
+					}
+			  }
+		});
+	})(jQuery);
+	</script>
+</block>

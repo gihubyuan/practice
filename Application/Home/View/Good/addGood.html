@@ -1,0 +1,136 @@
+<extend name="public:base" />
+
+<block name="body">
+	<form method="POST" action="{:U('goodHandle')}" role="form">
+
+			 <legend>{$form_header} good</legend>
+		
+			<div class="form-group">
+				<label for="">商品名</label>
+				<input type="text" name="good_name" value="{$good.good_name}"　class="form-control" id="">
+			</div>
+
+			<div class="form-group">
+				<label for="">商品sn</label>
+				<input type="text" name="good_sn" value="{$good.good_sn}" class="form-control" id="">
+				(留空系统自动生成)
+			</div>
+
+			<div class="form-group">
+				<label for="">重量</label>
+				<input type="text" name="weight" value="{$good.weight}"　class="form-control" id="">
+				<select name="weight_unit">
+						<option value="0" selected>千克</option>
+						<option value="1">克</option>
+				</select>
+			</div>
+			
+		 	<div class="form-group">
+				<label for="">价格</label>
+				<input type="text" name="price"　value="{$good.price}" class="form-control" id="">
+			</div>
+
+			<div class="form-group">
+				<div class="checkbox">
+					<label>
+						<eq name="good.is_best" value="1">
+							<input type="checkbox" name="is_best" checked>
+						 <else/>
+							<input type="checkbox" name="is_best">
+					  </eq>
+						精品
+					</label>
+					<label>
+						<eq name="good.is_hot" value="1">
+							<input type="checkbox" name="is_hot" checked>
+						 <else/>
+							<input type="checkbox" name="is_hot">
+					  </eq>
+						热销
+					</label>
+					<label>
+						<eq name="good.is_new" value="1">
+							<input type="checkbox" name="is_new" checked>
+						 <else/>
+							<input type="checkbox" name="is_new">
+					  </eq>
+						新品 
+					</label>
+				</div>
+			</div>
+			
+			
+			<div class="form-group">
+				<label for="">促销价格</label>
+				<input type="text" name="promotion_price" value="{$good.promotion_price}" 　class="form-control" id="">
+			</div>
+
+			<div class="form-group">
+				<label for="">促销开始</label>
+				<input type="text" name="promotion_start"　value="{$good.promotion_start}" class="form-control" id="">
+			</div>
+			<div class="form-group">
+				<label for="">促销结束</label>
+				<input type="text" name="promotion_end"　value="{$good.promotion_end}"  class="form-control" id="">
+			</div>
+
+			<div class="form-group">
+				<label for="">库存</label>
+				<input type="text" name="number" value="{$good.number}"　class="form-control" id="">
+			</div>
+
+			<div class="form-group">
+				<label for="">警告库存</label>
+				<input type="text" name="warn_number"　value="{$good.warn_number}" class="form-control" id="">
+			</div>
+
+			<div class="form-group">
+				<label for="">关键字</label>
+				<input type="text" name="keywords" value="{$good.keywords}"　class="form-control" id="">
+			</div>
+
+			<div class="form-group">
+				<label for="">分类</label>
+				<select name="type_id" id="category" class="form-control" required="required">
+					<option value="0">-select-</option>
+					<volist name="options" id="option">
+							<eq name="option['id']" value="$good['type_id']">
+								<option value="{$option.id}" selected>{$option.type_name}</option>
+						  <else/>
+								<option value="{$option.id}">{$option.type_name}</option>
+					  </eq>
+				  </volist>
+			  </select>
+			</div>
+			<div id="attributes">
+				
+			</div>
+		<input type="hidden" name="good_id" value="{$good.id}">
+		<input type="hidden" name="act" value="{$act}">
+		<button type="submit" class="btn btn-primary">Submit</button>
+	</form>
+</block>
+<block name="script">
+	<script>
+
+		var href = '{:U("Good/getAttrHtml")}';
+				href = href.replace('.html', '');
+		var good_id = parseInt($('input[name="good_id"]').val());
+
+		$.get(href, {type_id:$('#category').val(),good_id:good_id},function(data){
+					if(data.status ==1) {
+						$('#attributes')[0].innerHTML = data.data;
+					}
+		});
+
+		$('#category').on('change', function(){
+				$.get(href, {type_id:$(this).val(),good_id:good_id},function(data){
+					if(data.status ==1) {
+						$('#attributes')[0].innerHTML = data.data;
+					}
+				});
+  	});
+
+	</script>
+	
+</block>
