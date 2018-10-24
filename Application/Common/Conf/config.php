@@ -5,7 +5,7 @@ return array(
 // 数据库类型
 'DB_HOST'   => 'localhost', 
 // 服务器地址
-'DB_NAME'   => 'user', 
+'DB_NAME'   => 'practice', 
 // 数据库名
 'DB_USER'   => 'root', 
 // 用户名
@@ -23,7 +23,6 @@ return array(
 // 令牌验证的表单隐藏字段名称，默认为__hash__
 'TOKEN_TYPE'    =>    'md5', 
 //令牌哈希验证规则 默认为MD5
-'TOKEN_RESET'   =>    true,
+'TOKEN_RESET'   =>    true
 
-'URL_MODEL' => 0
 );

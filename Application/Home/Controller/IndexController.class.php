@@ -6,8 +6,9 @@ class IndexController extends HomeController
 {
     public function index()
     {
-        $lists = D("User")->lists(null);
-        $this->assign('lists', $lists);
+        
+        /*$lists = D("User")->lists(null);
+        $this->assign('lists', $lists);*/
         $this->display();    	
     }
     public function login($username = '', $password = '', $remember = '')
