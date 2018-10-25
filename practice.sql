@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.9
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 25, 2018 at 09:28 AM
--- Server version: 5.7.21
--- PHP Version: 5.6.35
+-- Generation Time: Oct 25, 2018 at 03:03 PM
+-- Server version: 5.7.19
+-- PHP Version: 5.6.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -21,6 +21,25 @@ SET time_zone = "+00:00";
 --
 -- Database: `practice`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `account_log`
+--
+
+DROP TABLE IF EXISTS `account_log`;
+CREATE TABLE IF NOT EXISTS `account_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` int(11) NOT NULL,
+  `user_money` int(11) NOT NULL,
+  `frozen_money` int(11) NOT NULL,
+  `rank_points` int(11) NOT NULL,
+  `pay_points` int(11) NOT NULL,
+  `change_desc` varchar(40) NOT NULL,
+  `change_type` tinyint(2) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -213,19 +232,30 @@ CREATE TABLE IF NOT EXISTS `my_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(30) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `phone` varchar(11) NOT NULL,
+  `phone` varchar(11) NOT NULL DEFAULT '',
   `status` tinyint(1) NOT NULL DEFAULT '1',
+  `user_money` int(11) NOT NULL DEFAULT '0',
+  `frozen_moeny` int(11) NOT NULL DEFAULT '0',
+  `rank_points` int(11) NOT NULL DEFAULT '0',
+  `pay_points` int(11) NOT NULL DEFAULT '0',
   `password` char(32) NOT NULL,
-  `user_salt` varchar(20) NOT NULL,
-  `salt` varchar(20) NOT NULL,
-  `qq` varchar(15) NOT NULL,
-  `pwd_question` varchar(50) NOT NULL,
-  `office_phone` varchar(15) NOT NULL,
+  `user_salt` varchar(20) NOT NULL DEFAULT '',
+  `salt` varchar(20) NOT NULL DEFAULT '',
+  `qq` varchar(15) NOT NULL DEFAULT '',
+  `pwd_question` varchar(50) NOT NULL DEFAULT '',
+  `office_phone` varchar(15) NOT NULL DEFAULT '',
   `home_phone` varchar(15) NOT NULL,
-  `pwd_question_answer` varchar(50) NOT NULL,
-  `reg_time` int(11) NOT NULL,
+  `pwd_question_answer` varchar(50) NOT NULL DEFAULT '',
+  `reg_time` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `my_users`
+--
+
+INSERT INTO `my_users` (`id`, `username`, `email`, `phone`, `status`, `user_money`, `frozen_moeny`, `rank_points`, `pay_points`, `password`, `user_salt`, `salt`, `qq`, `pwd_question`, `office_phone`, `home_phone`, `pwd_question_answer`, `reg_time`) VALUES
+(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 'yuanwei888', '', '', '', '', '', '', '', 1);
 
 -- --------------------------------------------------------
 

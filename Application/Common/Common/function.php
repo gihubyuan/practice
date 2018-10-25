@@ -1,4 +1,40 @@
 <?php
+function check_email($email)
+{
+    if(!preg_match('/[a-zA-Z][a-zA-Z0-9_]+@[a-zA-Z_]+(\.com|\.cn|\.edu)+/', $email)) {
+        return false;
+    }
+    return true;
+}
+
+function log_account_change($uid, $user_money, $frozen_money, $rank_points, $pay_points, $change_desc = '', $change_type = 1)
+{
+    $data = [
+        'uid' => $uid,
+        'user_money' => $user_money,
+        'frozen_money' => $frozen_money,
+        'rank_points' => $rank_points,
+        'pay_points' => $pay_points,
+        'change_desc' => $change_desc,
+        'change_type' => $change_type
+    ];
+    if(!M('accountLog')->add($data)) {
+        return false;
+    }
+    unset($data);
+
+    $sql = "UPDATE my_users 
+       SET user_money = user_money + $user_money,
+           frozen_money = frozen_money + $frozen_money,
+           rank_points = rank_points + $rank_points,
+           pay_points = pay_points + $pay_points
+        WHERE  id = $uid LIMIT 1"；
+   if(!(new \Think\Model())->execute($sql)) {
+     return false;
+   }
+   return true;
+}
+
 function build_fields_html($fields)
 {
     $html = '';

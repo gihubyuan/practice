@@ -13,4 +13,8 @@ class UserApi extends Api
 	{
 		return $this->model->login($username, $password);
 	}
+	public function register($username, $password, $repassword, $email)
+	{
+		return $this->model->register($username, $password, $repassword, $email);
+	}
 }

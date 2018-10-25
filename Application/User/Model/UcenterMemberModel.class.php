@@ -8,6 +8,17 @@ class UcenterMemberModel extends Model
 
 	protected $tableName = 'users';
 	protected $tablePrefix = 'my_';
+
+	protected $_validate = array(
+		array('username', '6,12', -1, 0, 'length',self::MODEL_BOTH),
+		array('username', '', -2, 0, 'unique',self::MODEL_INSERT),
+
+		array('password', '5,16', -3, 0, 'length'),
+		array('repassword', 'password', -4, 0, 'confirm'),
+
+		array('email', 'check_email', -5, 0, 'function')
+	);
+
 	public function login($username, $password)
 	{
 	  $user = $this->where(['username'=>$username])->find();
@@ -42,14 +53,29 @@ class UcenterMemberModel extends Model
 	  	if(empty($user['my_salt'])) {
 
 	  	}else {
-	  		 if(md5($password . $user['my_salt']) == $user['password']
+	  		 if(md5($password . $user['my_salt']) == $user['password']) {
+
+	  		 }
 	  	}
 	  }
 	}
 
 
-	public function register($username, $password, $email)
+	public function register($username, $password, $repassword, $email)
 	{
+
+		$data = [
+			'username' => $username,
+			'password' => $password,
+			'repassword' => $repassword,
+			'email' => $email
+		];
+		if($this->create()) {
+			$uid = $this->add();
+			return $uid;
+		}else {
+			return $this->getError();
+		}
 	}
 
 }
