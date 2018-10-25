@@ -40,13 +40,22 @@ class UserController extends \Think\Controller
 
     public function login()
     {
+            $this->display();
+    }
+    
+    public function register()
+    {
         if(IS_POST) {
-            echo (new UserApi()) ->login(11, 22);
+
         }else {
+            $fields = M('registerFields')
+             ->field(['id', 'field_name', 'field_title', 'field_values'])
+             ->where(['type'=>1, 'enabled'=>1])
+             ->select();
+
+            $this->assign('fields', build_fields_html($fields));
             $this->display();
         }
     }
-    
-    
    
 }

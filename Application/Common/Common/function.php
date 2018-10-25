@@ -1,4 +1,29 @@
 <?php
+function build_fields_html($fields)
+{
+    $html = '';
+    foreach($fields as $field) {
+        $field_values = $field['field_values'];
+        if(!empty($field_values)) {
+            $field_values = preg_replace('/\r/', '', $field_values);
+            $options = preg_split('/\n/', $field_values);
+            $html .= '<select name="'.$field['field_name'].'" id="input" class="form-control">
+        <option value="">--请选择问题--</option>';
+
+            foreach($options as $option) {
+                $html .= "<option value=\"$option\">$option</option>";
+            }
+         $html .= '</select>';
+        }else {
+            $html .= '<div class="form-group">
+        <label for="">'.$field['field_title'].'</label>
+        <input type="password" class="form-control" name="'.$field['field_name'].'">
+    </div>';
+        }
+    }
+    return $html;
+}
+
 function api($name = '', $param = array())
 {
     if(empty($name)) {
