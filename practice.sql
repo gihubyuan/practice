@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.7.9
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 25, 2018 at 03:03 PM
--- Server version: 5.7.19
--- PHP Version: 5.6.31
+-- Generation Time: Oct 27, 2018 at 10:17 AM
+-- Server version: 5.7.21
+-- PHP Version: 5.6.35
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -238,24 +238,30 @@ CREATE TABLE IF NOT EXISTS `my_users` (
   `frozen_moeny` int(11) NOT NULL DEFAULT '0',
   `rank_points` int(11) NOT NULL DEFAULT '0',
   `pay_points` int(11) NOT NULL DEFAULT '0',
+  `affiliate_id` int(11) NOT NULL DEFAULT '0',
   `password` char(32) NOT NULL,
-  `user_salt` varchar(20) NOT NULL DEFAULT '',
-  `salt` varchar(20) NOT NULL DEFAULT '',
+  `user_salt` char(5) NOT NULL DEFAULT '',
+  `salt` int(11) NOT NULL DEFAULT '0',
+  `sex` tinyint(1) NOT NULL DEFAULT '0',
+  `birthday` varchar(10) NOT NULL DEFAULT '',
   `qq` varchar(15) NOT NULL DEFAULT '',
   `pwd_question` varchar(50) NOT NULL DEFAULT '',
   `office_phone` varchar(15) NOT NULL DEFAULT '',
-  `home_phone` varchar(15) NOT NULL,
+  `home_phone` varchar(15) NOT NULL DEFAULT '',
   `pwd_question_answer` varchar(50) NOT NULL DEFAULT '',
   `reg_time` int(11) NOT NULL DEFAULT '0',
+  `last_login_time` int(11) NOT NULL DEFAULT '0',
+  `last_login_ip` varchar(15) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `my_users`
 --
 
-INSERT INTO `my_users` (`id`, `username`, `email`, `phone`, `status`, `user_money`, `frozen_moeny`, `rank_points`, `pay_points`, `password`, `user_salt`, `salt`, `qq`, `pwd_question`, `office_phone`, `home_phone`, `pwd_question_answer`, `reg_time`) VALUES
-(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 'yuanwei888', '', '', '', '', '', '', '', 1);
+INSERT INTO `my_users` (`id`, `username`, `email`, `phone`, `status`, `user_money`, `frozen_moeny`, `rank_points`, `pay_points`, `affiliate_id`, `password`, `user_salt`, `salt`, `sex`, `birthday`, `qq`, `pwd_question`, `office_phone`, `home_phone`, `pwd_question_answer`, `reg_time`, `last_login_time`, `last_login_ip`) VALUES
+(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, 'yuanwei888', '', 0, 0, '0', '', '', '', '', '', 1, 0, ''),
+(3, 'xxxxxx', 'xxxxx@xxxxxxx.com', '', 1, 0, 0, 0, 0, 0, '3a27140dd96c3a005b42365408df13f0', '87243', 0, 0, '', '', '', '', '', '', 1540627148, 0, '');
 
 -- --------------------------------------------------------
 
@@ -308,6 +314,61 @@ INSERT INTO `register_fields` (`id`, `field_name`, `field_title`, `type`, `enabl
 (2, 'home_phone', '家庭电话', 1, 1, ''),
 (3, 'office_phone', '办公电话', 1, 1, ''),
 (7, 'pwd_questions', '密码找回问题', 1, 1, '您的爸爸姓名?\r\n您的妈妈姓名?\r\n您的家庭住址?');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `system_config`
+--
+
+DROP TABLE IF EXISTS `system_config`;
+CREATE TABLE IF NOT EXISTS `system_config` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `config_name` varchar(20) NOT NULL,
+  `config_title` varchar(30) NOT NULL,
+  `config_value` varchar(150) NOT NULL DEFAULT '',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `sort` smallint(6) NOT NULL DEFAULT '10',
+  `groups` tinyint(4) NOT NULL DEFAULT '0',
+  `type` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `system_config`
+--
+
+INSERT INTO `system_config` (`id`, `config_name`, `config_title`, `config_value`, `enabled`, `sort`, `groups`, `type`) VALUES
+(1, 'keywords', '网页关键字', '我的网站', 1, 10, 0, 1),
+(2, 'site_closed', '网站维护', '0', 1, 10, 0, 1),
+(3, 'affiliate', '邀请设置', 'a:3:{s:17:\"invitation_points\";i:2;s:17:\"affiliate_enabled\";i:1;s:20:\"invitation_points_up\";i:100;}', 1, 10, 0, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_rank`
+--
+
+DROP TABLE IF EXISTS `user_rank`;
+CREATE TABLE IF NOT EXISTS `user_rank` (
+  `id` tinyint(4) NOT NULL AUTO_INCREMENT,
+  `rank_name` varchar(10) NOT NULL,
+  `discount` tinyint(4) NOT NULL,
+  `min_points` int(11) NOT NULL,
+  `max_points` int(11) NOT NULL,
+  `show_price` tinyint(1) NOT NULL,
+  `is_special` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `user_rank`
+--
+
+INSERT INTO `user_rank` (`id`, `rank_name`, `discount`, `min_points`, `max_points`, `show_price`, `is_special`) VALUES
+(1, '注册会员', 100, 0, 10000, 1, 0),
+(2, 'VIP会员', 95, 10000, 10000000, 1, 0),
+(3, '代销用户', 90, 0, 0, 0, 1);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

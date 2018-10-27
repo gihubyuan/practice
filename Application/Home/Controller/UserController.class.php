@@ -34,6 +34,7 @@ class UserController extends \Think\Controller
     }
     public function test()
     {
+        
     }
 
     public function index()
@@ -43,25 +44,26 @@ class UserController extends \Think\Controller
 
     public function login()
     {
-      $this->display();
+      if(IS_POST) {
+        $data = I('post.');
+        $uid = (new UserApi())->login($data['username'], $data['password']);
+        if($uid > 0) {
+            echo '登录成功';
+        }
+      }else {
+        $this->display();
+      }
+      
     }
-
-
     
     public function register()
     {
         if(IS_POST) {
             $data = I('post.');
-            $users = M('myUsers');
 
-            $api = new UserApi();
-            $uid = $api->register($data['username'], $data['password'], $data['repassword'], $data['email']);
-
-            if($uid > 0) {
-                
-                if(!empty($configs['register_points'])) {
-                    log_account_change($uid, 0 , 0, $configs['register_points'],$configs['register_points'], '注冊送積分');
-                }
+           $uid  = register($data);
+           if($uid >0) {
+                echo '注册成功';
             }else {
                 $this->error($this->getError($uid));
                 exit;

@@ -4,6 +4,11 @@ namespace Admin\Controller;
 use Think\Controller;
 class IndexController extends Controller
 {
+	public function _initialize()
+	{
+		 $configs = api('Config/lists');
+     C($configs);
+	}
 
 	public function index()
 	{
@@ -12,7 +17,26 @@ class IndexController extends Controller
 
 	public function regFields()
 	{
+		  $this->assign('fields', M('registerFields')->where(['enabled'=>1])->select());
 			$this->display();
+	}
+
+	public function affiliateHandle()
+	{
+		 if(IS_POST) {
+		 	 $data = I('post.');
+		 	 $data['invitation_points'] = !empty($data['invitation_points']) ? intval($data['invitation_points']) : 0;
+		 	 $data['invitation_points_up'] = !empty($data['invitation_points_up']) ? intval($data['invitation_points_up']) : 0;
+		 	 $data['on'] = intval($data['on']) == 1 ? 1 : 0;
+		 	 put_affiliate($data);
+		 	 return true;
+		 }
+	}
+
+	public function affiliate()
+	{
+		$this->assign('affiliate', unserialize(C('affiliate')));
+		$this->display();
 	}
 
 	public function aRegField()

@@ -1,4 +1,76 @@
 <?php
+
+
+function register($data)
+{
+    $api = new \User\Api\UserApi();
+            $uid = $api->register($data['username'], $data['password'], $data['repassword'], $data['email']);
+
+            if($uid > 0) {
+                session('user.auth', $user);
+                session('user.auth_sign', data_auth_sign($user));
+                if(!empty($configs['register_points'])) {
+                    log_account_change($uid, 0 , 0, $configs['register_points'],$configs['register_points'], '注冊送積分');
+                }
+
+                if(C('AFFILIATE_ENABLED') == 1) {
+                    $user = get_affiliate();
+                    if($user['uid'] >0) {
+                        $invitation_points = C('INVITATION_POINTS');
+                        $invitation_points_up = C('INVITATION_POINTS_UP');
+                        if(!empty($invitation_points)) {
+                            if(!empty($invitation_points_up)) {
+                                if($invitation_points + $user['rank_points'] <= $invitation_points_up) {
+                                log_account_change($user['uid'], 0 , 0, $invitation_points,0 , '邀请得积分');
+                                }
+                            }else {
+                                log_account_change($user['uid'], 0 , 0, $invitation_points,0 , '邀请得积分');
+                            }
+                            M('myUsers')->where(['id'=>$uid])->setField(['affiliate_id'=>$user['uid']]);
+                        }
+                    }
+                }
+
+                $other_keys = ['msn', 'qq', 'home_phone', 'office_phone', 'pwd_question', 'pwd_question_answer'];
+                $temp = array();
+                foreach($data as $key => $data_item) {
+                    if(in_array($key, $other_keys)) {
+                        $temp[$key] = $data_item;
+                    }
+                }
+                $temp['reg_time'] = time();
+                M('myUsers')->where(['id'=>$uid])->save($temp);
+                update_user_info();
+                return true;
+            }          
+            return $uid;
+}
+
+function update_user_info()
+{
+    $uid = session('user.auth.uid');
+    if($uid <=0 || !$uid) {
+        return false;
+    }
+    M('myUsers')
+      ->field()
+      ->find($uid);
+}
+
+function get_affiliate()
+{
+    $uid = cookie('affiliate_uid');
+    if(!empty($uid)) {
+        $user = M('myUsers')->find($uid);
+        if($user) {
+            return ['uid'=>$user['id'], 'rank_points'=>$user['rank_points']];
+        }else {
+          cookie('affiliate_uid', null);
+        }
+    }
+    return 0;
+}
+
 function check_email($email)
 {
     if(!preg_match('/[a-zA-Z][a-zA-Z0-9_]+@[a-zA-Z_]+(\.com|\.cn|\.edu)+/', $email)) {
@@ -28,7 +100,7 @@ function log_account_change($uid, $user_money, $frozen_money, $rank_points, $pay
            frozen_money = frozen_money + $frozen_money,
            rank_points = rank_points + $rank_points,
            pay_points = pay_points + $pay_points
-        WHERE  id = $uid LIMIT 1"；
+        WHERE  id = $uid LIMIT 1";
    if(!(new \Think\Model())->execute($sql)) {
      return false;
    }
@@ -43,13 +115,16 @@ function build_fields_html($fields)
         if(!empty($field_values)) {
             $field_values = preg_replace('/\r/', '', $field_values);
             $options = preg_split('/\n/', $field_values);
-            $html .= '<select name="'.$field['field_name'].'" id="input" class="form-control">
+            $html .= '<strong>'.$field['field_title'].'</strong><select name="'.$field['field_name'].'"  class="form-control">
         <option value="">--请选择问题--</option>';
 
             foreach($options as $option) {
                 $html .= "<option value=\"$option\">$option</option>";
             }
-         $html .= '</select>';
+         $html .= '</select><div class="form-group">
+        <label for="">密码回答问题</label>
+        <input type="text" name="pwd_question_answer" class="form-control">
+    </div>';
         }else {
             $html .= '<div class="form-group">
         <label for="">'.$field['field_title'].'</label>
@@ -138,19 +213,20 @@ function status_to_desc($status)
 
 function is_login()
 {
-	if(!cookie('uid')) {
-		if(($user = session('user_auth')) && ($sign = session('user_auth_sign'))) {
-			if(data_auth_sign($user) == $sign) {
-				return true;
-			}else {
-				return false;
-			}
-		}else {
+	if(($user = session('user_auth')) && ($sign = session('user_auth_sign'))) {
+		if(data_auth_sign($user) != $sign) {
 			return false;
 		}
-	}else {
 		return true;
+	}else {
+		return false;
 	}
+	return true;
+}
+
+function auto_login()
+{
+
 }
 
 function data_auth_sign($data)
@@ -160,10 +236,6 @@ function data_auth_sign($data)
 	return sha1(http_build_query($data));
 }
 
-function encrypt_password($password, $key = 'jdjKDd+(jk,l{sdf#')
-{
-	return empty($password) ? '' : md5(sha1($password). $key);
-}
 
 function get_insert_type_name($type_id)
 {

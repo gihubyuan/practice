@@ -13,13 +13,15 @@
 				</tr>
 			</thead>
 			<tbody>
+				<volist name="fields" id="field">
 				<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
+					<td>{$field.id}</td>
+					<td><a href="{:U('aRegField', array('type'=>'edit', 'id'=>$field['id']))}">{$field.field_name}</a></td>
+					<td>{$field.field_title}</td>
+					<td>{$field.enabled}</td>
+					<td>{$field.field_values}</td>
 				</tr>
+			</volist>
 			</tbody>
 		</table>
 	</div>
