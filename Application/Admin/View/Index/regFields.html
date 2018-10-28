@@ -1,0 +1,28 @@
+<extend name="Public:base" />
+
+<block name="body">
+	<div class="table-responsive">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>id</th>
+					<th>field_name</th>
+					<th>field_title</th>
+					<th>enabled</th>
+					<th>field_values</th>
+				</tr>
+			</thead>
+			<tbody>
+				<volist name="fields" id="field">
+				<tr>
+					<td>{$field.id}</td>
+					<td><a href="{:U('aRegField', array('type'=>'edit', 'id'=>$field['id']))}">{$field.field_name}</a></td>
+					<td>{$field.field_title}</td>
+					<td>{$field.enabled}</td>
+					<td>{$field.field_values}</td>
+				</tr>
+			</volist>
+			</tbody>
+		</table>
+	</div>
+</block>

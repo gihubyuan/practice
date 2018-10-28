@@ -1,0 +1,38 @@
+<extend name="Public:base" />
+
+<block name="body">
+	<form action="{:U('affiliateHandle')}" method="POST" role="form">
+		<legend>Form title</legend>
+	
+		<div class="form-group">
+			<label for="">invitation_points</label>
+			<input type="text" name="invitation_points" value="{$affiliate.invitation_points}" class="form-control" id="">
+		</div>
+	
+		<div class="form-group">
+			<label for="">invitation_points_up</label>
+			<input type="text" name="invitation_points_up" value="{$affiliate.invitation_points_up}" class="form-control" id="">
+		</div>
+	
+		<div class="radio">
+			<label>
+			<eq name="affiliate.affiliate_enabled" value="1">
+				<input type="radio" name="affiliate_enabled" id="input" value="1" checked="checked">
+				<else/>
+				<input type="radio" name="affiliate_enabled" id="input" value="1">
+		  </eq>
+				启用
+			</label>
+			<label>
+				<eq name="affiliate.on" value="0">
+				<input type="radio" name="affiliate_enabled" id="input" value="0" checked="checked">
+				<else/>
+				<input type="radio" name="affiliate_enabled" id="input" value="0">
+		  </eq>
+				禁用
+			</label>
+		</switch>
+		</div>
+		<button type="submit" class="btn btn-primary">Submit</button>
+	</form>
+</block>

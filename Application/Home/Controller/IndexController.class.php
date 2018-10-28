@@ -6,8 +6,9 @@ class IndexController extends HomeController
 {
     public function index()
     {
-        $lists = D("User")->lists(null);
-        $this->assign('lists', $lists);
+        
+        /*$lists = D("User")->lists(null);
+        $this->assign('lists', $lists);*/
         $this->display();    	
     }
     public function login($username = '', $password = '', $remember = '')
@@ -22,6 +23,13 @@ class IndexController extends HomeController
         }else {
             $this->display();
         }
+    }
+
+    public function logout()
+    {
+        session('user_auth', null);
+        session('user_auth_sign', null);
+        $this->redirect('index');
     }
 
     public function register($username = '', $password = '', $repassword = '')

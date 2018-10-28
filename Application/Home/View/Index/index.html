@@ -1,62 +1,6 @@
 <extend name="Public:base" />
 
 <block name='body'>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>
-						<input type="checkbox" value="0" class="checkall">
-			</th>
-				<th>ID</th>
-				<th>名称</th>
-				<th>状态</th>
-				<th>操作</th>
-			</tr>
-		</thead>
-		<tbody>
-			<volist name="lists" id="item">
-				<tr>
-					<td>
-							<input type="checkbox" class="ids" name="ids[]" value="{$item.id}">
-					</td>
-					<td>{$item.id}</td>
-					<td>{$item.username}</td>
-					<td>{$item.status|status_to_desc}</td>
-					<td><button type="button" class="btn btn-sm btn-danger">删除</button></td>
-				</tr>
-		</volist>
-				<tr><td colspan="5"><button type="button" class="btn btn-danger ajax-post" action-url="{:U('delete')}">全部删除</button></td></tr>
-		</tbody>
-	</table>
+	<h1 class="text-danger">FUCKKKKKKKKKKK</h1>
 </block>
 
-<block name="script">
-	<script>
-		$(function(){
-			 var $ids = $('.ids');
-			 $('.checkall').click(function(){
-			 	 $ids.prop('checked', this.checked);
-			 });
-
-			 $ids.click(function(){
-			 	 $ids.each(function(){
-			 	 	 if(this.checked) {
-			 	 	 	 	$('.checkall').prop('checked', true);
-			 	 	 }else {
-				 	 	 	$('.checkall').prop('checked', false);
-				 	 	 	return false;
-			 	 	 }
-			 	 });
-			 });
-
-			 $('.ajax-post').click(function(){
-			 	 if(!confirm("确认要删除吗?")) {
-			 	 	 return false;
-			 	 }
-			 	 $.post($(this).attr('action-url'), $('.ids').serialize(), function(response){
-			 	 	$('body').append('<div>' + response + '</div>')
-			 	 });
-			 })
-		})
-	</script>
-</block>

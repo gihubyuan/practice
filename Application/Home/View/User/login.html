@@ -1,0 +1,55 @@
+<extend name="Public:base" />
+
+<block name="body">
+	<div class="row">
+		<div class="col-md-10">
+					<form method="POST" role="form">
+				<legend>用户登录</legend>
+				
+				<div class="form-group">
+					<label for="">用户名</label>
+					<input type="text" name="username" class="form-control">
+				</div>
+			
+				<div class="form-group">
+					<label for="">密码</label>
+					<input type="password" name="password" class="form-control">
+				</div>
+
+				<eq name="captcha_enabled" value="1">
+					<div class="form-group">
+						<label for="">验证码</label>
+						<input type="text"  name="vcode">
+						<img style="width:150px;height:100px;cursor:pointer;" id="verify" src="{:U('getVerifyCode', array('id'=>2))}">
+					</div>
+				</eq>
+
+				<div class="checkbox">
+					<label>
+						<input type="checkbox" name="remember">
+						记住我
+					</label>
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			  <div>(找回密码) <a href="">密码问题</a> <a href="">短信</a> <a href="">验证</a></div>
+			</form>
+		</div>
+		<div class="col-md-2" style="padding-top:250px;">
+				<a href="{:U('register')}" class="btn btn-info">立即注册</a>
+		</div>
+	</div>
+	
+</block>
+
+<block name="script">
+	<script type="text/javascript">
+		
+		$('#verify').on('click', function(){
+			if(this.src.indexOf('?') > 0) {
+				this.src = this.src.replace(/\&.*/, '') + '&rand=' + Math.random();
+			}else {
+				this.src += '?' + Math.random();
+			}
+		})
+	</script>
+</block>
