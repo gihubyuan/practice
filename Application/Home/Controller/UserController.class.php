@@ -6,15 +6,15 @@ class UserController extends \Think\Controller
 {
     public function _initialize()
     {
+        $configs = api('Config/lists');
+        C($configs);
+         if(C('SITE_CLOSED') == 1) {
+            exit("网站已关闭,请稍后在访问~");
+        }
+        
         if(is_login()) {
             $this->redirect('Index/index');
             exit;
-        }
-        
-        $configs = api('Config/lists');
-          C($configs);
-         if(C('SITE_CLOSED') == 1) {
-            exit("网站已关闭,请稍后在访问~");
         }
     }
     public function test()
@@ -25,6 +25,78 @@ class UserController extends \Think\Controller
     public function index()
     {
       $this->display();   
+    }
+
+    function getByQuestionFirst()
+    {
+        $this->assign('act', ACTION_NAME);
+        $this->display();
+    }
+    function getByQuestionSecond()
+    {
+        if(IS_POST) {
+            $username = I('post.username'); 
+            !$username && $this->error('错误');
+            $user = M('myUsers')->field(['id','username', 'pwd_question'])->where(['username'=>$username])->find();
+            empty($user) && $this->error("错误");
+            empty($user['pwd_question']) && $this->error("没有匹配到密码问题");
+            session('temp_username', $user['username']); 
+            session('temp_userid', $user['id']); 
+            $this->assign('questions', build_fields_html(4));
+            $this->assign('act', ACTION_NAME);
+            $this->assign('uid', $user['id']);
+            $this->display('getByQuestionFirst');
+        }
+    }
+
+    function getByQuestionThird()
+    {
+        if(IS_POST) {
+            $question = I('post.extend_field4'); 
+            $answer = I('post.pwd_question_answer'); 
+            $uid = I('post.uid'); 
+            (empty($question) || empty($answer || empty($uid))) && $this->error('错误');
+            if(is_null(session('temp_username')) || is_null(session('temp_userid')) || ($uid != session('temp_userid'))) {
+                $this->error('错误');
+            }
+            
+            $user = M('myUsers')->field(['id','pwd_question', 'pwd_question_answer'])->where(['id'=>session('temp_userid')])->find();
+            empty($user) && $this->error("用户不存在");
+            session('temp_username', null); 
+            session('temp_userid', null); 
+            if($user['pwd_question'] != $question) {
+                $this->error("您的问题选择错误");
+            }else {
+                if($user['pwd_question_answer'] == $answer) {
+                    session('verify_userid', $user['id']);
+                    $this->assign('questions', build_fields_html(4));
+                    $this->assign('act', ACTION_NAME);
+                    $this->display('getByQuestionFirst');
+                }else {
+                    $this->error("答案错误");
+                }
+            }
+
+        }
+    }
+
+    function getByQuestionFourth()
+    {
+        if(IS_POST) {
+            $password = I('post.password'); 
+            empty($password) && $this->error("密码不得唯恐");
+            $uid = session('verify_userid');
+            session('verify_userid', null);
+            is_null( $uid) &&  $this->error("ID错误");
+            $userApi = new UserApi();
+            if($userApi->setProfileById($uid, $password)) {
+                $userApi->logout();
+            }else {
+                $this->error("更新失败");
+            }
+        }else {
+            $this->error("错误");
+        }
     }
 
     public function login()
@@ -99,16 +171,11 @@ class UserController extends \Think\Controller
                  $this->assign('register_on', 1);
              }
 
-            $fields = M('registerFields')
-             ->field(['id', 'field_name', 'field_title', 'field_values'])
-             ->where(['type'=>1, 'enabled'=>1])
-             ->select();
-
             if(CAPTCHA_KO & C('REGISTER_CAPTCHA') > 0) {
                 $this->assign('captcha_on', 1);
                 $this->assign('RAND', mt_rand());
             }
-            $this->assign('fields', build_fields_html($fields));
+            $this->assign('fields', build_fields_html());
             $this->display();
         }
     }

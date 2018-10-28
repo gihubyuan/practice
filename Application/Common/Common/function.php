@@ -187,9 +187,24 @@ function log_account_change($uid, $user_money, $frozen_money, $rank_points, $pay
    return true;
 }
 
-function build_fields_html($fields)
+function build_fields_html($id = 0)
 {
     $html = '';
+     if($id != 0) {
+        $fields = M('registerFields')
+             ->field(['id', 'field_name', 'field_title', 'field_values'])
+             ->where(['type'=>1, 'enabled'=>1])
+             ->find($id);
+        if($fields) {
+            $fields = array($fields);
+        }
+     }else {
+        $fields = M('registerFields')
+             ->field(['id', 'field_name', 'field_title', 'field_values'])
+             ->where(['type'=>1, 'enabled'=>1])
+             ->select();
+     }
+     
     foreach($fields as $field) {
         $field_values = $field['field_values'];
         if(!empty($field_values)) {

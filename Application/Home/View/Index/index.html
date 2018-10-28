@@ -1,6 +1,41 @@
 <extend name="Public:base" />
-
+<block name="style">
+	<link rel="stylesheet" href="__PUBLIC__/css/index.css">
+</block>
 <block name='body'>
-	<h1 class="text-danger">FUCKKKKKKKKKKK</h1>
+	<div class="row">
+		<div class="col-md-2" style="padding-left:0;padding-right:0;">
+			<div class="sidebar-children-navs hidden">
+				sssssxxxxxxxx
+			</div>
+			<div class="sidebar-navs">
+				<ul>
+					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
+					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
+					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
+					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
+					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
+					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
+					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
+					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
+					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
+				</ul>
+			</div>
+		</div>				
+		<div class="col-md-10">
+		</div>
+	</div>
+</block>
+<block name="script">
+	<script>
+		(function($, win, doc){
+			$('.sidebar-navs a').click(function(){
+				$('.sidebar-children-navs').removeClass('hidden show').addClass('show');
+			});
+			$('.sidebar-navs a').on('dblclick', function(){
+				doc.location.href = $(this).data('url'); 
+			});
+		})(jQuery, window, document);
+	</script>
 </block>
 

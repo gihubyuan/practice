@@ -1,0 +1,37 @@
+<extend name="Public:base" />
+
+<block name="body">
+	<switch name="act">
+		<case value="getByQuestionFirst">
+		<form  method="POST" action="{:U('getByQuestionSecond')}" role="form">
+			<legend>通过用户名找回</legend>
+
+			<div class="form-group">
+				<label for="">用户名</label>
+				<input type="text" class="form-control" name="username">
+			</div>
+		</case>
+		<case value="getByQuestionSecond">
+			<form  method="POST" action="{:U('getByQuestionThird')}" role="form">
+			<legend>您的密码找回问题</legend>
+
+			{$questions}
+			<input type="hidden" name="uid" value="{$uid}">	
+		</case>
+		<case value="getByQuestionThird">
+			<form  method="POST" action="{:U('getByQuestionFourth')}" role="form">
+			<legend>重置密码</legend>
+
+			<div class="form-group">
+				<label for="">新密码</label>
+				<input type="password" class="form-control" name="password">
+			</div>
+		</case>
+		
+		<default/>
+		<form  method="POST" role="form">
+	</switch>
+
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+</block>

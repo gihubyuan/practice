@@ -17,4 +17,14 @@ class UserApi extends Api
 	{
 		return $this->model->register($username, $password, $repassword, $email);
 	}
+	public function setProfileById($uid, $field, $isPassword = true)
+	{
+		return $this->model->setProfileById($uid, $field, $isPassword);
+	}
+	public function logout()
+	{
+		session('user_auth', null);
+		session('user_auth_sign', null);
+		redirect(U("Index/index"));
+	}
 }
