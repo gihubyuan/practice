@@ -1,14 +1,46 @@
 <?php
 
+function check_verify($code, $id = ''){
+    $verify = new \Think\Verify();
+    return $verify->check($code, $id);
+}
+
+function is_login()
+{
+     if(session('user_auth') && session('user_auth_sign') &&  (session('user_auth_sign') == data_auth_sign(session('user_auth')))) {
+        return true;
+     }
+     return false;
+}
+
+function login($username, $password, $remember)
+{
+    $uid = (new \User\Api\UserApi())->login($username, $password, $remember);
+    if($uid > 0) {
+        $user = M('myUsers')->field(['username'])->find($uid);
+        $sess = ['uid'=>$uid, 'username'=>$user['username']];
+        session('user_auth', $sess);
+        session('user_auth_sign', data_auth_sign($sess));
+        update_user_info();
+        return true;
+    }else {
+        session('user.login_fail', session('user.login_fail') + 1);
+        return false;
+    }
+}
 
 function register($data)
 {
+    $data['qq'] = !empty($data['extend_field1']) ? $data['extend_field1'] :'';
+    $data['home_phone'] = !empty($data['extend_field2']) ? $data['extend_field2'] :'';
+    $data['office_phone'] = !empty($data['extend_field3']) ? $data['extend_field3'] :'';
+    $data['pwd_question'] = !empty($data['extend_field4']) ? compile_str($data['extend_field4']) :'';
+    $data['pwd_question_answer'] = !empty($data['pwd_question_answer']) ? compile_str($data['pwd_question_answer']) : '';
+
     $api = new \User\Api\UserApi();
             $uid = $api->register($data['username'], $data['password'], $data['repassword'], $data['email']);
 
             if($uid > 0) {
-                session('user.auth', $user);
-                session('user.auth_sign', data_auth_sign($user));
                 if(!empty($configs['register_points'])) {
                     log_account_change($uid, 0 , 0, $configs['register_points'],$configs['register_points'], '注冊送積分');
                 }
@@ -24,13 +56,15 @@ function register($data)
                                 log_account_change($user['uid'], 0 , 0, $invitation_points,0 , '邀请得积分');
                                 }
                             }else {
-                                log_account_change($user['uid'], 0 , 0, $invitation_points,0 , '邀请得积分');
+                                log_account_change($user['uid'], 0 , 0, $invitation_points, 0 , '邀请得积分');
                             }
                             M('myUsers')->where(['id'=>$uid])->setField(['affiliate_id'=>$user['uid']]);
                         }
                     }
                 }
 
+                
+                
                 $other_keys = ['msn', 'qq', 'home_phone', 'office_phone', 'pwd_question', 'pwd_question_answer'];
                 $temp = array();
                 foreach($data as $key => $data_item) {
@@ -46,15 +80,61 @@ function register($data)
             return $uid;
 }
 
+function compile_str($str)
+{
+    return strtr($str, array('<' => '《', '>' => '》', '"' => '“', "'" => '”'));
+}
+
 function update_user_info()
 {
-    $uid = session('user.auth.uid');
+    $uid = session('user_auth.uid');
     if($uid <=0 || !$uid) {
         return false;
     }
-    M('myUsers')
-      ->field()
-      ->find($uid);
+    $user = M('myUsers')->field(true)->find($uid);
+    if($user) {
+        if($user['rank_id'] > 0) {
+          $rank =  M('userRank')->field(['is_special'])->find($user['rank_id']);
+           if($rank['is_special'] == 0 || is_null($rank['is_special'])) {
+             M('myUsers')->save(['id'=>$uid, 'rank_id'=>0]);
+             $user['rank_id'] = 0;
+           }
+        }
+
+        if($user['rank_id'] == 0) {
+            $rank = M('userRank')
+                ->field(['discount', 'id'])
+                ->where(['min_points'=>['ELT', $user['rank_points']], 'max_points' => ['GT', $user['rank_points']]])
+                ->find();
+            if($rank) {
+                session('user.discount', $rank['discount'] / 100.00);
+                session('user.rank_id', $rank['id']);
+            }else {
+                session('user.discount', 1);
+                session('user.rank_id', 0);
+            }
+               
+        }else {
+             $rank = M('userRank')->field(['discount', 'id'])->find($user['rank_id']);
+             if($rank) {
+                session('user.discount', $rank['discount'] / 100.00);
+                session('user.rank_id', $rank['id']);
+            }else {
+                session('user.discount', 1);
+                session('user.rank_id', 0);
+            }
+            
+        }
+
+        M('myUsers')->save([
+            'id'=> $uid,
+            'last_login_time' => time(),
+            'last_login_ip' => get_client_ip(),
+            'visit_counts' => ['exp','visit_counts +1']
+        ]); 
+        return true;
+    } 
+    return false;
 }
 
 function get_affiliate()
@@ -73,7 +153,7 @@ function get_affiliate()
 
 function check_email($email)
 {
-    if(!preg_match('/[a-zA-Z][a-zA-Z0-9_]+@[a-zA-Z_]+(\.com|\.cn|\.edu)+/', $email)) {
+    if(!preg_match('/[a-zA-Z][a-zA-Z0-9_]+@[a-zA-Z_0-9]+(\.com|\.cn|\.edu)+/', $email)) {
         return false;
     }
     return true;
@@ -115,7 +195,7 @@ function build_fields_html($fields)
         if(!empty($field_values)) {
             $field_values = preg_replace('/\r/', '', $field_values);
             $options = preg_split('/\n/', $field_values);
-            $html .= '<strong>'.$field['field_title'].'</strong><select name="'.$field['field_name'].'"  class="form-control">
+            $html .= '<strong>'.$field['field_title'].'</strong><select name="extend_field'.$field['id'].'"  class="form-control">
         <option value="">--请选择问题--</option>';
 
             foreach($options as $option) {
@@ -128,7 +208,7 @@ function build_fields_html($fields)
         }else {
             $html .= '<div class="form-group">
         <label for="">'.$field['field_title'].'</label>
-        <input type="password" class="form-control" name="'.$field['field_name'].'">
+        <input type="password" class="form-control" name="extend_field'.$field['id'].'">
     </div>';
         }
     }
@@ -211,18 +291,6 @@ function status_to_desc($status)
 	return $status == 0 ? '禁用': '启用';
 }
 
-function is_login()
-{
-	if(($user = session('user_auth')) && ($sign = session('user_auth_sign'))) {
-		if(data_auth_sign($user) != $sign) {
-			return false;
-		}
-		return true;
-	}else {
-		return false;
-	}
-	return true;
-}
 
 function auto_login()
 {

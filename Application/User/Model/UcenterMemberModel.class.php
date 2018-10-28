@@ -24,7 +24,7 @@ class UcenterMemberModel extends Model
 	);
 	
 
-	public function login($username, $password)
+	public function login($username, $password, $remember)
 	{
 	  $user = $this->where(['username'=>$username])->find();
 
@@ -68,6 +68,7 @@ class UcenterMemberModel extends Model
 	  	}
 	  }
   }
+
 
 
 	protected function compile_pwd($data)
@@ -118,6 +119,8 @@ class UcenterMemberModel extends Model
 		if($this->create($data)) {
 			$uid = $this->add();
 			$user = ['uid'=>$uid, 'username'=>$data['username']];
+			session('user_auth', $user);
+            session('user_auth_sign', data_auth_sign($user));
 			return $uid;
 		}else {
 			return $this->getError();

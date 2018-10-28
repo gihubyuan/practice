@@ -25,6 +25,13 @@ class IndexController extends HomeController
         }
     }
 
+    public function logout()
+    {
+        session('user_auth', null);
+        session('user_auth_sign', null);
+        $this->redirect('index');
+    }
+
     public function register($username = '', $password = '', $repassword = '')
     {
         if(IS_POST) {

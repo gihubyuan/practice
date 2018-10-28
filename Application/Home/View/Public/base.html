@@ -14,7 +14,12 @@
 			</ul>
 
 			<ul class="nav navbar-nav navbar-right">
-		        <li><a href="{:U('User/index')}">用户中心</a></li>
+				<if condition="is_login()">
+		        	<li><a href="javascript:void(0);">欢迎回来, {$Think.session.user_auth.username}</a></li>
+		        	<li><a href="{:U('logout')}">退出</a></li>
+		        <else/>
+		        	<li><a href="{:U('User/login')}">用户中心</a></li>
+		        </if>
 		        <li><a href="">购物车</a></li>
 		     </ul>
 		</div>

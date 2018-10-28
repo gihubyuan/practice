@@ -1,6 +1,7 @@
 <extend name="Public:base" />
 
 <block name="body">
+<eq name="register_on" value="1">
 <form  method="POST" role="form">
 	<legend>用户注册</legend>
 
@@ -24,7 +25,30 @@
 		<input type="password" class="form-control" name="repassword">
 	</div>
 
+	<eq name="captcha_on" value="1">
+		<div class="form-group">
+			<label for="">验证码</label>
+			<input type="text"  name="vcode">
+			<img style="width:150px;height:100px;cursor:pointer;" id="verify" src="{:U('getVerifyCode', array('id'=>1))}">
+		</div>
+	</eq>
+
 	{$fields}
 	<button type="submit" class="btn btn-primary">Submit</button>
 </form>
+</block>
+<block name="script">
+	<script type="text/javascript">
+		
+		$('#verify').on('click', function(){
+			if(this.src.indexOf('?') > 0) {
+				this.src = this.src.replace(/\&.*/, '') + '&rand=' + Math.random();
+			}else {
+				this.src += '?' + Math.random();
+			}
+		})
+	</script>
+<else/>
+<h1 style="color:red;">注册已关闭</h1>
+</eq>
 </block>

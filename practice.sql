@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.9
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 27, 2018 at 10:17 AM
--- Server version: 5.7.21
--- PHP Version: 5.6.35
+-- Generation Time: Oct 28, 2018 at 03:56 AM
+-- Server version: 5.7.19
+-- PHP Version: 5.6.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -252,16 +252,17 @@ CREATE TABLE IF NOT EXISTS `my_users` (
   `reg_time` int(11) NOT NULL DEFAULT '0',
   `last_login_time` int(11) NOT NULL DEFAULT '0',
   `last_login_ip` varchar(15) NOT NULL DEFAULT '',
+  `rank_id` tinyint(4) NOT NULL DEFAULT '0',
+  `visit_counts` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `my_users`
 --
 
-INSERT INTO `my_users` (`id`, `username`, `email`, `phone`, `status`, `user_money`, `frozen_moeny`, `rank_points`, `pay_points`, `affiliate_id`, `password`, `user_salt`, `salt`, `sex`, `birthday`, `qq`, `pwd_question`, `office_phone`, `home_phone`, `pwd_question_answer`, `reg_time`, `last_login_time`, `last_login_ip`) VALUES
-(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, 'yuanwei888', '', 0, 0, '0', '', '', '', '', '', 1, 0, ''),
-(3, 'xxxxxx', 'xxxxx@xxxxxxx.com', '', 1, 0, 0, 0, 0, 0, '3a27140dd96c3a005b42365408df13f0', '87243', 0, 0, '', '', '', '', '', '', 1540627148, 0, '');
+INSERT INTO `my_users` (`id`, `username`, `email`, `phone`, `status`, `user_money`, `frozen_moeny`, `rank_points`, `pay_points`, `affiliate_id`, `password`, `user_salt`, `salt`, `sex`, `birthday`, `qq`, `pwd_question`, `office_phone`, `home_phone`, `pwd_question_answer`, `reg_time`, `last_login_time`, `last_login_ip`, `rank_id`, `visit_counts`) VALUES
+(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '', '', '', '', 1, 1540698719, '0.0.0.0', 0, 3);
 
 -- --------------------------------------------------------
 
@@ -313,7 +314,7 @@ INSERT INTO `register_fields` (`id`, `field_name`, `field_title`, `type`, `enabl
 (1, 'qq', 'qq', 1, 1, ''),
 (2, 'home_phone', '家庭电话', 1, 1, ''),
 (3, 'office_phone', '办公电话', 1, 1, ''),
-(7, 'pwd_questions', '密码找回问题', 1, 1, '您的爸爸姓名?\r\n您的妈妈姓名?\r\n您的家庭住址?');
+(4, 'pwd_questions', '密码找回问题', 1, 1, '您的爸爸姓名?\r\n您的妈妈姓名?\r\n您的家庭住址?');
 
 -- --------------------------------------------------------
 
@@ -332,7 +333,7 @@ CREATE TABLE IF NOT EXISTS `system_config` (
   `groups` tinyint(4) NOT NULL DEFAULT '0',
   `type` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `system_config`
@@ -341,7 +342,9 @@ CREATE TABLE IF NOT EXISTS `system_config` (
 INSERT INTO `system_config` (`id`, `config_name`, `config_title`, `config_value`, `enabled`, `sort`, `groups`, `type`) VALUES
 (1, 'keywords', '网页关键字', '我的网站', 1, 10, 0, 1),
 (2, 'site_closed', '网站维护', '0', 1, 10, 0, 1),
-(3, 'affiliate', '邀请设置', 'a:3:{s:17:\"invitation_points\";i:2;s:17:\"affiliate_enabled\";i:1;s:20:\"invitation_points_up\";i:100;}', 1, 10, 0, 1);
+(3, 'affiliate', '邀请设置', 'a:3:{s:17:\"invitation_points\";i:2;s:17:\"affiliate_enabled\";i:1;s:20:\"invitation_points_up\";i:100;}', 1, 10, 0, 1),
+(4, 'register_captcha', '注册验证码开启码', '1', 1, 10, 0, 1),
+(5, 'register_closed', '关闭注册', '0', 1, 10, 0, 1);
 
 -- --------------------------------------------------------
 
