@@ -24,23 +24,21 @@ class UcenterMemberModel extends Model
 	);
 	
 
-	public function findProfile($username, $type)
-	{
-		 $field = array();
-		 switch($type)
-		 {
-		 	 case 1:
-		 	   $field['username'] = $username;
-		 	   break;
-		 	 case 2:
-		 	   $field['email'] = $username;
-		 	   break;
-		 	 case 3:
-		 		 $field['phone'] = $username;
-		 	   break;
-		 }
 
-		 return M('myUsers')->where($field)->find();
+	public function setProfileById($uid, $field, $isPassword)
+	{
+		$map = array();
+		if($isPassword) {
+			$map['password'] = $field;
+		}else {
+			$map['username'] = $field;
+		}
+		if(isset($map['password'])) {
+			$user = $this->field(['user_salt'])->find($uid);
+			$map['password'] = $this->compile_pwd(array('password'=>$field, 'user_salt'=>$user['user_salt']));
+		    return $this->save(array_merge(array('id'=>$uid), $map));
+		}
+		return $this->save(array_merge(array('id'=>$uid), $map));
 	}
 
 	public function login($username, $password, $remember)
