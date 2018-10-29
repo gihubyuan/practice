@@ -5,6 +5,15 @@ function check_verify($code, $id = ''){
     return $verify->check($code, $id);
 }
 
+function get_navs()
+{
+    $navs = M('navs')
+     ->where(['if_show'=>1])
+     ->order('view_order desc', 'id asc')
+     ->select();
+    return empty($navs) ? array() : $navs;
+}
+
 function is_login()
 {
      if(session('user_auth') && session('user_auth_sign') &&  (session('user_auth_sign') == data_auth_sign(session('user_auth')))) {
@@ -255,25 +264,6 @@ function generate_good_sn()
         $sn = 'gn' . date('Ymd') . mt_rand(10000, 99999) . $fields['max_id'];
     }
     return $sn;
-}
-
-function get_navs($id = null, $nav_name = null)
-{
-	static $navs;
-    
-    if(!$navs) {
-    	$navs = S('s_static_navs');
-    }
-
-    if(empty($navs)) {
-    	$lists = M('navs')->where(['status'=>1])->order('pid', 'sort desc')->select();
-    	$lists = list_to_tree($lists);
-    	$navs = $lists;
-    	if(count($lists) < 1000) {
-	    	S('s_static_navs', $lists);
-    	}
-    }
-    return $navs;
 }
 
 function list_to_tree($list, $pk='id', $pid = 'pid', $child = '_child', $root = 0) {

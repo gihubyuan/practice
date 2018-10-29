@@ -13,6 +13,8 @@ class HomeController extends Controller
     		if(C('SITE_CLOSED') == 1) {
     			exit("网站已关闭,请稍后在访问~");
     		}
+
+            $this->assign('navs', get_navs());
     }
 
    
