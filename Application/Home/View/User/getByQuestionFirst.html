@@ -1,0 +1,32 @@
+<extend name="Public:base" />
+
+<block name="body">
+	<div class="row">
+				<switch name="act">    
+					<case value="getByQuestionFirst">
+							<form method="POST" action="{:U('getByQuestionSecond')}" role="form">
+								<legend>您的用户名</legend>
+								<div class="form-group">
+									<label for=""></label>
+									<input type="text" name="username" class="form-control">
+								</div>
+							</case>    
+						<case value="getByQuestionSecond">
+							<form method="POST" action="{:U('getByQuestionSecond')}" role="form">
+								<legend>请回答注册问题</legend>
+						    {$field}
+						    <div class="form-group">
+									<label for=""></label>
+									<input type="text" name="pwd_answer" class="form-control">
+								</div>
+						</case>    
+						<default />
+							<form method="POST" role="form">
+							
+						default
+					</switch>
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</form>
+	</div>
+</block>
+

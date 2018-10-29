@@ -27,6 +27,30 @@ class UserController extends \Think\Controller
       $this->display();   
     }
 
+    public function getByQuestionFirst()
+    {
+       $this->assign('act', ACTION_NAME);
+       $this->display();
+    }
+
+    public function getByQuestionSecond()
+    {
+        if(IS_POST) {
+            $data = I('post.');
+            $user = M('myUsers')->where(['username'=>$data['username']])->find();
+            session('temp_user_id', $user['id']);
+            session('temp_username', $user['username']);
+            session('temp_pwd_question', $user['pwd_question']);
+        }else {
+            $this->assign('field', build_question_html(4));
+            $this->assign('act', ACTION_NAME);
+            $this->display('getByQuestionFirst');
+        }
+        
+    }
+
+
+
     public function login()
     {
       define('CAPTCHA_LOGINFAIL', 1);
@@ -99,16 +123,11 @@ class UserController extends \Think\Controller
                  $this->assign('register_on', 1);
              }
 
-            $fields = M('registerFields')
-             ->field(['id', 'field_name', 'field_title', 'field_values'])
-             ->where(['type'=>1, 'enabled'=>1])
-             ->select();
-
             if(CAPTCHA_KO & C('REGISTER_CAPTCHA') > 0) {
                 $this->assign('captcha_on', 1);
                 $this->assign('RAND', mt_rand());
             }
-            $this->assign('fields', build_fields_html($fields));
+            $this->assign('fields', build_fields_html());
             $this->display();
         }
     }

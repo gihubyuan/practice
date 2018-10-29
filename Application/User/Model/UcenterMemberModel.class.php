@@ -24,6 +24,25 @@ class UcenterMemberModel extends Model
 	);
 	
 
+	public function findProfile($username, $type)
+	{
+		 $field = array();
+		 switch($type)
+		 {
+		 	 case 1:
+		 	   $field['username'] = $username;
+		 	   break;
+		 	 case 2:
+		 	   $field['email'] = $username;
+		 	   break;
+		 	 case 3:
+		 		 $field['phone'] = $username;
+		 	   break;
+		 }
+
+		 return M('myUsers')->where($field)->find();
+	}
+
 	public function login($username, $password, $remember)
 	{
 	  $user = $this->where(['username'=>$username])->find();

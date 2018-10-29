@@ -17,4 +17,9 @@ class UserApi extends Api
 	{
 		return $this->model->register($username, $password, $repassword, $email);
 	}
+	public function findProfile($username, $type =1)
+	{
+		return $this->model->findProfile($username, $type);
+	}
+
 }

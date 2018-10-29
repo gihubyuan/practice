@@ -187,9 +187,26 @@ function log_account_change($uid, $user_money, $frozen_money, $rank_points, $pay
    return true;
 }
 
-function build_fields_html($fields)
+
+
+function build_fields_html($id = 0, $pwd_index = '')
 {
-    $html = '';
+    $html = '';     
+    if($id != 0) {
+        $fields = M('registerFields')
+         ->field(['id', 'field_name', 'field_title', 'field_values'])
+         ->where(['type'=>1, 'enabled'=>1])
+         ->find($id);
+        if(!empty($fields)) {
+            $fields = array($fields);
+        }
+    }else {
+         $fields = M('registerFields')
+             ->field(['id', 'field_name', 'field_title', 'field_values'])
+             ->where(['type'=>1, 'enabled'=>1])
+             ->select();
+    }
+
     foreach($fields as $field) {
         $field_values = $field['field_values'];
         if(!empty($field_values)) {
@@ -199,7 +216,7 @@ function build_fields_html($fields)
         <option value="">--请选择问题--</option>';
 
             foreach($options as $option) {
-                $html .= "<option value=\"$option\">$option</option>";
+                $html .= "<option value=\"$option\" ". ($option == $pwd_index ? 'selected' : '').">$option</option>";
             }
          $html .= '</select><div class="form-group">
         <label for="">密码回答问题</label>
