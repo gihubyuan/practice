@@ -7,7 +7,21 @@
 		
 			<div class="form-group">
 				<label for="">商品名</label>
-				<input type="text" name="good_name" value="{$good.good_name}" class="form-control" id="">
+				<input type="text" name="good_name" value="{$good.good_name}" style="color:{$good.name_style_color};" class="form-control">
+				颜色<input type="text" name="name_style_color" value="{$good.name_style_color}" class="form-control">
+				样式<select name="name_style_font" class="form-control">
+					    <option value="">默认</option>
+						<eq name="good.name_style_font" value="underline">
+							<option value="underline" selected>下划线</option>
+						<else/>
+							<option value="underline">下划线</option>
+						</eq>
+						<eq name="good.name_style_font" value="bold">
+							<option value="bold" selected>下划线</option>
+						<else/>
+							<option value="bold">下划线</option>
+						</eq>
+					</select>
 			</div>
 
 			<div class="form-group">

@@ -1,0 +1,47 @@
+<extend name="Public:base" />
+<block name="style">
+	<link rel="stylesheet" href="__PUBLIC__/css/index.css">
+</block>
+<block name='body'>
+	
+	<div class="row">
+		<div class="col-md-1 col-md-offset-11">排序蓝</div>	
+			<volist name="goods" id="good">
+				<div class="col-md-3 col-sm-4">
+					<div class="thumbnail">
+						<img src="__PUBLIC__/img/Penguins.jpg" alt="">
+						<div class="caption">
+							<h3>{$good.good_name}</h3>
+							<p>
+								{$good.good_sn}
+							</p>
+							<p>
+								<a href="#" class="btn btn-default">查看</a>
+							</p>
+						</div>
+					</div>
+				</div>
+			</volist>
+	</div>
+</block>
+<block name="script">
+	<script>
+		(function($, win, doc){
+			$('.sidebar-navs a').click(function(){
+				var url = '{:U("Index/decendant")}';
+				$.get(url, {id:$(this).data('cid')}, function(data){
+					 if(data.status == 1) {
+					 	 $('.sidebar-children-navs').html(data.data);
+					 }else {
+					 	  alert(data.error);
+					 }
+				});
+				$('.sidebar-children-navs').removeClass('hidden show').addClass('show');
+			});
+			$('.sidebar-navs a').on('dblclick', function(){
+				doc.location.href = $(this).data('url'); 
+			});
+		})(jQuery, window, document);
+	</script>
+</block>
+

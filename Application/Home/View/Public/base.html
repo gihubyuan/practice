@@ -33,9 +33,9 @@
 		<div class="row">
 			<div class="col-md-9  col-md-offset-3">
 				<ul class="nav nav-pills  pull-right">
-				  <li role="presentation" class="active"><a href="#">Home</a></li>
+				  <li role="presentation" class="active"><a href="{:U('Home/Index/index')}">Home</a></li>
 				  <volist name="navs" id="nav">
-						<li><a href="javascript:void(0);" data-url="{$nav.url}" 
+						<li><a href="{$nav.nav_url}" 
 							<eq name="nav.open_new" value="1">target="_blank"</eq>>
 							{$nav.nav_name}</a></li>
 					</volist>
@@ -55,7 +55,6 @@
 	
 
 	<div class="container">
-
 		<block name="body">
 
 			<h1 class="text-danger">Hi~</h1>

@@ -7,6 +7,7 @@
 					<tr>
 						<th>ID</th>
 						<th>NAME</th>
+						<th>deleted</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -16,6 +17,7 @@
 							<td>
 								<a href="{:U('Good/addGood', array('good_id'=>$good['id'], 'act'=>'update'))}">{$good.good_name}</a>
 						  </td>
+						  <td>{$good.deleted}</td>
 						</tr>
 				  </volist>
 				</tbody>

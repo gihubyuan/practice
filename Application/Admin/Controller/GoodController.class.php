@@ -7,7 +7,7 @@ class GoodController extends PublicController
 {
 	public function index()
 	{
-		$goods = M('goods')->where(['status'=>1])->order('cat_id, sort desc')->select();
+		$goods = M('goods')->order('sort desc, id')->select();
 		$this->assign('goods', $goods);
 		$this->display();
 	}
@@ -52,7 +52,8 @@ class GoodController extends PublicController
 		 		$data['price'] = empty($data['price']) ? 0 : $data['price'];
 		 		$data['weight'] = empty($data['weight']) ? 0 : $data['weight'];
 		 		$good_id = empty($data['good_id']) ? 0 : $data['good_id'];
-				unset($data['attr_id_list'],$data['__hash__'], $data['attr_value_list'], $data['good_id']);			 		
+		 		$data['good_name_style'] = $data['name_style_color'] . '|' . $data['name_style_font'];
+				unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id']);			 		
 		 				 			 		
 				if(empty($data['good_sn'])) {
 					$data['good_sn'] = generate_good_sn();
@@ -152,7 +153,7 @@ class GoodController extends PublicController
 		 	  	if(empty($good_id = I('good_id'))) {
 			 	  	$this->error('错误');
 			 	  	exit;
-		 	 		}
+		 	 	}
 		 	  }
 		 		if($is_add) {
 		 			 $good = array(
@@ -170,7 +171,9 @@ class GoodController extends PublicController
 		 			 	 'promotion_price' => 0,
 		 			 	 'promotion_start' => 0,
 		 			 	 'promotion_end' => 0,
-		 			 	 'good_id' => 0
+		 			 	 'good_id' => 0,
+		 			 	 'name_style_color' => '',
+		 			 	 'name_style_font' => ''
 		 			 );		 
 		 			 $this->assign('act', 'act_insert');
 		 			 $this->assign('form_header', 'add');
@@ -178,6 +181,9 @@ class GoodController extends PublicController
 
 		 		if($is_update) {
 		 			 $good = M('goods')->find($good_id);
+		 			 $style = explode('|', $good['good_name_style']);
+		 			 $good['name_style_color'] = $style[0];
+		 			 $good['name_style_font'] = $style[1];
 		 			 $this->assign('form_header', 'update');
 		 			 $this->assign('act', 'act_update');
 		 		}

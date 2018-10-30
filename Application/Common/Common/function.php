@@ -6,6 +6,7 @@ function check_verify($code, $id = '')
     return $verify->check($code, $id);
 }
 
+
 function build_list_html($arr)
 {
     if(empty($arr)) {
@@ -22,13 +23,29 @@ function build_list_html($arr)
     return $html;
 }
 
+function get_cate_goods($cat_id)
+{
+    return M('goods')
+             ->where([
+                'deleted' => 0,
+                'is_on_sale' => 1,
+                'is_alone_sale' => 1,
+                '_string' => db_create_in(array_unique(array_merge(array($cat_id), getCategories($cat_id))), 'cat_id')
+             ])->select();
+}
+
 function get_navs()
 {
     $navs = M('navs')
      ->where(['if_show'=>1])
-     ->order('view_order desc', 'id asc')
+     ->order('view_order desc, id')
      ->select();
-    return empty($navs) ? array() : $navs;
+     if(!empty($navs)) {
+        foreach($navs as $k =>$nav) {
+            $navs[$k]['nav_url'] = U('Home/Category/index', array('id'=>$nav['id']));
+        }
+     }
+     return $navs;
 }
 
 function is_login()
@@ -390,4 +407,197 @@ function build_attr_html($type = 0, $good_id = 0)
     }
 
     return $html;
+}
+
+
+function getCategories($cid, $type = true)
+{
+    static $arr2 = null;
+    
+    if($arr2 === null) {
+        $arr2 = S('cat_pid_asc');
+            if($arr2 == null) {
+                    $arr = M('goods')
+                        ->alias('g')
+                        ->field(['cat_id', 'count(cat_id)' => 'goods_num'])
+                        ->where(['g.is_on_sale'=>1, 'g.deleted'=>0])
+                        ->group('g.cat_id')
+                        ->select();
+
+                    $arr2 = M('categories')
+                          ->alias('c')
+                          ->field(['c.id','c.cat_name','c.pid','c.if_show','c.view_order','count(cc.id)' => 'children'])
+                          ->join('categories cc on c.id = cc.pid', 'left')
+                          ->order('pid asc', 'c.id asc')
+                          ->group('c.id')
+                          ->select();
+
+                  $temp = array();
+                    foreach($arr as $k => $value) {
+                        $temp[$value['cat_id']] = $value['goods_num'];
+                    }
+
+                    foreach($arr2 as $k => $value) {
+                         $arr2[$k]['good_num'] = isset($temp[$value['id']]) ? $temp[$value['id']] : 0;
+                    }
+
+                    if(count($arr2) < 1000) {
+                        S('cat_pid_asc', $arr2);
+                    }
+            }
+    }
+
+    if(empty($arr2)) {
+         return $type ? array() : '';
+    }
+
+    $cateSorts = categories_sort($cid, $arr2);
+    
+    if($type) {
+        foreach($cateSorts as $key => $value) {
+            $cateSorts[$key]['url'] = U('Home/Category/index', array('id'=>$key));
+        }
+        return $cateSorts;
+    }else {
+        $html = '<select name="cat_id" class="form-control">';
+        foreach($cateSorts as $key => $value) {
+            $html .= '<option value="'.$value['id'].'">'.str_repeat('&nbsp;&nbsp;--', $value['level']).$value['name']. '</option>';
+        }
+        $html .='</select>';
+        return $html;
+    }   
+
+}
+
+function categories_sort($index_id, $list)
+{
+    static $cates;
+
+    if(isset($cates[$index_id])) {
+        return $cates[$index_id];
+    }
+
+    if(!isset($cates[0])) {
+         $data = S('cate_relation_sort');
+         if($data == null) {
+                $level = $pid = 0;
+                $level_arr =  $tree = $cat_id_arr = array();
+                while(!empty($list)) {
+                    foreach($list as $key => $value) {
+                        $cat_id = $value['id'];
+                        if($level == 0 && $pid == 0 ) {
+                             $tree[$cat_id] = $value;
+                             $tree[$cat_id]['level'] = $level;
+                           $tree[$cat_id]['name'] = $value['cat_name'];
+                           unset($list[$key]);
+                            if($value['children'] == 0) {
+                                 continue;
+                            }
+
+                            $pid = $cat_id;
+                            $cat_id_arr[] = $cat_id;
+                            $level_arr[$cat_id] = ++$level;
+                            continue;
+                        }
+
+                        if($value['pid'] == $pid) {
+                             $tree[$cat_id] = $value;
+                             $tree[$cat_id]['level'] = $level;
+                           $tree[$cat_id]['name'] = $value['cat_name'];
+                           unset($list[$key]);
+
+                           if($value['children'] > 0) {
+                              $pid = $cat_id;
+                                    $cat_id_arr[] = $cat_id;
+                                $level_arr[$cat_id] = ++$level;
+                           }
+                        }else if($value['pid'] > $pid) {
+                            break;
+                        }
+                    }
+
+                    if(!empty($cat_id_arr)) 
+                    {
+                        $pid = array_pop($cat_id_arr);
+                    }
+                    else 
+                    {
+                          $level_arr = [];
+                            $pid = 0;
+                            $level = 0;
+                            $cat_id_arr = [];
+                            continue;
+                    }
+                        
+                    if($pid && isset($level_arr[$pid])) {
+                         $level = $level_arr[$pid];
+                    }else {
+                         $level = 0;
+                    }
+                }
+                 if(count($tree) <= 2000)
+                 {
+                        S('cate_relation_sort', $tree);
+                 }
+             }else {
+                  $tree = $data;
+             }
+            $cates[0] = $tree;
+        }else {
+            $tree = $cates[0];
+        }
+
+        if(!$index_id) {
+            return $tree;
+        }else {
+            if(empty($cates[$index_id])) {
+                return array();
+            }
+
+            foreach($tree as $key => $value) {
+                if($key != $index_id) {
+                    unset($tree[$key]);
+                }
+            }
+            
+            $spec_id_level = $tree[$index_id]['level'];
+            $spec_id_array = array();
+            foreach($tree as $key => $value) {
+                if(($spec_id_level == $value['level'] && $index_id != $value['id'] ) || $value['level'] < $spec_id_level ) {
+                    break;
+                }else {
+                    $spec_id_array[$key] = $value;
+                }
+            }
+
+            $cates[$index_id] = $spec_id_array;
+            return $spec_id_array;
+        }
+}
+
+
+function db_create_in($value_list, $fields = '') 
+{
+    if(empty($value_list)) {
+        return "IN ('')";
+    }else {
+        if(!is_array($value_list)) {
+           $value_list =  explode(',', $value_list);
+        }
+       $value_list =  array_unique($value_list);
+    
+       $list_item = '';
+       foreach($value_list as $value) {
+          if(!empty($value)) {
+             $list_item .= $list_item ? ",'$value'" : "'$value'";
+          }
+       }
+
+       if(empty($list_item)) {
+         return "$fields IN ('')";
+       }else {
+         return "$fields IN ($list_item)";
+       }
+    }
+    
 }

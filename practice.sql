@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.9
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 30, 2018 at 09:06 AM
--- Server version: 5.7.21
--- PHP Version: 5.6.35
+-- Generation Time: Oct 30, 2018 at 03:07 PM
+-- Server version: 5.7.19
+-- PHP Version: 5.6.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -167,9 +167,9 @@ DROP TABLE IF EXISTS `goods`;
 CREATE TABLE IF NOT EXISTS `goods` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `good_name` varchar(20) NOT NULL,
+  `good_name_style` varchar(20) NOT NULL DEFAULT '',
   `good_sn` varchar(20) NOT NULL,
   `cat_id` int(11) NOT NULL DEFAULT '0',
-  `status` int(11) NOT NULL DEFAULT '1',
   `sort` int(11) NOT NULL DEFAULT '50',
   `type_id` int(11) NOT NULL,
   `keywords` varchar(60) NOT NULL DEFAULT '''''',
@@ -185,6 +185,7 @@ CREATE TABLE IF NOT EXISTS `goods` (
   `promotion_end` int(11) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `is_on_sale` tinyint(1) NOT NULL DEFAULT '1',
+  `is_alone_sale` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
@@ -192,10 +193,9 @@ CREATE TABLE IF NOT EXISTS `goods` (
 -- Dumping data for table `goods`
 --
 
-INSERT INTO `goods` (`id`, `good_name`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`) VALUES
-(1, 'Holy Bible', 'gn20181022581761', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1),
-(2, 'iphone Max(512G)', 'gn201810225817613', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '0', '0', 0, 0, 0, 1),
-(3, 'iphoneMax512', 'gn20181022682392', 3, 1, 50, 4, '烤饼|插电', 0, 1, 0, 3000, 0, '12', '0', '0', 0, 0, 0, 1);
+INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`) VALUES
+(1, 'Holy Bible', '#f00|underline', 'gn20181022581761', 4, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1),
+(2, 'iphone Max(512G)', '', 'gn201810225817613', 3, 50, 4, '', 0, 0, 0, 0, 0, '7', '0', '0', 0, 0, 0, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -316,7 +316,7 @@ CREATE TABLE IF NOT EXISTS `navs` (
 INSERT INTO `navs` (`id`, `nav_name`, `if_show`, `view_order`, `url`, `open_new`) VALUES
 (3, '数码设备', 1, 50, '', 0),
 (4, '服装', 1, 50, '', 0),
-(5, '食品', 1, 50, '', 1),
+(5, '食品', 1, 50, '', 0),
 (6, '玩具', 1, 50, '', 0);
 
 -- --------------------------------------------------------
