@@ -13,7 +13,7 @@
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
 		<div class="container">
-			<a class="navbar-brand" href="#">LOGO</a>
+			<a class="navbar-brand" href="/practice">LOGO</a>
 			<ul class="nav navbar-nav">
 			</ul>
 
@@ -34,8 +34,11 @@
 			<div class="col-md-9  col-md-offset-3">
 				<ul class="nav nav-pills  pull-right">
 				  <li role="presentation" class="active"><a href="#">Home</a></li>
-				  <li role="presentation"><a href="#">Profile</a></li>
-				  <li role="presentation"><a href="#">Messages</a></li>
+				  <volist name="navs" id="nav">
+						<li><a href="javascript:void(0);" data-url="{$nav.url}" 
+							<eq name="nav.open_new" value="1">target="_blank"</eq>>
+							{$nav.nav_name}</a></li>
+					</volist>
 				  <li role="presentation" class="form-group">
 				  	<div class="col-sm-10" style="padding-right:0px;">
 				  		<input type="text" name="search" id="input" class="form-control" value="" required="required" placeholder="搜搜看看">

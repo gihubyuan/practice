@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 28, 2018 at 03:56 AM
+-- Generation Time: Oct 29, 2018 at 02:56 PM
 -- Server version: 5.7.19
 -- PHP Version: 5.6.31
 
@@ -106,6 +106,32 @@ INSERT INTO `attribute` (`id`, `type_id`, `attribute_name`, `status`, `input_typ
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `categories`
+--
+
+DROP TABLE IF EXISTS `categories`;
+CREATE TABLE IF NOT EXISTS `categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cat_name` varchar(20) NOT NULL,
+  `pid` int(11) NOT NULL DEFAULT '0',
+  `if_show` tinyint(1) NOT NULL DEFAULT '1',
+  `view_order` int(11) NOT NULL DEFAULT '100',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `cat_name`, `pid`, `if_show`, `view_order`) VALUES
+(1, '数码设备', 0, 1, 100),
+(2, '服装', 0, 1, 100),
+(3, '手机', 1, 1, 100),
+(4, '书籍', 0, 1, 100);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `document`
 --
 
@@ -165,9 +191,9 @@ CREATE TABLE IF NOT EXISTS `goods` (
 --
 
 INSERT INTO `goods` (`id`, `good_name`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`) VALUES
-(1, 'Holy Bible', '', 0, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0),
-(2, 'iphone Max(512G)', 'gn201810225817613', 0, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '0', '0', 0, 0),
-(12, 'iphoneMax512', 'gn20181022682392', 0, 1, 50, 4, '烤饼|插电', 0, 1, 0, 3000, 0, '12', '0', '0', 0, 0);
+(1, 'Holy Bible', 'gn20181022581761', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0),
+(2, 'iphone Max(512G)', 'gn201810225817613', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '0', '0', 0, 0),
+(3, 'iphoneMax512', 'gn20181022682392', 3, 1, 50, 4, '烤饼|插电', 0, 1, 0, 3000, 0, '12', '0', '0', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -262,7 +288,7 @@ CREATE TABLE IF NOT EXISTS `my_users` (
 --
 
 INSERT INTO `my_users` (`id`, `username`, `email`, `phone`, `status`, `user_money`, `frozen_moeny`, `rank_points`, `pay_points`, `affiliate_id`, `password`, `user_salt`, `salt`, `sex`, `birthday`, `qq`, `pwd_question`, `office_phone`, `home_phone`, `pwd_question_answer`, `reg_time`, `last_login_time`, `last_login_ip`, `rank_id`, `visit_counts`) VALUES
-(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '', '', '', '', 1, 1540698719, '0.0.0.0', 0, 3);
+(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '您的爸爸姓名?', '', '', '袁德坤', 1, 1540733883, '0.0.0.0', 0, 5);
 
 -- --------------------------------------------------------
 
@@ -274,20 +300,22 @@ DROP TABLE IF EXISTS `navs`;
 CREATE TABLE IF NOT EXISTS `navs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nav_name` varchar(20) NOT NULL,
-  `status` enum('1','0') NOT NULL DEFAULT '1',
-  `sort` int(11) NOT NULL DEFAULT '50',
-  `pid` int(11) NOT NULL,
+  `if_show` tinyint(1) NOT NULL DEFAULT '1',
+  `view_order` smallint(11) NOT NULL DEFAULT '50',
   `url` varchar(20) NOT NULL,
+  `open_new` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `navs`
 --
 
-INSERT INTO `navs` (`id`, `nav_name`, `status`, `sort`, `pid`, `url`) VALUES
-(1, '文章', '1', 50, 0, 'document/article'),
-(2, '下载', '1', 50, 0, 'document/download');
+INSERT INTO `navs` (`id`, `nav_name`, `if_show`, `view_order`, `url`, `open_new`) VALUES
+(3, '数码设备', 1, 50, '', 0),
+(4, '服装', 1, 50, '', 0),
+(5, '食品', 1, 50, '', 1),
+(6, '玩具', 1, 50, '', 0);
 
 -- --------------------------------------------------------
 

@@ -16,6 +16,8 @@ class UserController extends \Think\Controller
             $this->redirect('Index/index');
             exit;
         }
+        $this->assign('navs', get_navs());
+        
     }
     public function test()
     {
