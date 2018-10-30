@@ -6,6 +6,8 @@ class IndexController extends HomeController
 {
     public function index()
     {
+        $categories = D('categories')->getAllCategories();
+        $this->assign('categories', $categories);
         $this->display();    	
     }
     public function login($username = '', $password = '', $remember = '')
@@ -43,18 +45,7 @@ class IndexController extends HomeController
         }
     }
 
-    public function test()
-    {
-        if(IS_POST) {
-            if(!M('')->autoCheckToken(I('request.'))) {
-                $this->error("重复访问");
-                exit;
-            }
-            dump(I('request.'));
-        }else {
-            $this->display();
-        }
-    }
+  
 
     private function showErrMsg($code = 0)
     {
@@ -79,19 +70,25 @@ class IndexController extends HomeController
         return $msg;
     }
 
-    public function delete()
+    public function test()
     {
-        $ids = I('ids');
-        if(!$ids) {
-            $this->error("错误");
-            exit;
-        }
-        $map['id'] = array('in', $ids);
-        if(M('users')->where($map)->delete()) {
-            $this->success("删除陈宫");
-        }else {
-            $this->error("删除失败");
-        }
     }
+
+    public function decendant()
+    {
+        $id = I('get.id');
+        if(empty($id)) {
+            $this->ajaxReturn(['status'=>0, 'error'=>'错误']);
+        }
+        $id = base64_decode(substr($id, 4));
+        $categories = D('categories')->getAllCategories(false);
+        $decendants = build_list_html(D('categories')->findDecendant($categories, $id));
+        if(empty($decendants)) {
+            $this->ajaxReturn(['status'=>1, 'data'=>array()]);
+        }
+        $this->ajaxReturn(['status'=>1, 'data'=>$decendants]);
+    }
+
+
    
 }

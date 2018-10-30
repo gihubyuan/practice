@@ -1,8 +1,25 @@
 <?php
 
-function check_verify($code, $id = ''){
+function check_verify($code, $id = '')
+{
     $verify = new \Think\Verify();
     return $verify->check($code, $id);
+}
+
+function build_list_html($arr)
+{
+    if(empty($arr)) {
+        return '';
+    }
+    $html = '<ul>';
+    foreach($arr as $key => $value) {
+        $html .= '<li><a href="">'.str_repeat('&nbsp;&nbsp;', $value['level']).$value['cat_name'].'</a></li>';
+        if(!empty($value['child'])) {
+            $html .= build_list_html($value['child']);
+        }
+    }
+    $html .= '</ul>';
+    return $html;
 }
 
 function get_navs()
@@ -37,6 +54,7 @@ function login($username, $password, $remember)
         return false;
     }
 }
+
 
 function register($data)
 {

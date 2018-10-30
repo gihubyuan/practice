@@ -7,7 +7,7 @@
 		
 			<div class="form-group">
 				<label for="">商品名</label>
-				<input type="text" name="good_name" value="{$good.good_name}"　class="form-control" id="">
+				<input type="text" name="good_name" value="{$good.good_name}" class="form-control" id="">
 			</div>
 
 			<div class="form-group">
@@ -18,11 +18,17 @@
 
 			<div class="form-group">
 				<label for="">重量</label>
-				<input type="text" name="weight" value="{$good.weight}"　class="form-control" id="">
-				<select name="weight_unit">
+				<div class="row">
+					<div class="col-md-10">
+						<input type="text" name="weight" value="{$good.weight}" class="form-control" id="">
+					</div>
+					<div class="col-md-2" style="padding-left: 0;">
+						<select name="weight_unit" class="form-control">
 						<option value="0" selected>千克</option>
 						<option value="1">克</option>
 				</select>
+					</div>
+				</div>
 			</div>
 			
 		 	<div class="form-group">
@@ -62,7 +68,7 @@
 			
 			<div class="form-group">
 				<label for="">促销价格</label>
-				<input type="text" name="promotion_price" value="{$good.promotion_price}" 　class="form-control" id="">
+				<input type="text" name="promotion_price" value="{$good.promotion_price}" class="form-control" id="">
 			</div>
 
 			<div class="form-group">
@@ -76,7 +82,7 @@
 
 			<div class="form-group">
 				<label for="">库存</label>
-				<input type="text" name="number" value="{$good.number}"　class="form-control" id="">
+				<input type="text" name="number"　value="{$good.number}"  class="form-control" id="">
 			</div>
 
 			<div class="form-group">
@@ -86,7 +92,7 @@
 
 			<div class="form-group">
 				<label for="">关键字</label>
-				<input type="text" name="keywords" value="{$good.keywords}"　class="form-control" id="">
+				<input type="text" name="keywords"　value="{$good.keywords}"  class="form-control" id="">
 			</div>
 
 			<div class="form-group">

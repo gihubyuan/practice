@@ -1,0 +1,28 @@
+<extend name="public:base" />
+
+<block name="body">
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>NAME</th>
+						<th>商品数量</th>
+						<th>排序</th>
+						<th>是否显示</th>
+					</tr>
+				</thead>
+				<tbody>
+					<volist name="cates" id="cate">
+						<tr>
+							<td>{$cate.id}</td>
+							<td><php>echo str_repeat('&nbsp;&nbsp;-- ',$cate['level']);</php>{$cate.name}</td>
+						  <td>{$cate.good_num}</td>
+							<td>{$cate.view_order}</td>
+							<td>{$cate.if_show}</td>
+						</tr>
+					</volist>
+				</tbody>
+			</table>
+		</div>
+</block>

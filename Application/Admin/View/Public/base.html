@@ -19,10 +19,16 @@
 			</ul>
 		</div>
 	</nav>
-	<div class="container">
-		<block name="body">
-			Hi~
+	<div class="container-fluid">
+		<div class="col-md-2">
+			<ul class="list-group">
+				<li class="list-group-item"><a href="{:U('Good/cates')}">商品分类</a></li>
+			</ul>
+		</div>
+		<div class="col-md-10">
+			<block name="body">
 		</block>
+		</div>
 	</div>
 	<script src="__PUBLIC__/js/jquery-1.10.2.min.js"></script>
 	<script src="__PUBLIC__/js/bootstrap.min.js"></script>

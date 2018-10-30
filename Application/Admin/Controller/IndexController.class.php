@@ -1,14 +1,10 @@
 <?php 
 namespace Admin\Controller;
 
-use Think\Controller;
-class IndexController extends Controller
+use Admin\Controller\PublicController;
+
+class IndexController extends PublicController
 {
-	public function _initialize()
-	{
-		 $configs = api('Config/lists');
-     C($configs);
-	}
 
 	public function index()
 	{

@@ -6,19 +6,13 @@
 	<div class="row">
 		<div class="col-md-2" style="padding-left:0;padding-right:0;">
 			<div class="sidebar-children-navs hidden">
-				sssssxxxxxxxx
+				
 			</div>
 			<div class="sidebar-navs">
 				<ul>
-					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
-					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
-					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
-					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
-					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
-					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
-					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
-					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
-					<li><a href="javascript:void(0);" data-url="">The United States</a></li>
+					<volist name="categories" id="category">
+						<li><a href="javascript:void(0);" data-url="" data-cid="{$category.crypt_id}">{$category.cat_name}</a></li>
+					</volist>
 				</ul>
 			</div>
 		</div>				
@@ -30,6 +24,14 @@
 	<script>
 		(function($, win, doc){
 			$('.sidebar-navs a').click(function(){
+				var url = '{:U("Index/decendant")}';
+				$.get(url, {id:$(this).data('cid')}, function(data){
+					 if(data.status == 1) {
+					 	 $('.sidebar-children-navs').html(data.data);
+					 }else {
+					 	  alert(data.error);
+					 }
+				});
 				$('.sidebar-children-navs').removeClass('hidden show').addClass('show');
 			});
 			$('.sidebar-navs a').on('dblclick', function(){
