@@ -5,16 +5,32 @@
 <block name='body'>
 	
 	<div class="row">
-		<div class="col-md-1 col-md-offset-11">排序蓝</div>	
+		<div class="col-md-9">
+			共有相关商品{$goods_num}个
+		</div>
+		<div class="col-md-3 sort-panel">
+			<a href="{:U('')}">
+				<img src="__PUBLIC__/img/last_update_asc.gif" alt="">
+			</a>
+
+			<a href="">
+				<img src="__PUBLIC__/img/price_asc.gif" alt="">
+			</a>
+
+
+			<a href="">
+				<img src="__PUBLIC__/img/id_asc.gif" alt="">
+			</a>
+		</div>	
 			<volist name="goods" id="good">
 				<div class="col-md-3 col-sm-4">
 					<div class="thumbnail">
 						<img src="__PUBLIC__/img/Penguins.jpg" alt="">
 						<div class="caption">
-							<h3>{$good.good_name}</h3>
-							<p>
-								{$good.good_sn}
-							</p>
+							<h4>{$good.good_name}</h4>
+							<h3 style="color:red;">
+								{$good.price} 元
+							</h3>
 							<p>
 								<a href="#" class="btn btn-default">查看</a>
 							</p>
@@ -22,6 +38,11 @@
 					</div>
 				</div>
 			</volist>
+			<div class="row">
+				<divl class="col-md-12">
+					{$show}
+				</divl>
+			</div>
 	</div>
 </block>
 <block name="script">

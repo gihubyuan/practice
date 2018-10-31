@@ -176,6 +176,7 @@ class GoodController extends PublicController
 		 			 	 'name_style_font' => ''
 		 			 );		 
 		 			 $this->assign('act', 'act_insert');
+		 			 $this->assign('cates', getCategories(0, false));
 		 			 $this->assign('form_header', 'add');
 		 		}
 
@@ -185,6 +186,7 @@ class GoodController extends PublicController
 		 			 $good['name_style_color'] = $style[0];
 		 			 $good['name_style_font'] = $style[1];
 		 			 $this->assign('form_header', 'update');
+		 			 $this->assign('cates', getCategories(0, false, $good['cat_id']));
 		 			 $this->assign('act', 'act_update');
 		 		}
 		 	 $this->assign('good', $good);

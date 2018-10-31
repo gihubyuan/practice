@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 30, 2018 at 03:07 PM
+-- Generation Time: Oct 31, 2018 at 03:18 AM
 -- Server version: 5.7.19
 -- PHP Version: 5.6.31
 
@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS `goods` (
   `is_on_sale` tinyint(1) NOT NULL DEFAULT '1',
   `is_alone_sale` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `goods`
@@ -195,7 +195,9 @@ CREATE TABLE IF NOT EXISTS `goods` (
 
 INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`) VALUES
 (1, 'Holy Bible', '#f00|underline', 'gn20181022581761', 4, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1),
-(2, 'iphone Max(512G)', '', 'gn201810225817613', 3, 50, 4, '', 0, 0, 0, 0, 0, '7', '0', '0', 0, 0, 0, 1, 1);
+(2, 'iphone Max(512G)', '', 'gn201810225817613', 3, 50, 4, '', 0, 0, 0, 0, 0, '7', '0', '0', 0, 0, 0, 1, 1),
+(13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 50, 0, '', 0, 0, 0, 22, 0, '0', '5800', '0', 0, 0, 0, 1, 1),
+(14, '华为 Mate10', '|', 'gn201810315536814', 3, 50, 0, '', 0, 0, 0, 9999, 0, '0', '5000', '0', 0, 0, 0, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -363,7 +365,7 @@ CREATE TABLE IF NOT EXISTS `system_config` (
   `groups` tinyint(4) NOT NULL DEFAULT '0',
   `type` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `system_config`
@@ -374,7 +376,10 @@ INSERT INTO `system_config` (`id`, `config_name`, `config_title`, `config_value`
 (2, 'site_closed', '网站维护', '0', 1, 10, 0, 1),
 (3, 'affiliate', '邀请设置', 'a:3:{s:17:\"invitation_points\";i:2;s:17:\"affiliate_enabled\";i:1;s:20:\"invitation_points_up\";i:100;}', 1, 10, 0, 1),
 (4, 'register_captcha', '注册验证码开启码', '1', 1, 10, 0, 1),
-(5, 'register_closed', '关闭注册', '0', 1, 10, 0, 1);
+(5, 'register_closed', '关闭注册', '0', 1, 10, 0, 1),
+(6, 'default_sort_field', '', '0', 1, 10, 0, 1),
+(7, 'default_sort_order', '', '0', 1, 10, 0, 1),
+(8, 'limit_count', '', '1', 1, 10, 0, 1);
 
 -- --------------------------------------------------------
 

@@ -23,15 +23,30 @@ function build_list_html($arr)
     return $html;
 }
 
-function get_cate_goods($cat_id)
+function get_cate_goods($cat_id, $sort_field, $sort_order)
 {
-    return M('goods')
+    $goods_num =  M('goods')
              ->where([
                 'deleted' => 0,
                 'is_on_sale' => 1,
                 'is_alone_sale' => 1,
-                '_string' => db_create_in(array_unique(array_merge(array($cat_id), getCategories($cat_id))), 'cat_id')
-             ])->select();
+                '_string' => db_create_in(array_unique(array_merge(array($cat_id), array_keys(getCategories($cat_id)))), 'cat_id')
+             ])->count();
+    $page = new \Think\Page($goods_num, C('LIMIT_COUNT'));
+    $show = $page->show();
+    $goods = M('goods')
+             ->field(['good_name', 'price'])
+             ->where([
+                'deleted' => 0,
+                'is_on_sale' => 1,
+                'is_alone_sale' => 1,
+                '_string' => db_create_in(array_unique(array_merge(array($cat_id), array_keys(getCategories($cat_id)))), 'cat_id')
+             ])->order("$sort_field $sort_order")
+             ->limit($page->firstRow . ',' . $page->listRows)
+             ->select();
+
+    
+    return compact('goods', 'goods_num', 'show');
 }
 
 function get_navs()
@@ -410,7 +425,7 @@ function build_attr_html($type = 0, $good_id = 0)
 }
 
 
-function getCategories($cid, $type = true)
+function getCategories($cid, $type = true, $selected = 0)
 {
     static $arr2 = null;
     
@@ -459,11 +474,11 @@ function getCategories($cid, $type = true)
         }
         return $cateSorts;
     }else {
-        $html = '<select name="cat_id" class="form-control">';
+        $html = '<div class="form-group"><label for="">商品分类</label><select name="cat_id" class="form-control"><option value="0">--请选择--</option>';
         foreach($cateSorts as $key => $value) {
-            $html .= '<option value="'.$value['id'].'">'.str_repeat('&nbsp;&nbsp;--', $value['level']).$value['name']. '</option>';
+            $html .= '<option value="'.$value['id'].'" '.($value['id'] == $selected ? 'selected' : '').'>'.str_repeat('&nbsp;', intval($value['level']) * 4).$value['name']. '</option>';
         }
-        $html .='</select>';
+        $html .='</select></div>';
         return $html;
     }   
 
@@ -508,7 +523,7 @@ function categories_sort($index_id, $list)
 
                            if($value['children'] > 0) {
                               $pid = $cat_id;
-                                    $cat_id_arr[] = $cat_id;
+                                $cat_id_arr[] = $cat_id;
                                 $level_arr[$cat_id] = ++$level;
                            }
                         }else if($value['pid'] > $pid) {
@@ -537,7 +552,7 @@ function categories_sort($index_id, $list)
                 }
                  if(count($tree) <= 2000)
                  {
-                        S('cate_relation_sort', $tree);
+                     S('cate_relation_sort', $tree);
                  }
              }else {
                   $tree = $data;
@@ -550,20 +565,22 @@ function categories_sort($index_id, $list)
         if(!$index_id) {
             return $tree;
         }else {
-            if(empty($cates[$index_id])) {
+            if(empty($tree[$index_id])) {
                 return array();
             }
 
             foreach($tree as $key => $value) {
                 if($key != $index_id) {
                     unset($tree[$key]);
+                }else {
+                    break;
                 }
             }
             
             $spec_id_level = $tree[$index_id]['level'];
             $spec_id_array = array();
             foreach($tree as $key => $value) {
-                if(($spec_id_level == $value['level'] && $index_id != $value['id'] ) || $value['level'] < $spec_id_level ) {
+                if(($spec_id_level == $value['level'] && $index_id != $value['id'] ) || ($value['level'] < $spec_id_level )) {
                     break;
                 }else {
                     $spec_id_array[$key] = $value;
