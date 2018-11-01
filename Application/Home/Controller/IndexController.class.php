@@ -72,6 +72,7 @@ class IndexController extends HomeController
 
     public function test()
     {
+        dump(M('goods')->getField('good_name', true));
     }
 
     public function decendant()

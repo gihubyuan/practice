@@ -39,6 +39,7 @@ class GoodController extends PublicController
 				$data = I('post.');
 		 		$attr_id_list = !isset($data['attr_id_list']) ? array() : $data['attr_id_list'];
 		 		$attr_value_list = !isset($data['attr_value_list']) ? array() : $data['attr_value_list'];
+		 		$cat_extended_id = !empty($data['cat_extended_id']) ? array_unique($data['cat_extended_id']) : array();
 		 		$data['type_id'] = empty($data['type_id']) ? 0 : intval($data['type_id']);
 		 		$data['is_best'] = isset($data['is_best']) ? 1 : 0;
 		 		$data['is_hot'] = isset($data['is_hot']) ? 1 : 0;
@@ -53,7 +54,7 @@ class GoodController extends PublicController
 		 		$data['weight'] = empty($data['weight']) ? 0 : $data['weight'];
 		 		$good_id = empty($data['good_id']) ? 0 : $data['good_id'];
 		 		$data['good_name_style'] = $data['name_style_color'] . '|' . $data['name_style_font'];
-				unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id']);			 		
+				unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id'], $data['cat_extended_id']);			 		
 		 				 			 		
 				if(empty($data['good_sn'])) {
 					$data['good_sn'] = generate_good_sn();
@@ -72,13 +73,19 @@ class GoodController extends PublicController
 		 			if(!$good_id = M('goods')->add($data)) {
 		 				$this->error("添加失败");
 			 	 	  exit;
-		 			} 
+		 			}
+		 			 foreach($cat_extended_id as $extend_id) {
+		 				 M('goodExtendedCats')-> add(['good_id'=>$good_id, 'cat_id'=>$extend_id]);
+		 			 }
 		 		}else {
 		 			if(!M('goods')->where(['id'=>$good_id])->save($data)) {
 		 				 $this->error('更新失败');
 			 	 	   exit;
 		 			}
+		 			update_extended_goods($good_id, $cat_extended_id);
 		 		}
+
+		 		
 
 		 		if((isset($data['attr_id_list']) && isset($data['attr_value_list'])) || (empty($data['attr_id_list']) && empty($data['attr_value_list']))) {
 			 	 	
@@ -176,6 +183,7 @@ class GoodController extends PublicController
 		 			 	 'name_style_font' => ''
 		 			 );		 
 		 			 $this->assign('act', 'act_insert');
+		 			 $this->assign('extend_cats', build_extend_cats_html(array()));
 		 			 $this->assign('cates', getCategories(0, false));
 		 			 $this->assign('form_header', 'add');
 		 		}
@@ -185,6 +193,8 @@ class GoodController extends PublicController
 		 			 $style = explode('|', $good['good_name_style']);
 		 			 $good['name_style_color'] = $style[0];
 		 			 $good['name_style_font'] = $style[1];
+		 			 $extend_cats = M('goodExtendedCats')->where(['good_id'=>$good_id])->getField('cat_id', true);
+		 			 $this->assign('extend_cats', build_extend_cats_html($extend_cats));
 		 			 $this->assign('form_header', 'update');
 		 			 $this->assign('cates', getCategories(0, false, $good['cat_id']));
 		 			 $this->assign('act', 'act_update');

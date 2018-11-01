@@ -17,14 +17,24 @@
 							<option value="underline">下划线</option>
 						</eq>
 						<eq name="good.name_style_font" value="bold">
-							<option value="bold" selected>下划线</option>
+							<option value="bold" selected>加粗</option>
 						<else/>
-							<option value="bold">下划线</option>
+							<option value="bold">加粗</option>
 						</eq>
 					</select>
 			</div>
 
-			{$cates}
+			<div class="form-group">
+				<label for="">商品分类</label>
+				<select name="cat_id" id="" class="form-control">
+					<option value="0">请选择</option>
+					{$cates}
+				</select>
+			</div>
+			
+		
+				
+				{$extend_cats}
 
 			<div class="form-group">
 				<label for="">重量</label>
@@ -128,7 +138,7 @@
 </block>
 <block name="script">
 	<script>
-
+	
 		var href = '{:U("Good/getAttrHtml")}';
 				href = href.replace('.html', '');
 		var good_id = parseInt($('input[name="good_id"]').val());
@@ -137,6 +147,10 @@
 					if(data.status ==1) {
 						$('#attributes')[0].innerHTML = data.data;
 					}
+		});
+
+		$('.extend_cats').on('click', function(){
+			$(this).parent().clone(true).insertAfter($(this).parent());
 		});
 
 		$('#category').on('change', function(){

@@ -94,6 +94,54 @@ function login($username, $password, $remember)
     }
 }
 
+function build_extend_cats_html($arr)
+{
+    if(!empty($arr) && is_array($arr)) {
+        $html = '';
+        foreach($arr as $value) {
+            $html .= '<div class="form-group" style="position: relative;">
+                <span class="extend_cats" style="font-size:16px;cursor:pointer;position:absolute;right:0;top:0;">[ + ]</span>
+                <label for="">扩展分类</label>
+                <select name="cat_extended_id[]" id="" class="form-control">
+                    <option value="0">请选择</option>
+                    '.getCategories(0, false, $value).'
+                   </select>
+            </div>';
+
+        }
+        return $html;
+    }else {
+            return '<div class="form-group" style="position: relative;">
+                <span class="extend_cats" style="font-size:16px;cursor:pointer;position:absolute;right:0;top:0;">[ + ]</span>
+                <label for="">扩展分类</label>
+                <select name="cat_extended_id[]" id="" class="form-control">
+                    <option value="0">请选择</option>
+                    '.getCategories(0,  false).'
+                   </select>
+            </div>';
+        }
+    return '';
+}
+
+function update_extended_goods($good_id, $idArray)
+{
+    $cat_ids = M('goodExtendedCats')->where(['good_id'=>$good_id])->getField('cat_id', true);
+    $cat_ids = (array) $cat_ids;
+    $deleteArray = array_diff($cat_ids, $idArray);
+    if(!empty($deleteArray)) {
+        M('goodExtendedCats')->where(['cat_id'=>['in', $deleteArray]])->delete();
+    }
+
+    $addArray = array_diff($idArray, $cat_ids);
+    
+    if(!empty($addArray)) {
+        foreach($addArray as $aid) {
+            M('goodExtendedCats')->add(['good_id'=>$good_id, 'cat_id'=>$aid]);
+        }
+    }
+    
+}
+
 
 function register($data)
 {
@@ -481,11 +529,14 @@ function getCategories($cid, $type = true, $selected = 0)
         }
         return $cateSorts;
     }else {
-        $html = '<div class="form-group"><label for="">商品分类</label><select name="cat_id" class="form-control"><option value="0">--请选择--</option>';
+        $html = '';
         foreach($cateSorts as $key => $value) {
-            $html .= '<option value="'.$value['id'].'" '.($value['id'] == $selected ? 'selected' : '').'>'.str_repeat('&nbsp;', intval($value['level']) * 4).$value['name']. '</option>';
+            $html .= "<option value=\"{$value['id']}\" ";
+            $html .= $value['id'] == $selected ? 'selected' : '';
+            $html .= '>';
+            $html .=  str_repeat('&nbsp;', intval($value['level']) * 4) . $value['name'];
+            $html .= '</option>';
         }
-        $html .='</select></div>';
         return $html;
     }   
 
