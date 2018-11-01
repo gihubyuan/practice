@@ -1,5 +1,12 @@
 <?php
 
+function P($a)
+{
+    echo '<pre>';
+    print_r($a);
+    echo '</pre>';
+}
+
 function check_verify($code, $id = '')
 {
     $verify = new \Think\Verify();
