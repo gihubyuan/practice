@@ -1,7 +1,7 @@
 <extend name="public:base" />
 
 <block name="body">
-	<form method="POST" action="{:U('goodHandle')}" role="form">
+	<form method="POST" name="theform" action="{:U('goodHandle')}" role="form">
 
 			 <legend>{$form_header} good</legend>
 		
@@ -31,10 +31,18 @@
 					{$cates}
 				</select>
 			</div>
+
+			<div class="form-group">
+				<label for="">扩展分类</label>
+				<button type="button" class="btn btn-info btn-sm" id="extended-cats">添加</button>
+				<volist name="extend_cats" id="extend_cat">
+					<select name="cat_extended_id[]"  class="form-control" style="margin-bottom: 2px;">
+						<option value="0">--请选择--</option>
+						{$extend_cat}
+					</select>
+				</volist>
+			</div>
 			
-		
-				
-				{$extend_cats}
 
 			<div class="form-group">
 				<label for="">重量</label>
@@ -149,8 +157,14 @@
 					}
 		});
 
-		$('.extend_cats').on('click', function(){
-			$(this).parent().clone(true).insertAfter($(this).parent());
+		$('#extended-cats').on('click', function(){
+			var $children = $('form[name=theform] select[name=cat_id]').children(),
+			    len = $children.length,
+			    $select = $('<select>').addClass('form-control');
+			    $children.each(function(i){
+			    	$('<option>').text($(this).text()).val($(this).val()).appendTo($select);
+			    })
+			    $select.attr({name: 'cat_extended_id[]'}).appendTo($(this).parent());
 		});
 
 		$('#category').on('change', function(){

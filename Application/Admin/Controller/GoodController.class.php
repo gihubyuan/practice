@@ -183,7 +183,7 @@ class GoodController extends PublicController
 		 			 	 'name_style_font' => ''
 		 			 );		 
 		 			 $this->assign('act', 'act_insert');
-		 			 $this->assign('extend_cats', build_extend_cats_html(array()));
+		 			 $this->assign('extend_cats', [getCategories(0, false)]);
 		 			 $this->assign('cates', getCategories(0, false));
 		 			 $this->assign('form_header', 'add');
 		 		}
@@ -193,8 +193,12 @@ class GoodController extends PublicController
 		 			 $style = explode('|', $good['good_name_style']);
 		 			 $good['name_style_color'] = $style[0];
 		 			 $good['name_style_font'] = $style[1];
-		 			 $extend_cats = M('goodExtendedCats')->where(['good_id'=>$good_id])->getField('cat_id', true);
-		 			 $this->assign('extend_cats', build_extend_cats_html($extend_cats));
+		 			 $extend_cat_ids = M('goodExtendedCats')->where(['good_id'=>$good_id])->getField('cat_id', true);
+		 			 $extend_cats = [];
+		 			 foreach($extend_cat_ids as $cat_id) {
+		 			 	$extend_cats[] = getCategories(0, false, $cat_id);
+		 			 }
+		 			 $this->assign('extend_cats', $extend_cats);
 		 			 $this->assign('form_header', 'update');
 		 			 $this->assign('cates', getCategories(0, false, $good['cat_id']));
 		 			 $this->assign('act', 'act_update');

@@ -94,34 +94,7 @@ function login($username, $password, $remember)
     }
 }
 
-function build_extend_cats_html($arr)
-{
-    if(!empty($arr) && is_array($arr)) {
-        $html = '';
-        foreach($arr as $value) {
-            $html .= '<div class="form-group" style="position: relative;">
-                <span class="extend_cats" style="font-size:16px;cursor:pointer;position:absolute;right:0;top:0;">[ + ]</span>
-                <label for="">扩展分类</label>
-                <select name="cat_extended_id[]" id="" class="form-control">
-                    <option value="0">请选择</option>
-                    '.getCategories(0, false, $value).'
-                   </select>
-            </div>';
 
-        }
-        return $html;
-    }else {
-            return '<div class="form-group" style="position: relative;">
-                <span class="extend_cats" style="font-size:16px;cursor:pointer;position:absolute;right:0;top:0;">[ + ]</span>
-                <label for="">扩展分类</label>
-                <select name="cat_extended_id[]" id="" class="form-control">
-                    <option value="0">请选择</option>
-                    '.getCategories(0,  false).'
-                   </select>
-            </div>';
-        }
-    return '';
-}
 
 function update_extended_goods($good_id, $idArray)
 {
@@ -132,7 +105,7 @@ function update_extended_goods($good_id, $idArray)
         M('goodExtendedCats')->where(['cat_id'=>['in', $deleteArray]])->delete();
     }
 
-    $addArray = array_diff($idArray, $cat_ids);
+    $addArray = array_diff($idArray, $cat_ids, array(0));
     
     if(!empty($addArray)) {
         foreach($addArray as $aid) {

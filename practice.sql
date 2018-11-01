@@ -284,7 +284,7 @@ CREATE TABLE IF NOT EXISTS `good_extended_cats` (
 --
 
 INSERT INTO `good_extended_cats` (`good_id`, `cat_id`) VALUES
-(1, 0);
+(1, 4);
 
 -- --------------------------------------------------------
 
