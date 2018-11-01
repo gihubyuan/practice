@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<link rel="stylesheet" href="__PUBLIC__/css/bootstrap.min.css">
+	<block name="style"></block>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-static-top navbar-inverse" role="navigation">
@@ -24,6 +25,7 @@
 			<ul class="list-group">
 				<li class="list-group-item"><a href="{:U('Good/cates')}">商品分类</a></li>
 				<li class="list-group-item"><a href="{:U('Good/index')}">商品列表</a></li>
+				<li class="list-group-item"><a href="{:U('Good/addGood', array('act'=>'add'))}">添加商品</a></li>
 			</ul>
 		</div>
 		<div class="col-md-10">
@@ -33,5 +35,6 @@
 	</div>
 	<script src="__PUBLIC__/js/jquery-1.10.2.min.js"></script>
 	<script src="__PUBLIC__/js/bootstrap.min.js"></script>
+	<block name="script"></block>
 </body>
 </html>

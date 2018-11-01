@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.7.9
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 31, 2018 at 03:18 AM
--- Server version: 5.7.19
--- PHP Version: 5.6.31
+-- Generation Time: Nov 01, 2018 at 10:02 AM
+-- Server version: 5.7.21
+-- PHP Version: 5.6.35
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -106,6 +106,23 @@ INSERT INTO `attribute` (`id`, `type_id`, `attribute_name`, `status`, `input_typ
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `brands`
+--
+
+DROP TABLE IF EXISTS `brands`;
+CREATE TABLE IF NOT EXISTS `brands` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `brand_name` varchar(30) NOT NULL,
+  `brand_desc` varchar(150) NOT NULL DEFAULT '',
+  `brandd_url` varchar(80) NOT NULL DEFAULT '',
+  `sort_order` int(11) NOT NULL DEFAULT '100',
+  `if_show` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `categories`
 --
 
@@ -167,9 +184,9 @@ DROP TABLE IF EXISTS `goods`;
 CREATE TABLE IF NOT EXISTS `goods` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `good_name` varchar(20) NOT NULL,
-  `good_name_style` varchar(20) NOT NULL DEFAULT '',
   `good_sn` varchar(20) NOT NULL,
   `cat_id` int(11) NOT NULL DEFAULT '0',
+  `status` int(11) NOT NULL DEFAULT '1',
   `sort` int(11) NOT NULL DEFAULT '50',
   `type_id` int(11) NOT NULL,
   `keywords` varchar(60) NOT NULL DEFAULT '''''',
@@ -185,19 +202,18 @@ CREATE TABLE IF NOT EXISTS `goods` (
   `promotion_end` int(11) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `is_on_sale` tinyint(1) NOT NULL DEFAULT '1',
-  `is_alone_sale` tinyint(1) NOT NULL DEFAULT '1',
+  `brand_id` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `goods`
 --
 
-INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`) VALUES
-(1, 'Holy Bible', '#f00|underline', 'gn20181022581761', 4, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1),
-(2, 'iphone Max(512G)', '', 'gn201810225817613', 3, 50, 4, '', 0, 0, 0, 0, 0, '7', '0', '0', 0, 0, 0, 1, 1),
-(13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 50, 0, '', 0, 0, 0, 22, 0, '0', '5800', '0', 0, 0, 0, 1, 1),
-(14, '华为 Mate10', '|', 'gn201810315536814', 3, 50, 0, '', 0, 0, 0, 9999, 0, '0', '5000', '0', 0, 0, 0, 1, 1);
+INSERT INTO `goods` (`id`, `good_name`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `brand_id`) VALUES
+(1, 'Holy Bible', 'gn20181101699984', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 0),
+(2, 'iphone Max(512G)', 'gn201810225817613', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '0', '0', 0, 0, 0, 1, 0),
+(3, 'iphoneMax512', 'gn20181022682392', 3, 1, 50, 4, '烤饼|插电', 0, 1, 0, 3000, 0, '12', '0', '0', 0, 0, 0, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -250,6 +266,25 @@ CREATE TABLE IF NOT EXISTS `good_attr_types` (
 INSERT INTO `good_attr_types` (`id`, `type_name`, `status`, `sort`) VALUES
 (1, '书', 1, 50),
 (4, '手机', 1, 50);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `good_extended_cats`
+--
+
+DROP TABLE IF EXISTS `good_extended_cats`;
+CREATE TABLE IF NOT EXISTS `good_extended_cats` (
+  `good_id` int(11) NOT NULL,
+  `cat_id` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `good_extended_cats`
+--
+
+INSERT INTO `good_extended_cats` (`good_id`, `cat_id`) VALUES
+(1, 0);
 
 -- --------------------------------------------------------
 
@@ -318,7 +353,7 @@ CREATE TABLE IF NOT EXISTS `navs` (
 INSERT INTO `navs` (`id`, `nav_name`, `if_show`, `view_order`, `url`, `open_new`) VALUES
 (3, '数码设备', 1, 50, '', 0),
 (4, '服装', 1, 50, '', 0),
-(5, '食品', 1, 50, '', 0),
+(5, '食品', 1, 50, '', 1),
 (6, '玩具', 1, 50, '', 0);
 
 -- --------------------------------------------------------
@@ -365,7 +400,7 @@ CREATE TABLE IF NOT EXISTS `system_config` (
   `groups` tinyint(4) NOT NULL DEFAULT '0',
   `type` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `system_config`
@@ -376,10 +411,7 @@ INSERT INTO `system_config` (`id`, `config_name`, `config_title`, `config_value`
 (2, 'site_closed', '网站维护', '0', 1, 10, 0, 1),
 (3, 'affiliate', '邀请设置', 'a:3:{s:17:\"invitation_points\";i:2;s:17:\"affiliate_enabled\";i:1;s:20:\"invitation_points_up\";i:100;}', 1, 10, 0, 1),
 (4, 'register_captcha', '注册验证码开启码', '1', 1, 10, 0, 1),
-(5, 'register_closed', '关闭注册', '0', 1, 10, 0, 1),
-(6, 'default_sort_field', '', '0', 1, 10, 0, 1),
-(7, 'default_sort_order', '', '0', 1, 10, 0, 1),
-(8, 'limit_count', '', '1', 1, 10, 0, 1);
+(5, 'register_closed', '关闭注册', '0', 1, 10, 0, 1);
 
 -- --------------------------------------------------------
 
