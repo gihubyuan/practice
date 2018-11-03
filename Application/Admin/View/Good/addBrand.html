@@ -1,0 +1,63 @@
+<extend name="public:base" />
+
+<block name="body">
+	<form method="POST" name="theform" action="{:U('brandHandle')}" role="form">
+
+			 <legend>{$form_header} brand</legend>
+		
+							
+					<div class="form-group">
+						<label for="">品牌名</label>
+						<input type="text" class="form-control" name="brand_name" value="{$brand.brand_name}">
+					</div>
+
+					<div class="form-group">
+						<label for="">品牌描述</label>
+					  <textarea name="brand_desc"  class="form-control" rows="3">{$brand.brand_desc}</textarea>
+					</div>
+
+					<div class="form-group">
+						<label for="">品牌url</label>
+						<input type="text" class="form-control" name="brand_url" value="{$brand.brand_url}">
+					</div>
+
+					<div class="form-group">
+						<label for="">排序</label>
+						<input type="text" class="form-control" name="sort_order" value="{$brand.sort_order}">
+					</div>
+				
+					<div class="radio">
+						<label>
+							<eq name="brand.if_show" value="1">
+								<input type="radio" name="if_show" value="1" checked="checked">
+								<else/>
+								<input type="radio" name="if_show" value="1">
+							</eq>
+							显示
+						</label>
+
+						<label>
+							<eq name="brand.if_show" value="0">
+								<input type="radio" name="if_show" value="0" checked="checked">
+								<else/>
+								<input type="radio" name="if_show" value="0">
+							</eq>
+							隐藏
+						</label>
+					</div>
+				
+			
+	
+		<input type="hidden" name="id" value="{$brand.id}">
+		<input type="hidden" name="act" value="{$act}">
+		<button type="submit" class="btn btn-primary">Submit</button>
+	</form>
+</block>
+<block name="script">
+	<script>
+	
+		
+
+	</script>
+	
+</block>

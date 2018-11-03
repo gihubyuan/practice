@@ -12,6 +12,99 @@ class GoodController extends PublicController
 		$this->display();
 	}
 
+	public function brandHandle()
+	{
+		 $act = !empty(I('post.act')) ? I('post.act') : '';
+		 if(empty($act) || !in_array($act, array('act_insert', 'act_update'))) {
+		 	 $this->error("错误");
+		 	 exit;
+		 }
+		 $is_insert = $act == 'act_insert' ? true: false;
+		 $is_update = $act == 'act_update' ? true: false;
+		 if($is_update) {
+			 	 $id = I('post.id');
+			 	 if(!$id) {
+			 	 		$this->error("错误");
+			 	  	exit;
+			 	 }
+		}
+		 $data = I('post.');
+		 unset($data['act']);
+		 $data['sort_order'] = intval($data['sort_order']);
+
+		 if($data['old_brand_name'] != $data['brand_name']) {
+		 		if(M('brands')->where(['brand_name' => $data['brand_name']])->find()) {
+				 	 $this->error("该品牌已存在");
+				 	 exit;
+		 	  }
+		 }
+			unset($data['old_brand_name']);
+		 if($is_update) {
+		 	 M('brands')->save($data);
+		 }		
+
+		 if($is_insert) {
+		 		unset($data['id']);
+		 		M('brands')->add($data);
+		 }
+
+		$this->redirect('brands');
+		 
+	}
+
+	public function addBrand()
+	{
+			 $act = !empty(I('get.act')) ? I('get.act') : '';
+			 if(empty($act) || !in_array($act, array('add', 'update'))) {
+			 	 $this->error("错误");
+			 	 exit;
+			 }
+
+			 $is_add = $act == 'add' ? true: false;
+			 $is_update = $act == 'update' ? true: false;
+
+			 if($is_update) {
+			 	 $id = I('get.id');
+			 	 if(!$id) {
+			 	 		$this->error("错误");
+			 	  	exit;
+			 	 }
+			 	 $form_header  = '更新';
+			 	 $act = 'act_update';
+				 $brand = M('brands')->find($id);
+				 $brand['old_brand_name'] = $brand['brand_name'];
+			 }
+
+			 if(empty($brand)) {
+			 	  $brand = [
+			 	  	'id' => 0,
+			 	  	'brand_name' => '',
+			 	  	'brand_desc' => '',
+			 	  	'brand_url' => '',
+			 	  	'sort_order' => 100,
+			 	  	'if_show' => 1,
+			 	  	'old_brand_name' => ''
+			 	  ];
+			 }
+
+			 if($is_add) {
+			 	  $act = 'act_insert';
+			 	 	$form_header  = '添加';
+			 }
+
+			 $this->assign('form_header', $form_header);
+			 $this->assign('brand', $brand);
+			 $this->assign('act', $act);
+			 $this->display();
+	}
+
+	public function brands()
+	{
+		$brands = M('brands')->order('sort_order desc, id asc')->select();
+		$this->assign('brands', $brands);
+		$this->display();
+	}
+
 	public function attr()
 	{
 	   $types =  M('goodAttrTypes')
@@ -55,7 +148,10 @@ class GoodController extends PublicController
 		 		$good_id = empty($data['good_id']) ? 0 : $data['good_id'];
 		 		$data['good_name_style'] = $data['name_style_color'] . '|' . $data['name_style_font'];
 				unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id'], $data['cat_extended_id']);			 		
-		 				 			 		
+		 		
+		 		if(empty($data['brand_id'])) {
+		 			 unset($data['brand_id']);
+		 		}		 			 		
 				if(empty($data['good_sn'])) {
 					$data['good_sn'] = generate_good_sn();
 				}
@@ -178,7 +274,7 @@ class GoodController extends PublicController
 		 			 	 'promotion_price' => 0,
 		 			 	 'promotion_start' => 0,
 		 			 	 'promotion_end' => 0,
-		 			 	 'good_id' => 0,
+		 			 	 'id' => 0,
 		 			 	 'name_style_color' => '',
 		 			 	 'name_style_font' => ''
 		 			 );		 
@@ -203,6 +299,8 @@ class GoodController extends PublicController
 		 			 $this->assign('cates', getCategories(0, false, $good['cat_id']));
 		 			 $this->assign('act', 'act_update');
 		 		}
+		 		$brands = M('brands')->field(['id', 'brand_name'])->where(['if_show'=>1])->order('sort_order desc, id')->select();
+		 	 $this->assign('brands', $brands);
 		 	 $this->assign('good', $good);
 			 $options = M('goodAttrTypes')->where(['status'=>1])->select();
 			 $this->assign('options', $options);

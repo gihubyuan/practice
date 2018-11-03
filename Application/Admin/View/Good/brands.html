@@ -1,0 +1,32 @@
+<extend name="public:base" />
+
+<block name="body">
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>BRAND_NAME</th>
+						<th>BRAND_DESC</th>
+						<th>BRAND_URL</th>
+						<th>SORT_ORDER</th>
+						<th>IF_SHOW</th>
+					</tr>
+				</thead>
+				<tbody>
+					<volist name="brands" id="brand">
+						<tr>
+							<td>{$brand.id}</td>
+							<td>
+								<a href="{:U('addBrand',array('act'=>'update', 'id'=>$brand['id']))}">{$brand.brand_name}</a>
+						  </td>
+							<td>{$brand.brand_desc}</td>
+							<td>{$brand.brand_url}</td>
+							<td>{$brand.sort_order}</td>
+							<td>{$brand.if_show}</td>
+						</tr>
+				  </volist>
+				</tbody>
+			</table>
+		</div>
+</block>

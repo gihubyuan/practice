@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 01, 2018 at 10:02 AM
+-- Generation Time: Nov 03, 2018 at 10:25 AM
 -- Server version: 5.7.21
 -- PHP Version: 5.6.35
 
@@ -114,11 +114,18 @@ CREATE TABLE IF NOT EXISTS `brands` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `brand_name` varchar(30) NOT NULL,
   `brand_desc` varchar(150) NOT NULL DEFAULT '',
-  `brandd_url` varchar(80) NOT NULL DEFAULT '',
+  `brand_url` varchar(80) NOT NULL DEFAULT '',
   `sort_order` int(11) NOT NULL DEFAULT '100',
   `if_show` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `brands`
+--
+
+INSERT INTO `brands` (`id`, `brand_name`, `brand_desc`, `brand_url`, `sort_order`, `if_show`) VALUES
+(1, '苹果', '苹果公司是一家大型跨国公司', 'https://www.apple.com', 100, 1);
 
 -- --------------------------------------------------------
 
@@ -204,16 +211,16 @@ CREATE TABLE IF NOT EXISTS `goods` (
   `is_on_sale` tinyint(1) NOT NULL DEFAULT '1',
   `brand_id` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `goods`
 --
 
 INSERT INTO `goods` (`id`, `good_name`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `brand_id`) VALUES
-(1, 'Holy Bible', 'gn20181101699984', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 0),
+(1, 'Holy Bible', 'gn20181102448093', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1),
 (2, 'iphone Max(512G)', 'gn201810225817613', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '0', '0', 0, 0, 0, 1, 0),
-(3, 'iphoneMax512', 'gn20181022682392', 3, 1, 50, 4, '烤饼|插电', 0, 1, 0, 3000, 0, '12', '0', '0', 0, 0, 0, 1, 0);
+(13, '钢铁是怎样炼成的', 'gn20181102614153', 0, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '64', '0', 0, 0, 0, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -228,21 +235,17 @@ CREATE TABLE IF NOT EXISTS `good_attrs` (
   `attr_id` int(11) NOT NULL,
   `attr_value` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=119 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `good_attrs`
 --
 
 INSERT INTO `good_attrs` (`id`, `good_id`, `attr_id`, `attr_value`) VALUES
-(118, 12, 39, 'sony'),
-(117, 12, 21, '800'),
-(116, 12, 33, 'A12'),
-(115, 12, 30, 'IOS'),
-(113, 12, 24, '玻璃'),
-(114, 12, 29, '3G'),
-(112, 12, 14, '3000MHZ'),
-(85, 12, 13, 'N/A');
+(1, 1, 2, '基督教'),
+(2, 1, 6, '324'),
+(3, 13, 2, '基督教'),
+(4, 13, 6, '326');
 
 -- --------------------------------------------------------
 
@@ -257,7 +260,7 @@ CREATE TABLE IF NOT EXISTS `good_attr_types` (
   `status` int(11) NOT NULL DEFAULT '1',
   `sort` int(11) NOT NULL DEFAULT '50',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `good_attr_types`
@@ -265,7 +268,14 @@ CREATE TABLE IF NOT EXISTS `good_attr_types` (
 
 INSERT INTO `good_attr_types` (`id`, `type_name`, `status`, `sort`) VALUES
 (1, '书', 1, 50),
-(4, '手机', 1, 50);
+(2, '音乐', 1, 50),
+(3, '电影', 1, 50),
+(4, '手机', 1, 50),
+(5, '笔记本电脑', 1, 50),
+(6, '数码相机', 1, 50),
+(7, '数码摄像机', 1, 50),
+(8, '化妆品', 1, 50),
+(9, '精品手机', 1, 50);
 
 -- --------------------------------------------------------
 
@@ -284,7 +294,8 @@ CREATE TABLE IF NOT EXISTS `good_extended_cats` (
 --
 
 INSERT INTO `good_extended_cats` (`good_id`, `cat_id`) VALUES
-(1, 4);
+(1, 4),
+(13, 0);
 
 -- --------------------------------------------------------
 
