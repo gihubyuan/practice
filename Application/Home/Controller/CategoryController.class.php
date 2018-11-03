@@ -27,8 +27,10 @@ class CategoryController extends \Home\Controller\HomeController
         $this->assign('norder', $sort_order == 'asc' ? 'desc' : 'asc');
         $this->assign('id', $id);
         $this->display();
+
+
     }
-    
+   
 
    
 }
