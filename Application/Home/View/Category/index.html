@@ -9,17 +9,31 @@
 			共有相关商品{$goods_num}个
 		</div>
 		<div class="col-md-3 sort-panel">
-			<a href="{:U('')}">
-				<img src="__PUBLIC__/img/last_update_asc.gif" alt="">
+			<php>
+				$url_arr = [];
+				switch($sort_field) {
+					case "last_update":
+					case "price":
+					case "id":
+						if($sort_order == 'asc') {
+							$url_arr['sort_order'] = 'desc';
+						}else {
+							$url_arr['sort_order'] = 'asc';
+						}
+						break;
+				}
+			</php>
+			<a href="{:U('Category/index', array_merge(array('id'=>$id, 'sort_field'=>'last_update'), $url_arr))}">
+				<img src="__PUBLIC__/img/last_update_<if condition='$sort_field eq "last_update"'>{$sort_order}<else/>default</if>.gif" alt="">
 			</a>
 
-			<a href="">
-				<img src="__PUBLIC__/img/price_asc.gif" alt="">
+			<a href="{:U('Category/index', array_merge(array('id'=>$id, 'sort_field'=>'price'), $url_arr))}">
+				<img src="__PUBLIC__/img/price_<if condition='$sort_field eq "price"'>{$sort_order}<else/>default</if>.gif" alt="">
 			</a>
 
 
-			<a href="{:U('index', array('id'=>$id, 'sort'=>$sort, 'order'=>$order))}">
-				<img src="__PUBLIC__/img/id_{$norder}.gif" alt="">
+			<a href="{:U('Category/index', array_merge(array('id'=>$id, 'sort_field'=>'id'), $url_arr))}">
+				<img src="__PUBLIC__/img/id_<if condition='$sort_field eq "id"'>{$sort_order}<else/>default</if>.gif" alt="">
 			</a>
 		</div>	
 			<volist name="goods" id="good">
