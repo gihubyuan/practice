@@ -3,7 +3,16 @@
 	<link rel="stylesheet" href="__PUBLIC__/css/index.css">
 </block>
 <block name='body'>
-	
+		
+		<div class="sort-box">
+			
+			<ul class="nav nav-pills sort-pills">
+				<li><span class="bold">品牌:</span></li>
+				<li class="active"><a href="">全部</a></li>
+				<li><span>苹果</span></li>
+	   </ul>
+		</div>
+		
 	<div class="row">
 		<div class="col-md-9">
 			共有相关商品{$goods_num}个
@@ -39,14 +48,16 @@
 			<volist name="goods" id="good">
 				<div class="col-md-3 col-sm-4">
 					<div class="thumbnail">
-						<img src="__PUBLIC__/img/iphone.jpg" alt="">
+						<a href="{:U('Good/index', array('id'=>$good['id']))}">
+							<img src="__PUBLIC__/img/iphone.jpg" alt="">
+						</a>
 						<div class="caption">
 							<h4>{$good.good_name}</h4>
 							<h3 style="color:red;">
 								{$good.price} 元
 							</h3>
 							<p>
-								<a href="#" class="btn btn-default">查看</a>
+								<a href="{:U('Good/index', array('id'=>$good['id']))}" class="btn btn-default">查看</a>
 							</p>
 						</div>
 					</div>

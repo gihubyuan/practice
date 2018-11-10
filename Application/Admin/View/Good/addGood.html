@@ -11,25 +11,34 @@
 				颜色<input type="text" name="name_style_color" value="{$good.name_style_color}" class="form-control">
 				样式<select name="name_style_font" class="form-control">
 					    <option value="">默认</option>
-						<eq name="good.name_style_font" value="underline">
-							<option value="underline" selected>下划线</option>
+						<eq name="good.name_style_font" value="u">
+							<option value="u" selected>下划线</option>
 						<else/>
-							<option value="underline">下划线</option>
+							<option value="u">下划线</option>
 						</eq>
-						<eq name="good.name_style_font" value="bold">
-							<option value="bold" selected>加粗</option>
+						<eq name="good.name_style_font" value="strong">
+							<option value="strong" selected>加粗</option>
 						<else/>
-							<option value="bold">加粗</option>
+							<option value="strong">加粗</option>
+						</eq>
+					 <eq name="good.name_style_font" value="strike">
+							<option value="strike" selected>删除线</option>
+						<else/>
+							<option value="strike">删除线</option>
+						</eq>
+						 <eq name="good.name_style_font" value="em">
+							<option value="em" selected>斜体</option>
+						<else/>
+							<option value="em">斜体</option>
 						</eq>
 					</select>
 			</div>
-			
 			<div class="form-group">
 				<label for="">商品品牌</label>
 				<select name="brand_id" class="form-control">
 				<option value="0">--请选择--</option>
 				<volist name="brands" id="brand">
-					<option value="{$brand.id}">{$brand.brand_name}</option>
+					<option value="{$brand.id}" <eq name="brand.id" value="$good.brand_id">selected</eq>>{$brand.brand_name}</option>
 				</volist>
 			</select>
 		 </div>

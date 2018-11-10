@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 03, 2018 at 10:25 AM
+-- Generation Time: Nov 10, 2018 at 09:32 AM
 -- Server version: 5.7.21
 -- PHP Version: 5.6.35
 
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `if_show` tinyint(1) NOT NULL DEFAULT '1',
   `view_order` int(11) NOT NULL DEFAULT '100',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `categories`
@@ -212,18 +212,19 @@ CREATE TABLE IF NOT EXISTS `goods` (
   `is_on_sale` tinyint(1) NOT NULL DEFAULT '1',
   `is_alone_sale` tinyint(1) NOT NULL DEFAULT '1',
   `brand_id` int(11) NOT NULL DEFAULT '0',
+  `last_update` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `goods`
 --
 
-INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`) VALUES
-(1, 'Holy Bible', '#f00|underline', 'gn20181022581761', 4, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1),
-(2, 'iphone Max(512G)', '', 'gn201810225817613', 3, 50, 4, '', 0, 0, 0, 0, 0, '7', '0', '0', 0, 0, 0, 1, 1),
-(13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 50, 0, '', 0, 0, 0, 22, 0, '0', '5800', '0', 0, 0, 0, 1, 1),
-(14, '华为 Mate10', '|', 'gn201810315536814', 3, 50, 0, '', 0, 0, 0, 9999, 0, '0', '5000', '0', 0, 0, 0, 1, 1);
+INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`, `brand_id`, `last_update`) VALUES
+(1, 'Holy Bible', '#f00|em', 'gn201811106869915', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1, 0, 1541838405),
+(2, 'iphone Max(512G)', '|', 'gn201811103322215', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '9688', '0', 0, 0, 0, 1, 1, 1, 1541830344),
+(13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 1, 50, 0, '', 0, 0, 0, 22, 0, '0', '5800', '0', 0, 0, 0, 1, 1, 0, 1541830000),
+(14, '华为 Mate10', '|', 'gn201810315536814', 3, 1, 50, 0, '', 0, 0, 0, 9999, 0, '0', '5000', '0', 0, 0, 0, 1, 1, 0, 1541830000);
 
 -- --------------------------------------------------------
 

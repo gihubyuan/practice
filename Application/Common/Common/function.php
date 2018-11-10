@@ -30,6 +30,22 @@ function build_list_html($arr)
     return $html;
 }
 
+function getStyleName($name, $style)
+{
+    $styles = explode('|', $style);
+    $style_name = '';
+
+    if(isset($styles[0])) {
+        $style_name = '<font style="color:'.$styles[0].';">' . $name . '</font>';
+    }
+
+    if(isset($styles[1])) {
+        $style_name = "<$styles[1]>" . $style_name . "</$styles[1]>";
+
+    }
+    return $style_name;
+}
+
 function get_cate_goods($cat_id, $sort_field, $sort_order)
 {
     $goods_num =  M('goods')
@@ -42,7 +58,7 @@ function get_cate_goods($cat_id, $sort_field, $sort_order)
     $page = new \Think\Page($goods_num, C('LIMIT_COUNT'));
     $show = $page->show();
     $goods = M('goods')
-             ->field(['good_name', 'price'])
+             ->field(['id','good_name', 'price'])
              ->where([
                 'deleted' => 0,
                 'is_on_sale' => 1,
@@ -512,7 +528,15 @@ function getCategories($cid, $type = true, $selected = 0)
         }
         return $html;
     }   
+}
 
+function clear_cache($name)
+{
+    if(empty($name)) {
+        return '';
+    }
+
+    return is_array($name) ? array_map('clear_cache', $name) : S($name, null);
 }
 
 function categories_sort($index_id, $list)

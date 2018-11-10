@@ -52,6 +52,47 @@ class GoodController extends PublicController
 		 
 	}
 
+	public function catHandle()
+	{
+		 $act = !empty(I('post.act')) ? I('post.act') : '';
+		 if(empty($act) || !in_array($act, array('act_insert', 'act_update'))) {
+		 	 $this->error("错误");
+		 	 exit;
+		 }
+		 $is_insert = $act == 'act_insert' ? true: false;
+		 $is_update = $act == 'act_update' ? true: false;
+		 if($is_update) {
+			 	 $id = I('post.id');
+			 	 if(!$id) {
+			 	 		$this->error("错误");
+			 	  	exit;
+			 	 }
+		}
+		 $data = I('post.');
+		 unset($data['act']);
+		 $data['view_order'] = intval($data['view_order']);
+
+		 if($data['old_cat_name'] != $data['cat_name']) {
+		 		if(M('categories')->where(['cat_name' => $data['cat_name']])->find()) {
+				 	 $this->error("该分类名已存在");
+				 	 exit;
+		 	  }
+		 }
+			unset($data['old_cat_name']);
+		 if($is_update) {
+		 	 M('categories')->save($data);
+		 }		
+
+		 if($is_insert) {
+		 		unset($data['id']);
+		 		M('categories')->add($data);
+		 }
+
+		clear_cache(['cate_relation_sort', 'cat_pid_asc']);
+		$this->redirect('cates');
+		 
+	}
+
 	public function addBrand()
 	{
 			 $act = !empty(I('get.act')) ? I('get.act') : '';
@@ -105,6 +146,53 @@ class GoodController extends PublicController
 		$this->display();
 	}
 
+
+	public function addCate()
+	{
+			 $act = !empty(I('get.act')) ? I('get.act') : '';
+			 if(empty($act) || !in_array($act, array('add', 'update'))) {
+			 	 $this->error("错误");
+			 	 exit;
+			 }
+
+			 $is_add = $act == 'add' ? true: false;
+			 $is_update = $act == 'update' ? true: false;
+
+			 if($is_update) {
+			 	 $id = I('get.id');
+			 	 if(!$id) {
+			 	 		$this->error("错误");
+			 	  	exit;
+			 	 }
+			 	 $form_header  = '更新';
+			 	 $act = 'act_update';
+				 $cat = M('categories')->find($id);
+				 $cat['old_cat_name'] = $cat['cat_name'];
+			 }
+
+			 if(empty($cat)) {
+			 	  $cat = [
+			 	  	'id' => 0,
+			 	  	'cat_name' => '',
+			 	  	'if_show' => 1,
+			 	  	'view_order' => 100,
+			 	  	'old_cat_name' => '',
+			 	  	'pid' => 0
+			 	  ];
+			 }
+
+			 if($is_add) {
+			 	  $act = 'act_insert';
+			 	 	$form_header  = '添加';
+			 }
+
+			 $this->assign('form_header', $form_header);
+			 $this->assign('pcat', getCategories(0, false, $cat['pid']));
+			 $this->assign('cat', $cat);
+			 $this->assign('act', $act);
+			 $this->display();
+	}
+
 	public function attr()
 	{
 	   $types =  M('goodAttrTypes')
@@ -132,7 +220,7 @@ class GoodController extends PublicController
 				$data = I('post.');
 		 		$attr_id_list = !isset($data['attr_id_list']) ? array() : $data['attr_id_list'];
 		 		$attr_value_list = !isset($data['attr_value_list']) ? array() : $data['attr_value_list'];
-		 		$cat_extended_id = !empty($data['cat_extended_id']) ? array_filter(array_unique($data['cat_extended_id']));
+		 		$cat_extended_id = !empty($data['cat_extended_id']) ? array_filter(array_unique($data['cat_extended_id'])) : array();
 		 		$data['type_id'] = empty($data['type_id']) ? 0 : intval($data['type_id']);
 		 		$data['is_best'] = isset($data['is_best']) ? 1 : 0;
 		 		$data['is_hot'] = isset($data['is_hot']) ? 1 : 0;
@@ -145,6 +233,7 @@ class GoodController extends PublicController
 		 		$data['keywords'] = empty($data['keywords']) ? '' : $data['keywords'];
 		 		$data['price'] = empty($data['price']) ? 0 : $data['price'];
 		 		$data['weight'] = empty($data['weight']) ? 0 : $data['weight'];
+		 		$data['last_update'] = time();
 		 		$good_id = empty($data['good_id']) ? 0 : $data['good_id'];
 		 		$data['good_name_style'] = $data['name_style_color'] . '|' . $data['name_style_font'];
 				unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id'], $data['cat_extended_id']);			 		
@@ -276,7 +365,8 @@ class GoodController extends PublicController
 		 			 	 'promotion_end' => 0,
 		 			 	 'id' => 0,
 		 			 	 'name_style_color' => '',
-		 			 	 'name_style_font' => ''
+		 			 	 'name_style_font' => '',
+		 			 	 'brand_id' => 0
 		 			 );		 
 		 			 $this->assign('act', 'act_insert');
 		 			 $this->assign('extend_cats', [getCategories(0, false)]);

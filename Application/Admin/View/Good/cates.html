@@ -16,7 +16,7 @@
 					<volist name="cates" id="cate">
 						<tr>
 							<td>{$cate.id}</td>
-							<td><php>echo str_repeat('&nbsp;&nbsp;-- ',$cate['level']);</php>{$cate.name}</td>
+							<td><a href="{:U('addCate', array('id'=>$cate['id'], 'act'=>'update'))}"><php>echo str_repeat('&nbsp;',$cate['level']*4);</php>{$cate.name}</a></td>
 						  <td>{$cate.good_num}</td>
 							<td>{$cate.view_order}</td>
 							<td>{$cate.if_show}</td>

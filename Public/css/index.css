@@ -1,3 +1,6 @@
+.bold {
+	font-weight: bold;
+}
 .sidebar-navs {
 	padding: 10px 0;
 	background: #535556;
@@ -34,9 +37,25 @@
 }
 
 .current {
-	z-index: 2;
+	 z-index: 2;
     color: #fff;
     cursor: default;
     background-color: #337ab7;
     border-color: #337ab7;
 }
+.sort-box {
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px dashed #ccc;
+}
+.sort-pills > .active > a {
+	background: transparent !important;
+	color: #f00 !important;
+	font-weight: bold;
+}
+.sort-pills span {
+	display: block;
+	position: relative;
+	padding: 10px 15px;
+}
+
