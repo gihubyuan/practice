@@ -191,6 +191,7 @@ DROP TABLE IF EXISTS `goods`;
 CREATE TABLE IF NOT EXISTS `goods` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `good_name` varchar(20) NOT NULL,
+  `good_name_style` varchar(70) NOT NULL DEFAULT '',
   `good_sn` varchar(20) NOT NULL,
   `cat_id` int(11) NOT NULL DEFAULT '0',
   `status` int(11) NOT NULL DEFAULT '1',
@@ -209,6 +210,7 @@ CREATE TABLE IF NOT EXISTS `goods` (
   `promotion_end` int(11) NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `is_on_sale` tinyint(1) NOT NULL DEFAULT '1',
+  `is_alone_sale` tinyint(1) NOT NULL DEFAULT '1',
   `brand_id` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
@@ -217,10 +219,11 @@ CREATE TABLE IF NOT EXISTS `goods` (
 -- Dumping data for table `goods`
 --
 
-INSERT INTO `goods` (`id`, `good_name`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `brand_id`) VALUES
-(1, 'Holy Bible', 'gn20181102448093', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1),
-(2, 'iphone Max(512G)', 'gn201810225817613', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '0', '0', 0, 0, 0, 1, 0),
-(13, '钢铁是怎样炼成的', 'gn20181102614153', 0, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '64', '0', 0, 0, 0, 1, 0);
+INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`) VALUES
+(1, 'Holy Bible', '#f00|underline', 'gn20181022581761', 4, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1),
+(2, 'iphone Max(512G)', '', 'gn201810225817613', 3, 50, 4, '', 0, 0, 0, 0, 0, '7', '0', '0', 0, 0, 0, 1, 1),
+(13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 50, 0, '', 0, 0, 0, 22, 0, '0', '5800', '0', 0, 0, 0, 1, 1),
+(14, '华为 Mate10', '|', 'gn201810315536814', 3, 50, 0, '', 0, 0, 0, 9999, 0, '0', '5000', '0', 0, 0, 0, 1, 1);
 
 -- --------------------------------------------------------
 
