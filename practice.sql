@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.9
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 10, 2018 at 09:32 AM
--- Server version: 5.7.21
--- PHP Version: 5.6.35
+-- Generation Time: Nov 11, 2018 at 03:20 PM
+-- Server version: 5.7.19
+-- PHP Version: 5.6.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -140,6 +140,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `pid` int(11) NOT NULL DEFAULT '0',
   `if_show` tinyint(1) NOT NULL DEFAULT '1',
   `view_order` int(11) NOT NULL DEFAULT '100',
+  `filter_attr` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
@@ -147,11 +148,11 @@ CREATE TABLE IF NOT EXISTS `categories` (
 -- Dumping data for table `categories`
 --
 
-INSERT INTO `categories` (`id`, `cat_name`, `pid`, `if_show`, `view_order`) VALUES
-(1, '数码设备', 0, 1, 100),
-(2, '服装', 0, 1, 100),
-(3, '手机', 1, 1, 100),
-(4, '书籍', 0, 1, 100);
+INSERT INTO `categories` (`id`, `cat_name`, `pid`, `if_show`, `view_order`, `filter_attr`) VALUES
+(1, '数码设备', 0, 1, 100, ''),
+(2, '服装', 0, 1, 100, ''),
+(3, '手机', 1, 1, 100, ''),
+(4, '书籍', 0, 1, 100, '');
 
 -- --------------------------------------------------------
 

@@ -149,48 +149,51 @@ class GoodController extends PublicController
 
 	public function addCate()
 	{
-			 $act = !empty(I('get.act')) ? I('get.act') : '';
-			 if(empty($act) || !in_array($act, array('add', 'update'))) {
-			 	 $this->error("错误");
-			 	 exit;
-			 }
+		 $act = !empty(I('get.act')) ? I('get.act') : '';
+		 if(empty($act) || !in_array($act, array('add', 'update'))) {
+		 	 $this->error("错误");
+		 	 exit;
+		 }
 
-			 $is_add = $act == 'add' ? true: false;
-			 $is_update = $act == 'update' ? true: false;
+		 $is_add = $act == 'add' ? true: false;
+		 $is_update = $act == 'update' ? true: false;
 
-			 if($is_update) {
-			 	 $id = I('get.id');
-			 	 if(!$id) {
-			 	 		$this->error("错误");
-			 	  	exit;
-			 	 }
-			 	 $form_header  = '更新';
-			 	 $act = 'act_update';
-				 $cat = M('categories')->find($id);
-				 $cat['old_cat_name'] = $cat['cat_name'];
-			 }
+		 if($is_update) {
+		 	 $id = I('get.id');
+		 	 if(!$id) {
+		 	 		$this->error("错误");
+		 	  	exit;
+		 	 }
+		 	 $form_header  = '更新';
+		 	 $act = 'act_update';
+			 $cat = M('categories')->find($id);
+			 $cat['old_cat_name'] = $cat['cat_name'];
+		 }
 
-			 if(empty($cat)) {
-			 	  $cat = [
-			 	  	'id' => 0,
-			 	  	'cat_name' => '',
-			 	  	'if_show' => 1,
-			 	  	'view_order' => 100,
-			 	  	'old_cat_name' => '',
-			 	  	'pid' => 0
-			 	  ];
-			 }
+		 if(empty($cat)) {
+		 	  $cat = [
+		 	  	'id' => 0,
+		 	  	'cat_name' => '',
+		 	  	'if_show' => 1,
+		 	  	'view_order' => 100,
+		 	  	'old_cat_name' => '',
+		 	  	'pid' => 0
+		 	  ];
+		 }
 
-			 if($is_add) {
-			 	  $act = 'act_insert';
-			 	 	$form_header  = '添加';
-			 }
+		 if($is_add) {
+		 	  $act = 'act_insert';
+		 	 	$form_header  = '添加';
+		 }
 
-			 $this->assign('form_header', $form_header);
-			 $this->assign('pcat', getCategories(0, false, $cat['pid']));
-			 $this->assign('cat', $cat);
-			 $this->assign('act', $act);
-			 $this->display();
+		 $this->assign('form_header', $form_header);
+		 $this->assign('pcat', getCategories(0, false, $cat['pid']));
+		 $this->assign('cat', $cat);
+		 $this->assign('act', $act);
+
+		 $goodTypes = getGoodTypes();
+		 M('attribute')->where(['status'=>1])->select();
+		 $this->display();
 	}
 
 	public function attr()
@@ -389,9 +392,9 @@ class GoodController extends PublicController
 		 			 $this->assign('cates', getCategories(0, false, $good['cat_id']));
 		 			 $this->assign('act', 'act_update');
 		 		}
-		 		$brands = M('brands')->field(['id', 'brand_name'])->where(['if_show'=>1])->order('sort_order desc, id')->select();
-		 	 $this->assign('brands', $brands);
 		 	 $this->assign('good', $good);
+		 	 $brands = M('brands')->field(['id', 'brand_name'])->where(['if_show'=>1])->order('sort_order desc, id')->select();
+		 	 $this->assign('brands', $brands);
 			 $options = M('goodAttrTypes')->where(['status'=>1])->select();
 			 $this->assign('options', $options);
 			 $this->display();
@@ -457,4 +460,10 @@ class GoodController extends PublicController
 			$this->display();
 		}
 	}
+}
+
+
+function getGoodTypes()
+{
+	return M('goodAttrTypes')->where(['status'=>1])->select();
 }

@@ -18,30 +18,36 @@
 						</select>
 					</div>
 
-					<div class="radio">
-						<label>
-							<eq name="cat.if_show" value="1">
-								<input type="radio" name="if_show" value="1" checked="checked">
-								<else/>
-								<input type="radio" name="if_show" value="1">
-							</eq>
-							显示
-						</label>
-
-						<label>
-							<eq name="cat.if_show" value="0">
-								<input type="radio" name="if_show" value="0" checked="checked">
-								<else/>
-								<input type="radio" name="if_show" value="0">
-							</eq>
-							隐藏
-						</label>
+					
+					<div class="form-group">
+						<label for="">筛选属性</label>
+						<div class="row">
+							<div class="col-md-5">
+								<select name="" id="" class="form-control"></select>
+							</div>
+							<div class="col-md-5">
+								<select name="" id="" class="form-control"></select>
+							</div>
+						</div>
 					</div>
 
+					
 					<div class="form-group">
 						<label for="">排序</label>
 						<input type="text" class="form-control" name="view_order" value="{$cat.view_order}">
 					</div>
+
+					<div class="radio">
+						<label>
+							<input type="radio" name="if_show" value="1" <eq name="cat.if_show" value="1">checked</eq>>
+							显示
+						</label>
+						<label>
+								<input type="radio" name="if_show" value="0" <eq name="cat.if_show" value="0">checked</eq>>
+							隐藏
+						</label>
+					</div>
+					
 																	
 		<input type="hidden" name="id" value="{$cat.id}">
 		<input type="hidden" name="act" value="{$act}">

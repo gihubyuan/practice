@@ -32,44 +32,86 @@ function build_list_html($arr)
 
 function getStyleName($name, $style)
 {
-    $styles = explode('|', $style);
-    $style_name = '';
-
+    $styles = array_filter(explode('|', $style));
     if(isset($styles[0])) {
-        $style_name = '<font style="color:'.$styles[0].';">' . $name . '</font>';
+        $name = '<font style="color:'.$styles[0].';">' . $name . '</font>';
     }
 
     if(isset($styles[1])) {
-        $style_name = "<$styles[1]>" . $style_name . "</$styles[1]>";
+        $name = "<$styles[1]>" . $name . "</$styles[1]>";
 
     }
-    return $style_name;
+    return $name;
+}
+function build_uri($root, $id = 0, $sort_field = '', $sort_order = '', $brand_id = 0, $page = 0)
+{
+    if(empty($root) || !is_string($root)) {
+        return false;
+    }
+    $args = [
+        'id' => 0,
+        'sort_field' => '',
+        'sort_order' => '',
+        'brand_id' => 0
+    ];
+
+    extract(array_merge($args, compact('id', 'sort_field', 'sort_order', 'brand_id')));
+    $url = "Home/Category/$root";
+    if(!empty($id)) {
+        $url .= "/id/$id";
+    }
+    if(!empty($sort_field)) {
+        $url .= "/sort_field/$sort_field";
+    }
+    if(!empty($sort_order)) {
+        $url .= "/sort_order/$sort_order";
+    }
+    if(!empty($brand_id)) {
+        $url .= "/brand_id/$brand_id";
+    }
+    
+    if(!empty($page)) {
+        $url .= "/p/$page";
+    }
+
+    return U($url);
 }
 
-function get_cate_goods($cat_id, $sort_field, $sort_order)
+function get_cate_goods($cat_id, $sort_field, $sort_order, $bid)
 {
+    $map = [];
+    if($bid > 0) {
+        $map['brand_id'] = $bid;
+    }
+    
     $goods_num =  M('goods')
-             ->where([
+             ->where(array_merge([
                 'deleted' => 0,
                 'is_on_sale' => 1,
                 'is_alone_sale' => 1,
-                '_string' => db_create_in(array_unique(array_merge(array($cat_id), array_keys(getCategories($cat_id)))), 'cat_id')
-             ])->count();
+                '_string' => getChildren($cat_id)
+             ], $map))->count();
     $page = new \Think\Page($goods_num, C('LIMIT_COUNT'));
     $show = $page->show();
     $goods = M('goods')
              ->field(['id','good_name', 'price'])
-             ->where([
+             ->where(array_merge([
                 'deleted' => 0,
                 'is_on_sale' => 1,
                 'is_alone_sale' => 1,
-                '_string' => db_create_in(array_unique(array_merge(array($cat_id), array_keys(getCategories($cat_id)))), 'cat_id')
-             ])->order("$sort_field $sort_order")
+                '_string' => getChildren($cat_id)
+             ], $map))->order("$sort_field $sort_order")
              ->limit($page->firstRow . ',' . $page->listRows)
              ->select();
 
     
     return compact('goods', 'goods_num', 'show');
+}
+
+
+function getChildren($cat_id, $field = 'cat_id')
+{
+    return db_create_in(array_unique(array_merge(array($cat_id), array_keys(getCategories($cat_id)))),$field);
 }
 
 function get_navs()

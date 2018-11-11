@@ -48,14 +48,14 @@
 	padding-bottom: 10px;
 	border-bottom: 1px dashed #ccc;
 }
-.sort-pills > .active > a {
-	background: transparent !important;
-	color: #f00 !important;
-	font-weight: bold;
-}
 .sort-pills span {
 	display: block;
 	position: relative;
 	padding: 10px 15px;
+}
+.sort-pills span.active  {
+	background: transparent !important;
+	color: #f00 !important;
+	font-weight: bold;
 }
 

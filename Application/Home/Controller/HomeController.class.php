@@ -9,6 +9,7 @@ class HomeController extends Controller
     public function _initialize()
     {        
     		$configs = api('Config/lists');
+    		$configs['limit_count'] = 1;
     		C($configs);
     		if(C('SITE_CLOSED') == 1) {
     			exit("网站已关闭,请稍后在访问~");
