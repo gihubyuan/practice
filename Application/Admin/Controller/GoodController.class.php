@@ -154,9 +154,12 @@ class GoodController extends PublicController
 		 	 $this->error("错误");
 		 	 exit;
 		 }
+		 $attrs = getAllAttrs();
+		 $this->assign('attrs', $attrs);
 
 		 $is_add = $act == 'add' ? true: false;
 		 $is_update = $act == 'update' ? true: false;
+
 
 		 if($is_update) {
 		 	 $id = I('get.id');
@@ -168,6 +171,23 @@ class GoodController extends PublicController
 		 	 $act = 'act_update';
 			 $cat = M('categories')->find($id);
 			 $cat['old_cat_name'] = $cat['cat_name'];
+		 
+			 if($cat['filter_attr']) {
+			 	$filter_attr = explode(',', $cat['filter_attr']);
+			 	$filter_attr_list = array();
+			 	foreach($filter_attr as $k => $attr_id) {
+			 		$attr_cat_id = M('attribute')->where(['id'=>$attr_id])->getField('type_id');
+			 		$filter_attr_list[$k]['type_list'] = getTypeList($attr_cat_id);
+			 		$filter_attr_list[$k]['filter_attr'] = $attr_id;
+			 		foreach($attrs[$attr_cat_id] as $val) {
+			 			$filter_attr_list[$k]['option'][key($val)] =  current($val);
+			 		}
+			 	}
+			 	$this->assign('filter_attr_list',  $filter_attr_list);
+
+			 }else {
+			 	   $attr_cat_id  = 0;
+			 }
 		 }
 
 		 if(empty($cat)) {
@@ -182,17 +202,19 @@ class GoodController extends PublicController
 		 }
 
 		 if($is_add) {
-		 	  $act = 'act_insert';
-		 	 	$form_header  = '添加';
+		 	 $act = 'act_insert';
+		 	 $form_header  = '添加';
+			 $attr_cat_id  = 0;
+
 		 }
 
+		 $this->assign('attr_cat_id', $attr_cat_id);
+		 $this->assign('type_list', getTypeList(0));
 		 $this->assign('form_header', $form_header);
 		 $this->assign('pcat', getCategories(0, false, $cat['pid']));
 		 $this->assign('cat', $cat);
 		 $this->assign('act', $act);
 
-		 $goodTypes = getGoodTypes();
-		 M('attribute')->where(['status'=>1])->select();
 		 $this->display();
 	}
 
@@ -463,7 +485,31 @@ class GoodController extends PublicController
 }
 
 
-function getGoodTypes()
+function getAllAttrs()
 {
-	return M('goodAttrTypes')->where(['status'=>1])->select();
+	$attrs = M('attribute')
+	->alias('a')
+	->field(['a.id', 'a.type_id', 'a.attribute_name'])
+	->join('good_attr_types at on a.type_id=at.id','inner')
+	->where(['a.status'=>1, 'at.status'=>1])
+	->select();
+	$list = array();
+
+	foreach($attrs as $k => $val) {
+		$list[$val['type_id']][] = [$val['id']=>$val['attribute_name']];
+	}
+
+
+	return $list;
 }
+
+function getTypeList($selected)
+{
+	$types = M('goodAttrTypes')->field(['type_name', 'id'])->where(['status'=>1])->select();
+	$options = '';
+	foreach($types as $type) {
+		$options .= '<option value="'.$type['id'].'" '.($selected == $type['id'] ? 'selected' : '').'>'.$type['type_name'].'</option>';
+	}
+	return $options;
+}
+

@@ -1,6 +1,7 @@
 <extend name="public:base" />
 
 <block name="body">
+
 	<form method="POST" name="theform" action="{:U('catHandle')}" role="form">
 
 			 <legend>{$form_header} 分类</legend>
@@ -21,14 +22,40 @@
 					
 					<div class="form-group">
 						<label for="">筛选属性</label>
-						<div class="row">
-							<div class="col-md-5">
-								<select name="" id="" class="form-control"></select>
-							</div>
-							<div class="col-md-5">
-								<select name="" id="" class="form-control"></select>
-							</div>
-						</div>
+							<if condition="$attr_cat_id eq 0">
+								<div class="row">
+									<div class="col-md-5">
+										<select name="" id="" onchange="changeCat(this)" class="form-control">
+											<option>--请选择分类--</option>
+											{$type_list}
+										</select>[+]
+									</div>
+									<div class="col-md-5">
+										<select name="attr_id[]" id="" class="form-control">
+											<option value="">--请选择筛选属性--</option>
+										</select>
+									</div>
+								</div>
+							</if>
+								<foreach name="filter_attr_list" item="filter_item">
+									<div class="row">
+										<div class="col-md-5">
+											<select name="" id="" onchange="changeCat(this)" class="form-control">
+												<option>--请选择分类--</option>
+												{$filter_item.type_list}
+											</select>
+										</div>
+										<div class="col-md-5">
+											<select name="attr_id[]" id="" class="form-control">
+												<option>--请选择筛选属性--</option>
+												<php>$options = $filter_item['option'];</php>
+												<foreach name="options" item="option" key="opt_key">
+													<option value="{$opt_key}" <eq name="filter_item.filter_attr" value="$opt_key">selected</eq>>{$option}</option>
+												</foreach>
+											</select>
+										</div>
+									</div>
+								</foreach>
 					</div>
 
 					
@@ -58,7 +85,26 @@
 <block name="script">
 	<script>
 	
-		
+		var arr = [];
+		 <foreach name="attrs" item="attr" key="attr_key">
+		 	  arr[{$attr_key}] = [];
+			 <foreach name="attr" item="att" key="att_key">
+				 <foreach name="att" item="at" key="at_key">
+				 	 arr[{$attr_key}][{$att_key}] = [{$at_key}, '{$at}'];
+				 </foreach>
+			 </foreach>
+		 </foreach>
+
+		 function changeCat(obj)
+		 {
+		 	var val = obj.value;
+			var $sel = $(obj).parent().next().find('.form-control');
+			var data = arr[val];
+			$sel.html('<option>--请选择筛选属性--</option>');		 	
+		 	for(var i=0, len = data.length; i< len;i++) {
+				$('<option value="'+data[i][0]+'">'+data[i][1]+'</option>').appendTo($sel);		 		
+		 	}
+		 }
 
 	</script>
 	
