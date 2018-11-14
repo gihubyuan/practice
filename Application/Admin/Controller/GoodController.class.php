@@ -69,27 +69,34 @@ class GoodController extends PublicController
 			 	 }
 		}
 		 $data = I('post.');
-		 unset($data['act']);
-		 $data['view_order'] = intval($data['view_order']);
 
-		 if($data['old_cat_name'] != $data['cat_name']) {
-		 		if(M('categories')->where(['cat_name' => $data['cat_name']])->find()) {
-				 	 $this->error("该分类名已存在");
+		 if($data['old_cat_name'] != $data['cat_name']) { 
+		 		if(cat_exists($data['pid'], $data['cat_name'], $data['id'])) {
+		 			 $this->error("该分类名已存在");
 				 	 exit;
-		 	  }
-		 }
-			unset($data['old_cat_name']);
-		 if($is_update) {
-		 	 M('categories')->save($data);
-		 }		
-
-		 if($is_insert) {
-		 		unset($data['id']);
-		 		M('categories')->add($data);
+		 		}
+		 		
 		 }
 
-		clear_cache(['cate_relation_sort', 'cat_pid_asc']);
-		$this->redirect('cates');
+		 if(in_array($data['id'], array_keys(getCategories($data['pid'])))) {
+		 			 $this->error("父级分类选择错误");
+				 	 exit;
+		 }
+
+	 		 $data['view_order'] = !empty(intval($data['view_order'])) ? intval($data['view_order']) : 100;
+			 $data['filter_attr'] = implode(',', array_unique(array_diff($data['attr_id'], array(0))));
+				unset($data['old_cat_name'],$data['act'], $data['attr_id']);
+			 if($is_update) {
+			 	 M('categories')->save($data);
+			 }		
+
+			 if($is_insert) {
+			 		unset($data['id']);
+			 		M('categories')->add($data);
+			 }
+
+			clear_cache(['cate_relation_sort', 'cat_pid_asc']);
+			$this->redirect('cates');
 		 
 	}
 
@@ -511,5 +518,10 @@ function getTypeList($selected)
 		$options .= '<option value="'.$type['id'].'" '.($selected == $type['id'] ? 'selected' : '').'>'.$type['type_name'].'</option>';
 	}
 	return $options;
+}
+
+function cat_exists($pid, $name, $cat_id)
+{
+	return !empty(M('categories')->where(['pid'=>$pid, 'cat_name'=>$name, 'id'=>['neq'=>$cat_id]])->find()) ? true : false;
 }
 
