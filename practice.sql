@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.9
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 15, 2018 at 08:53 AM
--- Server version: 5.7.21
--- PHP Version: 5.6.35
+-- Generation Time: Nov 15, 2018 at 03:55 PM
+-- Server version: 5.7.19
+-- PHP Version: 5.6.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -173,8 +173,9 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `username` varchar(30) NOT NULL,
   `comment_rank` tinyint(1) NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '0',
+  `add_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -438,7 +439,7 @@ CREATE TABLE IF NOT EXISTS `system_config` (
   `groups` tinyint(4) NOT NULL DEFAULT '0',
   `type` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `system_config`
@@ -451,7 +452,8 @@ INSERT INTO `system_config` (`id`, `config_name`, `config_title`, `config_value`
 (4, 'register_captcha', '注册验证码开启码', '1', 1, 10, 0, 1),
 (5, 'register_closed', '关闭注册', '0', 1, 10, 0, 1),
 (10, 'captcha', '验证码', '704', 1, 10, 0, 1),
-(7, 'comment_factor', '评论开启条件', '0', 1, 10, 0, 1);
+(7, 'comment_factor', '评论开启条件', '0', 1, 10, 0, 1),
+(11, 'comment_check', '评论审核', '1', 1, 10, 0, 1);
 
 -- --------------------------------------------------------
 

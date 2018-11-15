@@ -55,8 +55,10 @@
 			</div>
 		</div>
 		
-		<div class="remark-box">					
-				<form action="{:U('Comment/add')}" name="formComment" method="POST" class="form-horizontal remark-form" role="form">
+		<div class="remark-box">
+				<div class="alert alert-danger alert-comment hidden">					
+				</div>					
+				<form action="{:U('Comment/addComment')}" name="formComment" method="POST" class="form-horizontal remark-form" role="form">
 						<div class="form-group">
 							<legend>发表评论</legend>
 						</div>
@@ -70,35 +72,34 @@
 					  <div class="form-group">
 					    <label for="inputPassword3" class="col-sm-2 control-label">E-mail：</label>
 					    <div class="col-sm-10">
-					      <input type="text" class="form-control" name="email" id="inputPassword3">
+					      <input type="text" class="form-control" name="email" value="{$email}" id="inputPassword3">
 					    </div>
 					  </div>
 					  <div class="form-group">
 					    <label for="inputPassword3" class="col-sm-2 control-label">评价等级：</label>
 					    <div class="col-sm-10">
 					      <label class="radio-inline">
-								  <input type="radio" name="remark_rank" value="1">
+								  <input type="radio" name="comment_rank" value="1">
 								  <img src="__PUBLIC__/img/stars1.gif" alt="">
 								</label>
 								<label class="radio-inline">
-								  <input type="radio" name="remark_rank" value="2">
+								  <input type="radio" name="comment_rank" value="2">
 								  <img src="__PUBLIC__/img/stars2.gif" alt="">
 
 								</label>
 								<label class="radio-inline">
-								  <input type="radio" name="remark_rank" value="3">
+								  <input type="radio" name="comment_rank" value="3">
 								  <img src="__PUBLIC__/img/stars3.gif" alt="">
 
 								</label>
 								<label class="radio-inline">
-								  <input type="radio" name="remark_rank" value="4">
+								  <input type="radio" name="comment_rank" value="4">
 								  <img src="__PUBLIC__/img/stars4.gif" alt="">
 
 								</label>
 								<label class="radio-inline">
-								  <input type="radio" name="remark_rank" value="5">
+								  <input type="radio" name="comment_rank" value="5" checked>
 								  <img src="__PUBLIC__/img/stars5.gif" alt="">
-
 								</label>
 					    </div>
 					  </div>
@@ -106,7 +107,7 @@
 						<div class="form-group">
 					    <label for="inputEmail3" class="col-sm-2 control-label">评论内容：</label>
 					    <div class="col-sm-10">
-					    		<textarea name="" id="input" class="form-control" rows="3"></textarea>
+					    		<textarea name="content" id="input" class="form-control" rows="3"></textarea>
 					    </div>
 					  </div>
 						
@@ -121,7 +122,9 @@
 					 </if>
 					  <div class="form-group">
 					    <div class="col-sm-offset-2 col-sm-10">
-					      <button type="submit" class="btn btn-default">提交评论</button>
+					      <input type="hidden" name="reply_id" value="{$good.id}">
+					      <input type="hidden" name="cmt_type" value="{$cmt_type}">
+					      <button type="submit" class="btn btn-primary">提交评论</button>
 					    </div>
 					  </div>
 				</form>
@@ -141,9 +144,46 @@
 				 }
 			});
 
-			$('form[name="formComment"]').on('submit', function(){
+			$('form[name=formComment]').on('submit', function(){
+				 var data = {};
+				 data.content = this.elements['content'].value;
+				 data.comment_rank = this.elements['comment_rank'].value; 
+				 data.reply_id = this.elements['reply_id'].value;
+				 data.email = this.elements['email'].value;
+				 data.comment_type = this.elements['cmt_type'].value;
+				 if(this.elements['vcode'] ) {
+				 	if(this.elements['vcode'].value !='') {
+				 		data.vcode = this.elements['vcode'].value;
+				 	}else {
+				 		alert('验证码不得为空');
+				        return false;
+				 	}
+				 }
+				   
+				 if(!/^[a-zA-Z]+[a-zA-Z0-9_]+\@[a-zA-Z]+[a-zA-Z0-9_](\.com|\.cn|\.edu|\.gov)+$/.test(data.email)) {
+				 	alert('邮箱错误');
+				    return false;
+				 }
+				 if(data['content'] == '') {
+				 	alert('评论内容不得为空!');
+				    return false;
+				 }
+				 $.post($(this).attr('action'), data, comtResponse);
 				 return false;
 			});
+
+			function comtResponse(response)
+			{
+				if(response.status == 0) {
+					var html = `<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>`;
+					for(var i=0, len= response.msg.length;i<len;i++) {
+						html += '<strong>'+response.msg[i]+'</strong>';
+					}
+					$('.alert-comment').removeClass('hidden').addClass('show').html(html);
+				}else {
+					alert(response.msg);
+				}
+			}
 
 		})
 	</script>
