@@ -3,7 +3,7 @@ namespace Home\Controller;
 
 use Think\Controller;
 
-class GoodController extends \Home\Controller\HomeController
+class CommentController extends \Home\Controller\HomeController
 {
 	public function index()
 	{
@@ -16,10 +16,12 @@ class GoodController extends \Home\Controller\HomeController
 
 		$good['good_name_style'] = getStyleName($good['good_name'], $good['good_name_style']);
 		$this->assign('good', $good);
-		if(C('CAPTCHA') & CAPTCHA_COMMENT) {
-			$this->assign('captcha_on', 'on');
-		}
 		$this->display();
+	}
+
+	public function addComment()
+	{
+		
 	}
 
 

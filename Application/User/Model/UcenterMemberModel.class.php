@@ -137,7 +137,7 @@ class UcenterMemberModel extends Model
 			$uid = $this->add();
 			$user = ['uid'=>$uid, 'username'=>$data['username']];
 			session('user_auth', $user);
-            session('user_auth_sign', data_auth_sign($user));
+      session('user_auth_sign', data_auth_sign($user));
 			return $uid;
 		}else {
 			return $this->getError();

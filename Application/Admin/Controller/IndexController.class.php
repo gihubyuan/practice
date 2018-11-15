@@ -29,6 +29,58 @@ class IndexController extends PublicController
 		 }
 	}
 
+	public function captcha()
+	{
+
+		 $captcha = C('CAPTCHA');
+		 if($captcha & CAPTCHA_REGISTER) {
+		 	 $this->assign(strtolower('CAPTCHA_REGISTER'), 1);
+		 }else {
+		 	 $this->assign(strtolower('CAPTCHA_REGISTER'), 0);
+		 }
+
+		 if($captcha & CAPTCHA_LOGIN) {
+		 	 $this->assign(strtolower('CAPTCHA_LOGIN'), 1);
+		 }else {
+		 	 $this->assign(strtolower('CAPTCHA_LOGIN'), 0);
+		 }
+
+		 if($captcha & CAPTCHA_COMMENT) {
+		 	 $this->assign(strtolower('CAPTCHA_COMMENT'), 1);
+		 }else {
+		 	 $this->assign(strtolower('CAPTCHA_COMMENT'), 0);
+		 }
+		 if($captcha & CAPTCHA_LOGIN_FAIL) {
+		 	 $this->assign(strtolower('CAPTCHA_LOGIN_FAIL'), 1);
+		 }else {
+		 	 $this->assign(strtolower('CAPTCHA_LOGIN_FAIL'), 0);
+		 }
+		 $this->display();
+	}
+
+	public function captchaSave()
+	{
+		 if(IS_POST) {
+		 	 $data = I('post.');
+		 	 $captcha = 0;
+		 	 $captcha = !empty($data['captcha_register']) ? $captcha | CAPTCHA_REGISTER : $captcha;
+		 	 $captcha = !empty($data['captcha_login']) ? $captcha | CAPTCHA_LOGIN : $captcha;
+		 	 $captcha = !empty($data['captcha_comment']) ? $captcha | CAPTCHA_COMMENT : $captcha;
+		 	 $captcha = !empty($data['captcha_login_fail']) ? $captcha | CAPTCHA_LOGIN_FAIL : $captcha;
+		 	 
+		 	 M('systemConfig')->where(['config_name'=>'captcha'])->delete();
+		 	 if(M('systemConfig')->add([
+		 	 	 'config_name' => 'captcha',
+		 	 	 'config_title' => '验证码', 
+		 	 	 'config_value' => $captcha 
+		 	 ])) {
+		 	 	 $this->success('修改成功', U('captcha'));
+		 	 }else {
+		 	 	 $this->error('修改失败');
+		 	 }
+		 }
+	}
+	
 	public function affiliate()
 	{
 		$this->assign('affiliate', unserialize(C('affiliate')));

@@ -56,7 +56,7 @@
 		</div>
 		
 		<div class="remark-box">					
-				<form action="" method="POST" class="form-horizontal remark-form" role="form">
+				<form action="{:U('Comment/add')}" name="formComment" method="POST" class="form-horizontal remark-form" role="form">
 						<div class="form-group">
 							<legend>发表评论</legend>
 						</div>
@@ -64,7 +64,7 @@
 						<div class="form-group">
 					    <label for="inputEmail3" class="col-sm-2 control-label">用户名：</label>
 					    <div class="col-sm-10">
-					    	<span>匿名用户</span>
+					    	<span style="position:relative;top:6px;"><if condition="is_login()">{$Think.session.user_auth.username}<else/>匿名用户</if></span>
 					    </div>
 					  </div>
 					  <div class="form-group">
@@ -106,10 +106,19 @@
 						<div class="form-group">
 					    <label for="inputEmail3" class="col-sm-2 control-label">评论内容：</label>
 					    <div class="col-sm-10">
-					    		<textarea name="" id="input" class="form-control" rows="3" required="required"></textarea>
+					    		<textarea name="" id="input" class="form-control" rows="3"></textarea>
 					    </div>
 					  </div>
-					
+						
+						<if condition="isset($captcha_on)">
+							<div class="form-group">
+						    <label for="inputPassword3" class="col-sm-2 control-label">验证码：</label>
+						    <div class="col-sm-10">
+						      <input type="text"  name="vcode">
+									<img style="width:180px;height:100px;cursor:pointer;" id="verify" src="{:U('Index/getVerifyCode', array('id'=>1))}">
+						    </div>
+						  </div>
+					 </if>
 					  <div class="form-group">
 					    <div class="col-sm-offset-2 col-sm-10">
 					      <button type="submit" class="btn btn-default">提交评论</button>
@@ -121,4 +130,22 @@
 	
 </block>
 
+<block name="script">
+	<script>
+		$(function(){
+			$('#verify').on('click', function(){
+				 if(this.src.indexOf('?' > 0)) {
+				 	  this.src = this.src.replace(/\?.*/, '') + '?' + Math.random();
+				 }else {
+				 	  this.src += '?' + Math.random();
+				 }
+			});
+
+			$('form[name="formComment"]').on('submit', function(){
+				 return false;
+			});
+
+		})
+	</script>
+</block>
 

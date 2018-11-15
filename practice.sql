@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.7.9
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 11, 2018 at 03:20 PM
--- Server version: 5.7.19
--- PHP Version: 5.6.31
+-- Generation Time: Nov 15, 2018 at 08:53 AM
+-- Server version: 5.7.21
+-- PHP Version: 5.6.35
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -149,10 +149,32 @@ CREATE TABLE IF NOT EXISTS `categories` (
 --
 
 INSERT INTO `categories` (`id`, `cat_name`, `pid`, `if_show`, `view_order`, `filter_attr`) VALUES
-(1, '数码设备', 0, 1, 100, ''),
+(1, '数码设备', -1, 1, 100, '19,24'),
 (2, '服装', 0, 1, 100, ''),
 (3, '手机', 1, 1, 100, ''),
 (4, '书籍', 0, 1, 100, '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `comments`
+--
+
+DROP TABLE IF EXISTS `comments`;
+CREATE TABLE IF NOT EXISTS `comments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `reply_id` int(11) NOT NULL,
+  `pid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `content` varchar(200) NOT NULL,
+  `comment_type` tinyint(4) NOT NULL,
+  `ip_address` varchar(15) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `username` varchar(30) NOT NULL,
+  `comment_rank` tinyint(1) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -343,7 +365,7 @@ CREATE TABLE IF NOT EXISTS `my_users` (
 --
 
 INSERT INTO `my_users` (`id`, `username`, `email`, `phone`, `status`, `user_money`, `frozen_moeny`, `rank_points`, `pay_points`, `affiliate_id`, `password`, `user_salt`, `salt`, `sex`, `birthday`, `qq`, `pwd_question`, `office_phone`, `home_phone`, `pwd_question_answer`, `reg_time`, `last_login_time`, `last_login_ip`, `rank_id`, `visit_counts`) VALUES
-(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '您的爸爸姓名?', '', '', '袁德坤', 1, 1540733883, '0.0.0.0', 0, 5);
+(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '您的爸爸姓名?', '', '', '袁德坤', 1, 1542269379, '0.0.0.0', 0, 6);
 
 -- --------------------------------------------------------
 
@@ -416,7 +438,7 @@ CREATE TABLE IF NOT EXISTS `system_config` (
   `groups` tinyint(4) NOT NULL DEFAULT '0',
   `type` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `system_config`
@@ -427,7 +449,9 @@ INSERT INTO `system_config` (`id`, `config_name`, `config_title`, `config_value`
 (2, 'site_closed', '网站维护', '0', 1, 10, 0, 1),
 (3, 'affiliate', '邀请设置', 'a:3:{s:17:\"invitation_points\";i:2;s:17:\"affiliate_enabled\";i:1;s:20:\"invitation_points_up\";i:100;}', 1, 10, 0, 1),
 (4, 'register_captcha', '注册验证码开启码', '1', 1, 10, 0, 1),
-(5, 'register_closed', '关闭注册', '0', 1, 10, 0, 1);
+(5, 'register_closed', '关闭注册', '0', 1, 10, 0, 1),
+(10, 'captcha', '验证码', '704', 1, 10, 0, 1),
+(7, 'comment_factor', '评论开启条件', '0', 1, 10, 0, 1);
 
 -- --------------------------------------------------------
 

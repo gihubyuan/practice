@@ -2,10 +2,15 @@
 namespace Home\Controller;
 
 use User\Api\UserApi;
+
 class UserController extends \Think\Controller
 {
     public function _initialize()
-    {
+    {   
+        define('CAPTCHA_REGISTER', 64);
+        define('CAPTCHA_LOGIN', 128);
+        define('CAPTCHA_COMMENT', 256);
+        define('CAPTCHA_LOGIN_FAIL', 512); 
         $configs = api('Config/lists');
         C($configs);
          if(C('SITE_CLOSED') == 1) {
@@ -19,17 +24,7 @@ class UserController extends \Think\Controller
         $this->assign('navs', get_navs());
         
     }
-    public function test()
-    {
-       echo md5('yuanwei888');
-    }   
-
-    public function index()
-    {
-      $this->display();   
-    }
-
-
+   
     function getByQuestionFirst()
     {
         $this->assign('act', ACTION_NAME);
@@ -104,14 +99,14 @@ class UserController extends \Think\Controller
 
     public function login()
     {
-      define('CAPTCHA_LOGINFAIL', 1);
-      if(is_null(session('user.login_fail'))) {
-        session('user.login_fail', 0);
+       if(is_null(session('user.login_fail'))) {
+           session('user.login_fail', 0);
       }
       if(IS_POST) {
+         
         $data = I('post.');
 
-        if(C('REGISTER_CAPTCHA') > 0 && ( !(C('REGISTER_CAPTCHA') & CAPTCHA_LOGINFAIL) || ((C('REGISTER_CAPTCHA') & CAPTCHA_LOGINFAIL) && session('user.login_fail') > 2))) {
+        if((C('CAPTCHA') & CAPTCHA_LOGIN) && (!(C('CAPTCHA') & CAPTCHA_LOGIN_FAIL) || ((C('CAPTCHA') & CAPTCHA_LOGIN_FAIL) && session('user.login_fail') > 2))) {
             if(empty($data['vcode'])) {
                     $this->error("验证码不得唯恐");
                 }
@@ -127,22 +122,17 @@ class UserController extends \Think\Controller
         }
 
       }else {
-        if(C('REGISTER_CAPTCHA') > 0 && ( !(C('REGISTER_CAPTCHA') & CAPTCHA_LOGINFAIL) || ((C('REGISTER_CAPTCHA') & CAPTCHA_LOGINFAIL) && session('user.login_fail') > 2))) {
+        if((C('CAPTCHA') & CAPTCHA_LOGIN) && (!(C('CAPTCHA') & CAPTCHA_LOGIN_FAIL) || ((C('CAPTCHA') & CAPTCHA_LOGIN_FAIL) && session('user.login_fail') > 2))) {
             $this->assign('captcha_enabled', 1);
-            $this->assign('rand', mt_rand());
         }else {
             $this->assign('captcha_enabled', 0);
         }
         $this->display();
       }
-      
     }
-    
-
+       
     public function register()
     {
-        define('CAPTCHA_KO', 0);
-        
         if(IS_POST) {
             if(C('REGISTER_CLOSED') == 1)  {
                 $this->error('注册关闭');
@@ -150,7 +140,7 @@ class UserController extends \Think\Controller
             }
             $data = I('post.');
 
-            if(CAPTCHA_KO & C('REGISTER_CAPTCHA') > 0) {
+            if((CAPTCHA_REGISTER & C('CAPTCHA')) > 0) {
                 if(empty($data['vcode'])) {
                     $this->error("验证码唯恐");
                 }
@@ -174,26 +164,14 @@ class UserController extends \Think\Controller
                  $this->assign('register_on', 1);
              }
 
-            if(CAPTCHA_KO & C('REGISTER_CAPTCHA') > 0) {
+            if((CAPTCHA_REGISTER & C('CAPTCHA')) > 0) {
                 $this->assign('captcha_on', 1);
-                $this->assign('RAND', mt_rand());
             }
             $this->assign('fields', build_fields_html());
             $this->display();
         }
     }
-
-    function getVerifyCode($id)
-    {
-        $config = array(
-            'fontSize' => 30, // 验证码字体大小
-            'length' => 4, // 验证码位数
-       );
-        $Verify = new \Think\Verify($config);
-        $Verify->entry($id);
-    }
-   
-
+     
     protected function getError($uid)
     {
         $msg = '';

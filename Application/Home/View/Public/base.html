@@ -20,7 +20,7 @@
 			<ul class="nav navbar-nav navbar-right">
 				<if condition="is_login()">
 		        	<li><a href="javascript:void(0);">欢迎回来, {$Think.session.user_auth.username}</a></li>
-		        	<li><a href="{:U('logout')}">退出</a></li>
+		        	<li><a href="{:U('Index/logout')}">退出</a></li>
 		        <else/>
 		        	<li><a href="{:U('User/login')}">登陆</a></li>
 		        </if>
