@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.9
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 16, 2018 at 09:24 AM
--- Server version: 5.7.21
--- PHP Version: 5.6.35
+-- Generation Time: Nov 16, 2018 at 02:58 PM
+-- Server version: 5.7.19
+-- PHP Version: 5.6.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `attribute` (
   `attribute_name` varchar(20) NOT NULL,
   `status` int(11) NOT NULL DEFAULT '1',
   `input_type_id` int(11) NOT NULL DEFAULT '1',
-  `input_type_values` varchar(40) NOT NULL DEFAULT '''''',
+  `input_type_values` varchar(40) NOT NULL DEFAULT '',
   `attr_index` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `attribute` (
 --
 
 INSERT INTO `attribute` (`id`, `type_id`, `attribute_name`, `status`, `input_type_id`, `input_type_values`, `attr_index`) VALUES
-(1, 1, '作者', 1, 1, '王八,故事', 1),
+(1, 1, '作者', 1, 1, '', 1),
 (2, 1, '出版社', 1, 1, '', 1),
 (3, 1, '图书书号/ISBN', 1, 2, '', 0),
 (4, 1, '出版日期', 1, 1, '', 0),
@@ -175,16 +175,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `status` tinyint(1) NOT NULL DEFAULT '0',
   `add_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `comments`
---
-
-INSERT INTO `comments` (`id`, `reply_id`, `pid`, `uid`, `content`, `comment_type`, `ip_address`, `email`, `username`, `comment_rank`, `status`, `add_time`) VALUES
-(1, 2, 0, 0, '垃圾当砖头垫床脚了', 0, '0.0.0.0', 'aaa@bb.com', '', 3, 1, 1542337692),
-(2, 2, 0, 1, '不错 就是有点小贵', 0, '0.0.0.0', 'yuanwei@yuanwei.com', 'yuanwei', 2, 1, 1542337744),
-(3, 2, 0, 1, '不错 就是有点小贵, 真流畅', 0, '0.0.0.0', 'yuanwei@yuanwei.com', 'yuanwei', 2, 1, 1542337792);
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -271,6 +262,7 @@ CREATE TABLE IF NOT EXISTS `good_attrs` (
   `good_id` int(11) NOT NULL,
   `attr_id` int(11) NOT NULL,
   `attr_value` varchar(20) NOT NULL,
+  `attr_price` varchar(20) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
@@ -278,11 +270,11 @@ CREATE TABLE IF NOT EXISTS `good_attrs` (
 -- Dumping data for table `good_attrs`
 --
 
-INSERT INTO `good_attrs` (`id`, `good_id`, `attr_id`, `attr_value`) VALUES
-(1, 1, 2, '基督教'),
-(2, 1, 6, '324'),
-(3, 13, 2, '基督教'),
-(4, 13, 6, '326');
+INSERT INTO `good_attrs` (`id`, `good_id`, `attr_id`, `attr_value`, `attr_price`) VALUES
+(1, 1, 2, '基督教', ''),
+(2, 1, 6, '324', ''),
+(3, 13, 2, '基督教', ''),
+(4, 13, 6, '326', '');
 
 -- --------------------------------------------------------
 
@@ -296,6 +288,7 @@ CREATE TABLE IF NOT EXISTS `good_attr_types` (
   `type_name` varchar(20) NOT NULL,
   `status` int(11) NOT NULL DEFAULT '1',
   `sort` int(11) NOT NULL DEFAULT '50',
+  `attr_group` varchar(30) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
@@ -303,16 +296,16 @@ CREATE TABLE IF NOT EXISTS `good_attr_types` (
 -- Dumping data for table `good_attr_types`
 --
 
-INSERT INTO `good_attr_types` (`id`, `type_name`, `status`, `sort`) VALUES
-(1, '书', 1, 50),
-(2, '音乐', 1, 50),
-(3, '电影', 1, 50),
-(4, '手机', 1, 50),
-(5, '笔记本电脑', 1, 50),
-(6, '数码相机', 1, 50),
-(7, '数码摄像机', 1, 50),
-(8, '化妆品', 1, 50),
-(9, '精品手机', 1, 50);
+INSERT INTO `good_attr_types` (`id`, `type_name`, `status`, `sort`, `attr_group`) VALUES
+(1, '书', 1, 50, '1\r\n2\r\n3'),
+(2, '音乐', 1, 50, ''),
+(3, '电影', 1, 50, ''),
+(4, '手机', 1, 50, ''),
+(5, '笔记本电脑', 1, 50, ''),
+(6, '数码相机', 1, 50, ''),
+(7, '数码摄像机', 1, 50, ''),
+(8, '化妆品', 1, 50, ''),
+(9, '精品手机', 1, 50, '');
 
 -- --------------------------------------------------------
 
@@ -375,7 +368,7 @@ CREATE TABLE IF NOT EXISTS `my_users` (
 --
 
 INSERT INTO `my_users` (`id`, `username`, `email`, `phone`, `status`, `user_money`, `frozen_moeny`, `rank_points`, `pay_points`, `affiliate_id`, `password`, `user_salt`, `salt`, `sex`, `birthday`, `qq`, `pwd_question`, `office_phone`, `home_phone`, `pwd_question_answer`, `reg_time`, `last_login_time`, `last_login_ip`, `rank_id`, `visit_counts`) VALUES
-(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '您的爸爸姓名?', '', '', '袁德坤', 1, 1542337725, '0.0.0.0', 0, 7);
+(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '您的爸爸姓名?', '', '', '袁德坤', 1, 1542269379, '0.0.0.0', 0, 6);
 
 -- --------------------------------------------------------
 
@@ -448,7 +441,7 @@ CREATE TABLE IF NOT EXISTS `system_config` (
   `groups` tinyint(4) NOT NULL DEFAULT '0',
   `type` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `system_config`
@@ -460,9 +453,9 @@ INSERT INTO `system_config` (`id`, `config_name`, `config_title`, `config_value`
 (3, 'affiliate', '邀请设置', 'a:3:{s:17:\"invitation_points\";i:2;s:17:\"affiliate_enabled\";i:1;s:20:\"invitation_points_up\";i:100;}', 1, 10, 0, 1),
 (4, 'register_captcha', '注册验证码开启码', '1', 1, 10, 0, 1),
 (5, 'register_closed', '关闭注册', '0', 1, 10, 0, 1),
-(12, 'captcha', '验证码', '960', 1, 10, 0, 1),
+(10, 'captcha', '验证码', '704', 1, 10, 0, 1),
 (7, 'comment_factor', '评论开启条件', '0', 1, 10, 0, 1),
-(11, 'comment_check', '评论审核', '0', 1, 10, 0, 1);
+(11, 'comment_check', '评论审核', '1', 1, 10, 0, 1);
 
 -- --------------------------------------------------------
 

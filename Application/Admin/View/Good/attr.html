@@ -7,20 +7,19 @@
 					<th>ID</th>
 					<th>名称</th>
 					<th>属性数量</th>
+					<th>属性列表</th>
 				</tr>
 			</thead>
 			<tbody>
 				<volist name="types" id="tpe">
 					<tr>
 						<td>{$tpe.id}</td>
-						<td>{$tpe.type_name}</td>
+						<td><a href="{:U('oneType', array('id'=>$tpe['id']))}">{$tpe.type_name}</a></td>
 						<td>{$tpe.num}</td>
+						<td><a href="{:U('attrsOfType', array('id'=>$tpe['id']))}">属性列表</a></td>
 					</tr>
 			</volist>
 			</tbody>
 		</table>
 	</div>
 </block>
-
-<input type="hidden" name="attr_id_list[]" value="">
-<input type="text" name="attr_value_list[]">

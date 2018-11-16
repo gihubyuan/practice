@@ -1,0 +1,23 @@
+<extend name="public:base" />
+<block name="body">
+	<div class="table-responsive">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>attribute_name</th>
+					<th>type_name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<foreach name="attrs" item="attr">
+					<tr>
+						<td>{$attr.id}</td>
+						<td><a href="{:U('oneAttr', array('id'=>$attr['id']))}">{$attr.attribute_name}</a></td>
+						<td>{$attr.type_name}</td>
+					</tr>
+			</foreach>
+			</tbody>
+		</table>
+	</div>
+</block>

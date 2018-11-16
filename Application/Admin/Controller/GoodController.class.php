@@ -225,6 +225,77 @@ class GoodController extends PublicController
 		 $this->display();
 	}
 
+	public function attrHandle()
+	{
+		$data = I('post.');
+		$data['status'] = !isset($data['status']) ? 1 : $data['status'];
+
+		if($data['attribute_name'] != $data['old_attr_name']) {
+			if(M('attribute')->where(['attribute_name'=>$data['attribute_name'], ])->find()) {
+				$this->error("重名!");
+				exit;
+			}
+		}
+		unset($data['old_attr_name']);
+		M('attribute')->save($data);
+		$this->redirect('Good/attr');
+	}
+	public function typeHandle()
+	{
+		$data = I('post.');
+		$data['sort'] = !empty($data['sort']) ? $data['sort'] : 50;
+
+		if($data['type_name'] != $data['old_type_name']) {
+			if(M('goodAttrTypes')->where(['type_name'=>$data['type_name']])->find()) {
+				$this->error("重名!");
+				exit;
+			}
+		}
+		unset($data['old_type_name']);
+		M('goodAttrTypes')->save($data);
+		$this->redirect('Good/attr');
+	}
+
+	public function oneAttr()
+	{
+		$id = I('get.id');
+		if(!$id || (!$attr=M('attribute')->find($id))) {
+			$this->redirect('Good/attr');
+		}
+
+		$this->assign('attr', $attr);
+		$this->display();
+	}
+
+	public function oneType()
+	{
+		$id = I('get.id');
+		if(!$id || (!$type=M('goodAttrTypes')->find($id))) {
+			$this->redirect('Good/attr');
+		}
+
+		$this->assign('type', $type);
+		$this->display();
+	}
+
+
+	public function attrsOfType()
+	{
+		$id = I('id');
+		if(!$id || (!$type=M('goodAttrTypes')->find($id))) {
+			$this->redirect('Good/attr');
+		}
+
+		$this->attrs = M('attribute')
+		    ->alias('a')
+		    ->field(['a.id', 'a.attribute_name', 'gt.type_name'])
+		    ->join('good_attr_types gt on a.type_id=gt.id', 'left')
+			->where(['a.type_id'=>$id])
+			->order('a.type_id,a.id')
+			->select();
+		$this->display();
+	}
+
 	public function attr()
 	{
 	   $types =  M('goodAttrTypes')
