@@ -715,3 +715,29 @@ function db_create_in($value_list, $fields = '')
     }
     
 }
+
+function assign_comments($tpl, $id)
+{
+    $count = M('comments')
+     ->where([
+      'comment_type'=>0,
+      'pid'=>0,
+      'reply_id'=>$id,
+      'status'=>1])
+     ->count();
+     $num = !empty(C('COMMENT_NUMBER')) ? intval(C('COMMENT_NUMBER')) : 2;
+     $Page = new \Think\Page($count, $num);
+     $list = M('comments')
+        ->field(['username', 'add_time', 'content', 'comment_rank'])
+        ->where([
+          'comment_type'=>0,
+          'pid'=>0,
+          'reply_id'=>$id,
+          'status'=>1])
+        ->order('id desc,add_time desc')
+        ->limit($Page->firstRow.','.$Page->listRows)
+        ->select();
+
+     $tpl->assign('list',$list);
+     $tpl->assign('page',$Page->show());
+}

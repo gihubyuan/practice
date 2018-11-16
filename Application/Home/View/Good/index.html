@@ -33,6 +33,20 @@
 		</div>
 	</div>
 
+	<div role="tabpanel" style="margin:100px 0;">
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation" class="active">
+				<a href="#home" aria-controls="home" role="tab" data-toggle="tab">购买记录</a>
+			</li>
+		</ul>
+	
+		<!-- Tab panes -->
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane active" id="home">还没有人购买过此商品</div>
+		</div>
+	</div>
+
 
 	<div role="tabpanel" style="margin:100px 0;">
 		<!-- Nav tabs -->
@@ -46,11 +60,20 @@
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="home">
 				<ul class="list-group">
-					<li class="list-group-item">
-						 <img src="__PUBLIC__/img/stars1.gif" class="pull-right" alt="image">
-							<p><strong>匿名用户</strong> <span style="color:#999;">(2018-11-14 16:00)</span></p>
-							<p>垃圾的一B, 拿来当砖头垫床脚了</p>
-					</li>
+					<if condition="!empty($list)">
+						<foreach name="list" item="item">
+							<li class="list-group-item">
+								 <img src="__PUBLIC__/img/stars{$item.comment_rank}.gif" class="pull-right" alt="image">
+									<p><strong>{$item.username|default="匿名用户"}</strong> <span style="color:#999;">({$item.add_time|date="Y-m-d H:i", ###})</span></p>
+									<p>{$item.content|htmlspecialchars}</p>
+							</li>					
+					 </foreach>
+					 <else/>
+							<li class="list-group-item">
+								没有相关评论
+							</li>
+				 </if>
+				 <li class="list-group-item">{$page}</li>
 				</ul>
 			</div>
 		</div>

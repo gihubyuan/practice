@@ -18,6 +18,9 @@ class GoodController extends \Home\Controller\HomeController
 		if(is_login()) {
 			$this->assign('email', M('myUsers')->where(['id'=>session('user_auth.uid')])->getField('email'));
 		}
+			
+		assign_comments($this->view, $good['id']);
+
 		$this->assign('good', $good);
 		if(C('CAPTCHA') & CAPTCHA_COMMENT) {
 			$this->assign('captcha_on', 'on');

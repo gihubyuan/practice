@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.7.9
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 15, 2018 at 03:55 PM
--- Server version: 5.7.19
--- PHP Version: 5.6.31
+-- Generation Time: Nov 16, 2018 at 09:24 AM
+-- Server version: 5.7.21
+-- PHP Version: 5.6.35
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -175,7 +175,16 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `status` tinyint(1) NOT NULL DEFAULT '0',
   `add_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `comments`
+--
+
+INSERT INTO `comments` (`id`, `reply_id`, `pid`, `uid`, `content`, `comment_type`, `ip_address`, `email`, `username`, `comment_rank`, `status`, `add_time`) VALUES
+(1, 2, 0, 0, '垃圾当砖头垫床脚了', 0, '0.0.0.0', 'aaa@bb.com', '', 3, 1, 1542337692),
+(2, 2, 0, 1, '不错 就是有点小贵', 0, '0.0.0.0', 'yuanwei@yuanwei.com', 'yuanwei', 2, 1, 1542337744),
+(3, 2, 0, 1, '不错 就是有点小贵, 真流畅', 0, '0.0.0.0', 'yuanwei@yuanwei.com', 'yuanwei', 2, 1, 1542337792);
 
 -- --------------------------------------------------------
 
@@ -366,7 +375,7 @@ CREATE TABLE IF NOT EXISTS `my_users` (
 --
 
 INSERT INTO `my_users` (`id`, `username`, `email`, `phone`, `status`, `user_money`, `frozen_moeny`, `rank_points`, `pay_points`, `affiliate_id`, `password`, `user_salt`, `salt`, `sex`, `birthday`, `qq`, `pwd_question`, `office_phone`, `home_phone`, `pwd_question_answer`, `reg_time`, `last_login_time`, `last_login_ip`, `rank_id`, `visit_counts`) VALUES
-(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '您的爸爸姓名?', '', '', '袁德坤', 1, 1542269379, '0.0.0.0', 0, 6);
+(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '您的爸爸姓名?', '', '', '袁德坤', 1, 1542337725, '0.0.0.0', 0, 7);
 
 -- --------------------------------------------------------
 
@@ -439,7 +448,7 @@ CREATE TABLE IF NOT EXISTS `system_config` (
   `groups` tinyint(4) NOT NULL DEFAULT '0',
   `type` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `system_config`
@@ -451,9 +460,9 @@ INSERT INTO `system_config` (`id`, `config_name`, `config_title`, `config_value`
 (3, 'affiliate', '邀请设置', 'a:3:{s:17:\"invitation_points\";i:2;s:17:\"affiliate_enabled\";i:1;s:20:\"invitation_points_up\";i:100;}', 1, 10, 0, 1),
 (4, 'register_captcha', '注册验证码开启码', '1', 1, 10, 0, 1),
 (5, 'register_closed', '关闭注册', '0', 1, 10, 0, 1),
-(10, 'captcha', '验证码', '704', 1, 10, 0, 1),
+(12, 'captcha', '验证码', '960', 1, 10, 0, 1),
 (7, 'comment_factor', '评论开启条件', '0', 1, 10, 0, 1),
-(11, 'comment_check', '评论审核', '1', 1, 10, 0, 1);
+(11, 'comment_check', '评论审核', '0', 1, 10, 0, 1);
 
 -- --------------------------------------------------------
 
