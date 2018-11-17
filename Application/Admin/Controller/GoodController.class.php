@@ -224,6 +224,25 @@ class GoodController extends PublicController
 
 		 $this->display();
 	}
+		
+	public function oneAttr()
+	{
+		$id = I('get.id');
+		if(!$id) {
+			$this->redirect('Good/attr');
+			exit;
+		}
+
+		$attr=M('attribute')
+			->alias('a')
+			->field(['a.*', 'gt.attr_groups'])
+			->join('good_attr_types gt on a.type_id=gt.id', 'left')
+			->where(['a.id'=>$id])
+			->find();
+		$this->groups = !empty($attr['attr_groups']) ? explode("\n", str_replace("\r", "", $attr['attr_groups'])) : array();
+		$this->assign('attr', $attr);
+		$this->display();
+	}
 
 	public function attrHandle()
 	{
@@ -240,32 +259,6 @@ class GoodController extends PublicController
 		M('attribute')->save($data);
 		$this->redirect('Good/attr');
 	}
-	public function typeHandle()
-	{
-		$data = I('post.');
-		$data['sort'] = !empty($data['sort']) ? $data['sort'] : 50;
-
-		if($data['type_name'] != $data['old_type_name']) {
-			if(M('goodAttrTypes')->where(['type_name'=>$data['type_name']])->find()) {
-				$this->error("重名!");
-				exit;
-			}
-		}
-		unset($data['old_type_name']);
-		M('goodAttrTypes')->save($data);
-		$this->redirect('Good/attr');
-	}
-
-	public function oneAttr()
-	{
-		$id = I('get.id');
-		if(!$id || (!$attr=M('attribute')->find($id))) {
-			$this->redirect('Good/attr');
-		}
-
-		$this->assign('attr', $attr);
-		$this->display();
-	}
 
 	public function oneType()
 	{
@@ -278,6 +271,42 @@ class GoodController extends PublicController
 		$this->display();
 	}
 
+	public function typeHandle()
+	{
+		$data = I('post.');
+		$data['sort'] = !empty($data['sort']) ? $data['sort'] : 50;
+		if($data['type_name'] != $data['old_type_name']) {
+			if(M('goodAttrTypes')->where(['type_name'=>$data['type_name']])->find()) {
+				$this->error("重名!");
+				exit;
+			}
+		}
+
+		$attr_groups = $data['attr_groups'];
+		unset($data['old_type_name'], $data['attr_groups']);
+		if(M('goodAttrTypes')->save($data))
+		{
+			$new_groups = explode("\n", str_replace("\r", '', $attr_groups));
+			$old_groups = M('goodAttrTypes')->where(['id'=>$data['id']])->getField('attr_groups');
+			$old_groups = explode("\n", str_replace("\r", '', $old_groups));
+			foreach($old_groups as $grp)
+			{
+				$found = array_search($grp, $new_groups);
+
+				if($found === false || $found === null)
+				{
+					M('attribute')->where(['attr_group'=>$grp, 'type_id'=>$data['id']])->setField(['attr_group'=>'']);
+				}
+				
+			}
+		}
+		else
+		{
+			$this->error("更新失败");
+		}
+		
+		$this->redirect('Good/attr');
+	}
 
 	public function attrsOfType()
 	{
@@ -285,7 +314,6 @@ class GoodController extends PublicController
 		if(!$id || (!$type=M('goodAttrTypes')->find($id))) {
 			$this->redirect('Good/attr');
 		}
-
 		$this->attrs = M('attribute')
 		    ->alias('a')
 		    ->field(['a.id', 'a.attribute_name', 'gt.type_name'])
@@ -318,118 +346,150 @@ class GoodController extends PublicController
 
 	function goodHandle()
 	{
-		 if(IS_POST) {
-		 		$is_insert = I('post.act') == 'act_insert' ? true : false;
-				$data = I('post.');
-		 		$attr_id_list = !isset($data['attr_id_list']) ? array() : $data['attr_id_list'];
-		 		$attr_value_list = !isset($data['attr_value_list']) ? array() : $data['attr_value_list'];
-		 		$cat_extended_id = !empty($data['cat_extended_id']) ? array_filter(array_unique($data['cat_extended_id'])) : array();
-		 		$data['type_id'] = empty($data['type_id']) ? 0 : intval($data['type_id']);
-		 		$data['is_best'] = isset($data['is_best']) ? 1 : 0;
-		 		$data['is_hot'] = isset($data['is_hot']) ? 1 : 0;
-		 		$data['is_new'] = isset($data['is_new']) ? 1 : 0;
-		 		$data['promotion_price'] = empty($data['promotion_price']) ? 0 : $data['promotion_price'];
-		 		$data['promotion_start'] = empty($data['promotion_start']) ? 0 : $data['promotion_start'];
-		 		$data['promotion_end'] = empty($data['promotion_end']) ? 0 : $data['promotion_end'];
-		 		$data['number'] = empty($data['number']) ? 0 : $data['number'];
-		 		$data['warn_number'] = empty($data['warn_number']) ? 0 : $data['warn_number'];
-		 		$data['keywords'] = empty($data['keywords']) ? '' : $data['keywords'];
-		 		$data['price'] = empty($data['price']) ? 0 : $data['price'];
-		 		$data['weight'] = empty($data['weight']) ? 0 : $data['weight'];
-		 		$data['last_update'] = time();
-		 		$good_id = empty($data['good_id']) ? 0 : $data['good_id'];
-		 		$data['good_name_style'] = $data['name_style_color'] . '|' . $data['name_style_font'];
-				unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id'], $data['cat_extended_id']);			 		
+		 if(IS_POST) 
+		 {
+	 		$is_insert = I('post.act') == 'act_insert' ? true : false;
+			$data = I('post.');
+	 		$attr_id_list = !isset($data['attr_id_list']) ? array() : $data['attr_id_list'];
+	 		$attr_value_list = !isset($data['attr_value_list']) ? array() : $data['attr_value_list'];
+	 		$attr_price_list = !isset($data['attr_price_list']) ? array() : $data['attr_price_list'];
+	 		$cat_extended_id = !empty($data['cat_extended_id']) ? array_filter(array_unique($data['cat_extended_id'])) : array();
+	 		$data['type_id'] = empty($data['type_id']) ? 0 : intval($data['type_id']);
+	 		$data['is_best'] = isset($data['is_best']) ? 1 : 0;
+	 		$data['is_hot'] = isset($data['is_hot']) ? 1 : 0;
+	 		$data['is_new'] = isset($data['is_new']) ? 1 : 0;
+	 		$data['promotion_price'] = empty($data['promotion_price']) ? 0 : $data['promotion_price'];
+	 		$data['promotion_start'] = empty($data['promotion_start']) ? 0 : $data['promotion_start'];
+	 		$data['promotion_end'] = empty($data['promotion_end']) ? 0 : $data['promotion_end'];
+	 		$data['number'] = empty($data['number']) ? 0 : $data['number'];
+	 		$data['warn_number'] = empty($data['warn_number']) ? 0 : $data['warn_number'];
+	 		$data['keywords'] = empty($data['keywords']) ? '' : $data['keywords'];
+	 		$data['price'] = empty($data['price']) ? 0 : $data['price'];
+	 		$data['weight'] = empty($data['weight']) ? 0 : $data['weight'];
+	 		$data['last_update'] = time();
+	 		$good_id = empty($data['good_id']) ? 0 : $data['good_id'];
+	 		$data['good_name_style'] = $data['name_style_color'] . '|' . $data['name_style_font'];
+			unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id'], $data['cat_extended_id']);			 		
 		 		
-		 		if(empty($data['brand_id'])) {
-		 			 unset($data['brand_id']);
-		 		}		 			 		
-				if(empty($data['good_sn'])) {
-					$data['good_sn'] = generate_good_sn();
-				}
-				if($data['weight_unit'] == 1) {
-					$data['weight'] *= 0.001;
-				}
-				unset($data['weight_unit']);
+	 		if(empty($data['brand_id'])) 
+	 		{
+	 			 unset($data['brand_id']);
+	 		}		 			 		
+			if(empty($data['good_sn'])) 
+			{
+				$data['good_sn'] = generate_good_sn();
+			}
+			if($data['weight_unit'] == 1) 
+			{
+				$data['weight'] *= 0.001;
+			}
+			unset($data['weight_unit']);
 
-				if(empty($data['promotion_price'])) {
-					$data['promotion_start'] = 0;
-					$data['promotion_end'] = 0;
-				}
+			if(empty($data['promotion_price'])) 
+			{
+				$data['promotion_start'] = 0;
+				$data['promotion_end'] = 0;
+			}
 
-				if($is_insert) {
-		 			if(!$good_id = M('goods')->add($data)) {
-		 				$this->error("添加失败");
-			 	 	  exit;
-		 			}
-		 			 foreach($cat_extended_id as $extend_id) {
-		 				 M('goodExtendedCats')-> add(['good_id'=>$good_id, 'cat_id'=>$extend_id]);
-		 			 }
-		 		}else {
-		 			if(!M('goods')->where(['id'=>$good_id])->save($data)) {
-		 				 $this->error('更新失败');
-			 	 	   exit;
-		 			}
-		 			update_extended_goods($good_id, $cat_extended_id);
-		 		}
-
+			if($is_insert) 
+			{
+	 			 if(!$good_id = M('goods')->add($data)) 
+	 			 {
+	 				 $this->error("添加失败");
+		 	 	     exit;
+	 			 }
+	 			 foreach($cat_extended_id as $extend_id) 
+	 			 {
+	 				 M('goodExtendedCats')-> add(['good_id'=>$good_id, 'cat_id'=>$extend_id]);
+	 			 }
+	 		}
+	 		else 
+	 		{
+	 			if(!M('goods')->where(['id'=>$good_id])->save($data)) 
+	 			{
+	 			  $this->error('更新失败');
+		 	 	   exit;
+	 			}
+	 			update_extended_goods($good_id, $cat_extended_id);
+	 		}
 		 		
-
-		 		if((isset($data['attr_id_list']) && isset($data['attr_value_list'])) || (empty($data['attr_id_list']) && empty($data['attr_value_list']))) {
+		 		if((isset($data['attr_id_list']) && isset($data['attr_value_list'])) || (empty($data['attr_id_list']) && empty($data['attr_value_list']))) 
+		 		{
 			 	 	
 				 	 $good_attr_list = array();
 				 	 $rs = M('goodAttrs')->where(['good_id'=>$good_id])->select();
-				 	 foreach($rs as $v) {
+				 	 foreach($rs as $v) 
+				 	 {
 				 	 	 $good_attr_list[$v['attr_id']][$v['attr_value']] = array('good_attr_id'=> $v['id'], 'type'=>'delete');
 				 	 }
 
-			 	 		 $attr_list = array();
-					 	 $rs = M('attribute')->where(['type_id'=>$data['type_id']])->select();
-					 	 foreach($rs as $v) {
-					 	 	 $attr_list[$v['id']] = $v['attr_index'];
-					 	 }
+		 	 		 $attr_list = array();
+				 	 $rs = M('attribute')->where(['type_id'=>$data['type_id']])->select();
+				 	 foreach($rs as $v) 
+				 	 {
+				 	 	 $attr_list[$v['id']] = $v['attr_index'];
+				 	 }
 
-			 	 		
+					if(!empty($attr_value_list)) 
+					{
+						$keywords = explode('|', trim($data['keywords'],'|'));
+						$keywords = array_flip($keywords);
 
-						if(!empty($attr_value_list)) {
-							$keywords = explode('|', trim($data['keywords'],'|'));
-							$keywords = array_flip($keywords);
-							if(isset($keywords[''])) {
-								 unset($keywords['']);
-							}
-		 		 		  foreach($attr_id_list as $key => $attr_id) {
-				 	 				$attr_value = $attr_value_list[$key];
-				 	 				if(!empty(trim($attr_value))) {
-					 	 				if(isset($good_attr_list[$attr_id][$attr_value])) {
-					 	 					$good_attr_list[$attr_id][$attr_value]['type'] = 'update';
-					 	 				}else {
-					 	 					$good_attr_list[$attr_id][$attr_value]['type'] = 'insert';
-					 	 				}
-									 	if(!isset($keywords[$attr_value]) && $attr_list[$attr_id] == 1) {
-								 	 	 	    $keywords[$attr_value] = "k$attr_id";
-								 	  }
-					 	 		 }
-				 	 		}
-				 	 		$keywords = implode('|',array_flip($keywords));
-		 	        M('goods')->where(['id'=>$gid])->setField('keywords', $keywords);		
+						if(isset($keywords[''])) 
+						{
+							 unset($keywords['']);
 						}
+		 		 		foreach($attr_id_list as $key => $attr_id) 
+		 		 		{
+		 	 				$attr_value = $attr_value_list[$key];
+		 	 				$attr_price = $attr_price_list[$key];
+		 	 				if(!empty($attr_value))
+		 	 				{
+		 	 					if(isset($good_attr_list[$attr_id][$attr_value]))
+			 	 				{
+			 	 					$good_attr_list[$attr_id][$attr_value]['type'] = 'update';
+			 	 				}
+			 	 				else 
+			 	 				{
+			 	 					$good_attr_list[$attr_id][$attr_value]['type'] = 'insert';
+			 	 				}
+			 	 				$good_attr_list[$attr_id][$attr_value]['attr_price'] = $attr_price;
+		 	 				}
+		 	 				
+						 	if(!isset($keywords[$attr_value]) && $attr_list[$attr_id] == 1)
+						 	{
+					 	 	 	 $keywords[$attr_value] = "k$attr_id";
+					 	    }
+				 	 	 }
+			 	 		$keywords = implode('|',array_flip($keywords));
+	 	       			 M('goods')->where(['id'=>$gid])->setField('keywords', $keywords);		
+					}
 			 	 				 	 		
-				 	 foreach($good_attr_list as $attr_id => $attr_value_arr) {
-				 	 	 foreach($attr_value_arr as $attr_value => $value) {
-				 	 	 		if($value['type'] == 'update') {
+				 	 foreach($good_attr_list as $attr_id => $attr_value_arr) 
+				 	 {
+				 	 	 foreach($attr_value_arr as $attr_value => $value) 
+				 	 	 {
+				 	 	 		if($value['type'] == 'update') 
+				 	 	 		{
 				 	 	 			 M('goodAttrs')->save([
 				 	 	 			 	 'attr_id' => $attr_id,
 				 	 	 			 	 'attr_value' => $attr_value,
 				 	 	 			 	 'good_id' => $good_id,
-				 	 	 			 	 'id' => $value['good_attr_id']
+				 	 	 			 	 'id' => $value['good_attr_id'],
+				 	 	 			 	 'attr_price' => $value['attr_price']
 				 	 	 			 ]);
-				 	 	 		}elseif($value['type'] == 'insert') {
+				 	 	 		}
+				 	 	 		elseif($value['type'] == 'insert') 
+				 	 	 		{
 				 	 	 			 M('goodAttrs')->add([
 				 	 	 			 	 'attr_id' => $attr_id,
 				 	 	 			 	 'attr_value' => $attr_value,
-				 	 	 			 	 'good_id' => $good_id
+				 	 	 			 	 'good_id' => $good_id,
+				 	 	 			 	 'attr_price' => $value['attr_price']
 				 	 	 			 ]);
-				 	 	 		}else {
+				 	 	 		}
+				 	 	 		else 
+				 	 	 		{
 				 	 	 			  M('goodAttrs')->delete($value['good_attr_id']);
 				 	 	 		}
 				 	 	 }

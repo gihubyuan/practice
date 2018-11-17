@@ -33,6 +33,8 @@
 						</eq>
 					</select>
 			</div>
+			
+
 			<div class="form-group">
 				<label for="">商品品牌</label>
 				<select name="brand_id" class="form-control">
@@ -42,7 +44,6 @@
 				</volist>
 			</select>
 		 </div>
-			
 
 			<div class="form-group">
 				<label for="">商品分类</label>
@@ -157,7 +158,7 @@
 				  </volist>
 			  </select>
 			</div>
-			<div id="attributes">
+			<div id="attributes" style="padding: 0 0 0 20px;">
 				
 			</div>
 		<input type="hidden" name="good_id" value="{$good.id}">
@@ -168,16 +169,17 @@
 <block name="script">
 	<script>
 	
-		var href = '{:U("Good/getAttrHtml")}';
-				href = href.replace('.html', '');
+		var href = '{:U("Good/getAttrHtml")}'.replace('.html', '');
 		var good_id = parseInt($('input[name="good_id"]').val());
 
-		$.get(href, {type_id:$('#category').val(),good_id:good_id},function(data){
-					if(data.status ==1) {
-						$('#attributes')[0].innerHTML = data.data;
-					}
-		});
-
+		if(good_id > 0) {
+			$.get(href, {type_id:$('#category').val(),good_id:good_id},function(data){
+				if(data.status ==1) {
+					$('#attributes')[0].innerHTML = data.data;
+				}
+			});
+		}
+		
 		$('#extended-cats').on('click', function(){
 			var $children = $('form[name=theform] select[name=cat_id]').children(),
 			    len = $children.length,
@@ -189,13 +191,26 @@
 		});
 
 		$('#category').on('change', function(){
-				$.get(href, {type_id:$(this).val(),good_id:good_id},function(data){
-					if(data.status ==1) {
-						$('#attributes')[0].innerHTML = data.data;
-					}
-				});
-  	});
+			$.get(href, {type_id:$(this).val(),good_id:good_id},function(data){
+				if(data.status ==1) {
+					$('#attributes')[0].innerHTML = data.data;
+				}
+			});
+  		});
 
+		function addAttr(obj)
+		{
+			var html = $(obj).parent().html();
+			html = html.replace(/onclick="[^\(]+([^\[]+)[^\]]+\]/, 'onclick="removeAttr$1[ - ]');
+			$('<div class="form-group"></div>').html(html).insertAfter($(obj).parent());
+			return false;
+		}
+
+		function removeAttr(obj)
+		{
+			$(obj).parent().remove();
+			return false;
+		}
 	</script>
 	
 </block>

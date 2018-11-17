@@ -10,6 +10,10 @@
 		<div class="media-body">
 			<h4 class="media-heading">{$good.good_name_style}</h4>
 			<p style="font-size:26px;">￥{$good.price} 元</p>
+
+			<ul>
+			</ul>
+
 			<button type="button" class="btn btn-info">加入购物车</button>
 		</div>
 	</div>
@@ -29,7 +33,25 @@
 		<!-- Tab panes -->
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="home">aaaaaaaaaaaa.</div>
-			<div role="tabpanel" class="tab-pane" id="tab">bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</div>
+			<div role="tabpanel" class="tab-pane" id="tab">
+				<div class="table-responsive">
+					<table class="table table-hover">
+						<tbody>
+							<foreach name="properties" item="prop" key="grp">
+								<tr align="center">
+									<td colspan="2">{$grp}</td>
+							    </tr>
+							    <foreach name="prop" item="prp" key="at_name">
+								<tr>
+									<td>{$at_name}</td>
+									<td>{$prp}</td>
+								</tr>
+								</foreach>
+						   </foreach>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 

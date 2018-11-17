@@ -476,35 +476,56 @@ function build_attr_html($type = 0, $good_id = 0)
    $attrs = M('attribute')
         ->alias('a')
         ->join('good_attrs gt on a.id=gt.attr_id and gt.good_id='.$good_id, 'left')
-        ->field(['input_type_values', 'input_type_id','attribute_name','a.id'=>'aid', 'attr_value'])
+        ->field(['input_value_type', 'input_type_values', 'input_type_id','attribute_name','gt.attr_price','a.id'=>'aid', 'attr_value', 'attr_price'])
         ->where(['a.type_id'=>$type])
+        ->order('a.type_id,a.id')
         ->select();
 
     $html = '';
-    foreach($attrs as $v) {
-        switch($v['input_type_id']) {
-            case 1: 
-                    $html .= '<div class="form-group">
-                    <label for="">'.$v['attribute_name'].': </label>
-                    <input type="hidden" name="attr_id_list[]" value="'.$v['aid'].'">
-                    <input type="text" name="attr_value_list[]" value="'.$v['attr_value'].'" class="form-control">
-                    </div>';
-                break;
-            case 2:
-                $t = '';
-                foreach(explode(',', trim($v['input_type_values'], ',')) as $vv) {
-                    $t .= "<option value='$vv' ". ($vv == $v['attr_value'] ? 'selected' : '') .">$vv</option>";
-                }
-                $html .= '<div class="form-group">
-                          <label for="">'.$v['attribute_name'].': </label>
-                            <input type="hidden" name="attr_id_list[]" value="'.$v['aid'].'">
-                            <select name="attr_value_list[]" class="form-control">
-                            <option value=""></option>
-                                '.$t.'
-                           </select>
-                        </div>';
-                break;
+    $index = 0;
+    
+    foreach($attrs as $attr)
+    {
+        $html .= '<div class="form-group">';
+        $html .= "<label>{$attr['attribute_name']}</label>";
+        if($attr['input_value_type'] == 2 || $attr['input_value_type'] == 3)
+        {
+            $html .= $attr['aid'] != $index ? ' <a href="javascript:;" onclick="addAttr(this)">[ + ]</a>'
+            : ' <a href="javascript:;" onclick="removeAttr(this)">[ - ]</a>';
+            $index = $attr['aid'];
         }
+
+        $html .= '<input type="hidden" name="attr_id_list[]" value="'.$attr['aid'].'">';
+        if($attr['input_type_id'] == 1)
+        {
+                
+            $html .= '<input type="text" name="attr_value_list[]"　value="'.$attr['attr_value'].'" class="form-control" id="">';
+        }
+        elseif ($attr['input_type_id'] == 2)
+        {
+            $html .= '<select name="attr_value_list[]"  class="form-control">';
+            $html .= '<option value="">--Please select--</value>';
+            $values = explode("\n", strtr($attr['input_type_values'], "\r", ''));
+            foreach($values as $value) {
+                $html .= '<option value="'.$value.'" '.($value == $attr['attr_value'] ? 'selected' : '').'>'.$value.'</option>';
+            }
+            $html .= '</select>';
+        }
+        else
+        {
+             $html .= '<textarea type="text" name="attr_value_list[]"　class="form-control">'.$attr['attr_value'].'</textarea>';
+        }
+
+        if($attr['input_value_type'] == 2 || $attr['input_value_type'] == 3)
+        {
+           $html .= '<input type="text" name="attr_price_list[]" value="'.$attr['attr_price'].'" class="form-control" placeholder="请输入价格">';
+        }
+        else
+        {
+           $html .= '<input type="hidden" name="attr_price_list[]" value="">';
+        }
+
+        $html .= '</div>';
     }
 
     return $html;
@@ -740,4 +761,62 @@ function assign_comments($tpl, $id)
 
      $tpl->assign('list',$list);
      $tpl->assign('page',$Page->show());
+     if(is_login()) 
+     {
+        $tpl->assign('email', M('myUsers')->where(['id'=>session('user_auth.uid')])->getField('email'));
+     }
+}
+
+function get_good_properties($good_id)
+{
+    if(!$good_id)
+    {
+        return false;
+    }
+
+    $attr_group = M('goods')
+     ->alias('g')
+     ->field(['attr_groups'])
+     ->join('good_attr_types gt on g.type_id=gt.id', 'inner')
+     ->where(['g.id'=>$good_id])
+     ->find();
+
+     $attr_group = $attr_group['attr_group'];
+     $groups = array();
+     if(!empty($attr_group))
+     {
+        $attr_group = explode("\n", strtr($attr_group, "\r", ''));
+        foreach($attr_group as $grp)
+        {
+            $grp = trim($grp);
+            $groups[$grp] = $grp;
+        }
+     }
+
+     $attrs = M('goodAttrs')
+      ->alias('ga')
+      ->field(['input_value_type', 'a.attribute_name', 'attr_price', 'ga.attr_value', 'attr_group', 'a.id'])
+      ->join('attribute a on ga.attr_id=a.id', 'left')
+      ->where(['ga.good_id'=>$good_id])
+      ->select();
+
+      $properties = array();
+      $list = array();
+      foreach($attrs as $attr)
+      {
+         if($attr['input_value_type'] == 1)
+         {
+            $group = isset($groups[$attr['attr_group']]) ? $groups[$attr['attr_group']] : '属性列表';
+            $list['prop'][$group][$attr['attribute_name']] = $attr['attr_value'];
+         }
+         else
+         {
+            $list['spec'][$attr['id']][] = array(
+                'attr_price' => $attr['attr_price'],
+                'attr_value' => $attr['attr_value'],
+                'attr_name' => $attr['attribute_name']
+            );
+         }
+      }
+      return $list;
 }
