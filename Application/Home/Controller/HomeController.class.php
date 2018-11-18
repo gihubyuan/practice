@@ -13,7 +13,7 @@ class HomeController extends Controller
             define('CAPTCHA_COMMENT', 256);
             define('CAPTCHA_LOGIN_FAIL', 512); 
     		$configs = api('Config/lists');
-    		$configs['limit_count'] = 1;
+    		$configs['limit_count'] = 10;
     		C($configs);
     		if(C('SITE_CLOSED') == 1) {
     			exit("网站已关闭,请稍后在访问~");

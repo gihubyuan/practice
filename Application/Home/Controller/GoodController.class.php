@@ -12,7 +12,7 @@ class GoodController extends \Home\Controller\HomeController
 		{
 			$this->redirect('Index/index');
 			exit;
-		}
+		}		
 
 		$good['good_name_style'] = getStyleName($good['good_name'], $good['good_name_style']);
 
@@ -20,15 +20,12 @@ class GoodController extends \Home\Controller\HomeController
 
 		$properties = get_good_properties($id);
 		$this->assign('properties', $properties['prop']);
-		
-		$this->assign('spec', $properties['spec']);
-
+		$this->assign('specification', $properties['spec']);
 		$this->assign('good', $good);
 		if(C('CAPTCHA') & CAPTCHA_COMMENT) {
 			$this->assign('captcha_on', 'on');
 		}
 		$this->display();
 	}
-
 
 }

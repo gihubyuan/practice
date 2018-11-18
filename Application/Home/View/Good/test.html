@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<foreach name="arr" item="aaa">
+		<foreach name="aaa" item="bbb" key="attr_name">
+			<h1>{$attr_name}</h1>
+			<foreach name="bbb" item="ccc" key="attr_id">
+				<p>{$attr_id}</p>
+				<php>
+					foreach($ccc as $cc)
+					{
+						echo $cc['attr_price'];
+					}
+				</php>
+			</foreach>
+		</foreach>
+	</foreach>
+</body>
+</html>

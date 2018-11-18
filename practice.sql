@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 17, 2018 at 02:25 PM
+-- Generation Time: Nov 18, 2018 at 02:49 PM
 -- Server version: 5.7.19
 -- PHP Version: 5.6.31
 
@@ -177,7 +177,14 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `status` tinyint(1) NOT NULL DEFAULT '0',
   `add_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `comments`
+--
+
+INSERT INTO `comments` (`id`, `reply_id`, `pid`, `uid`, `content`, `comment_type`, `ip_address`, `email`, `username`, `comment_rank`, `status`, `add_time`) VALUES
+(11, 14, 0, 0, '好評！', 0, '0.0.0.0', 'aaaa@bbb.com', '', 5, 0, 1542543789);
 
 -- --------------------------------------------------------
 
@@ -250,7 +257,7 @@ INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, 
 (1, 'Holy Bible', '#f00|em', 'gn201811106869915', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1, 0, 1541838405),
 (2, 'iphone Max(512G)', '|', 'gn201811103322215', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '9688', '0', 0, 0, 0, 1, 1, 1, 1541830344),
 (13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 1, 50, 0, '', 0, 0, 0, 22, 0, '0', '5800', '0', 0, 0, 0, 1, 1, 0, 1541830000),
-(14, '华为 Mate20', '|', 'gn201811175782315', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '0', '4666', '0', 0, 0, 0, 1, 1, 0, 1542463758);
+(14, '华为 Mate20', '|', 'gn201811185898715', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '0', '4666', '0', 0, 0, 0, 1, 1, 0, 1542520953);
 
 -- --------------------------------------------------------
 
@@ -266,7 +273,7 @@ CREATE TABLE IF NOT EXISTS `good_attrs` (
   `attr_value` varchar(20) NOT NULL,
   `attr_price` varchar(20) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `good_attrs`
@@ -278,9 +285,11 @@ INSERT INTO `good_attrs` (`id`, `good_id`, `attr_id`, `attr_value`, `attr_price`
 (3, 13, 2, '基督教', ''),
 (4, 13, 6, '326', ''),
 (12, 14, 13, '5g', '500'),
-(13, 14, 24, '玻璃', ''),
-(14, 14, 29, '8g', ''),
-(15, 14, 30, 'emui', '');
+(21, 14, 29, '8g', ''),
+(22, 14, 19, '2020x1240', ''),
+(23, 14, 24, '玻璃', ''),
+(24, 14, 30, 'emui', ''),
+(25, 14, 13, '3g', '-200');
 
 -- --------------------------------------------------------
 
@@ -332,6 +341,21 @@ CREATE TABLE IF NOT EXISTS `good_extended_cats` (
 INSERT INTO `good_extended_cats` (`good_id`, `cat_id`) VALUES
 (1, 4),
 (13, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `member_price`
+--
+
+DROP TABLE IF EXISTS `member_price`;
+CREATE TABLE IF NOT EXISTS `member_price` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `good_id` int(11) NOT NULL,
+  `user_rank` int(11) NOT NULL,
+  `member_price` decimal(10,0) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
