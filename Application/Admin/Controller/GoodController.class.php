@@ -348,71 +348,103 @@ class GoodController extends PublicController
 	{
 		 if(IS_POST) 
 		 {
-	 		$is_insert = I('post.act') == 'act_insert' ? true : false;
-			$data = I('post.');
-	 		$attr_id_list = !isset($data['attr_id_list']) ? array() : $data['attr_id_list'];
-	 		$attr_value_list = !isset($data['attr_value_list']) ? array() : $data['attr_value_list'];
-	 		$attr_price_list = !isset($data['attr_price_list']) ? array() : $data['attr_price_list'];
-	 		$cat_extended_id = !empty($data['cat_extended_id']) ? array_filter(array_unique($data['cat_extended_id'])) : array();
-	 		$data['type_id'] = empty($data['type_id']) ? 0 : intval($data['type_id']);
-	 		$data['is_best'] = isset($data['is_best']) ? 1 : 0;
-	 		$data['is_hot'] = isset($data['is_hot']) ? 1 : 0;
-	 		$data['is_new'] = isset($data['is_new']) ? 1 : 0;
-	 		$data['promotion_price'] = empty($data['promotion_price']) ? 0 : $data['promotion_price'];
-	 		$data['promotion_start'] = empty($data['promotion_start']) ? 0 : $data['promotion_start'];
-	 		$data['promotion_end'] = empty($data['promotion_end']) ? 0 : $data['promotion_end'];
-	 		$data['number'] = empty($data['number']) ? 0 : $data['number'];
-	 		$data['warn_number'] = empty($data['warn_number']) ? 0 : $data['warn_number'];
-	 		$data['keywords'] = empty($data['keywords']) ? '' : $data['keywords'];
-	 		$data['price'] = empty($data['price']) ? 0 : $data['price'];
-	 		$data['weight'] = empty($data['weight']) ? 0 : $data['weight'];
-	 		$data['last_update'] = time();
-	 		$good_id = empty($data['good_id']) ? 0 : $data['good_id'];
-	 		$data['good_name_style'] = $data['name_style_color'] . '|' . $data['name_style_font'];
-			unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id'], $data['cat_extended_id']);			 		
-		 		
-	 		if(empty($data['brand_id'])) 
-	 		{
-	 			 unset($data['brand_id']);
-	 		}		 			 		
-			if(empty($data['good_sn'])) 
-			{
-				$data['good_sn'] = generate_good_sn();
-			}
-			if($data['weight_unit'] == 1) 
-			{
-				$data['weight'] *= 0.001;
-			}
-			unset($data['weight_unit']);
+		 		$is_insert = I('post.act') == 'act_insert' ? true : false;
+				$data = I('post.');
+		 		$attr_id_list = !isset($data['attr_id_list']) ? array() : $data['attr_id_list'];
+		 		$attr_value_list = !isset($data['attr_value_list']) ? array() : $data['attr_value_list'];
+		 		$attr_price_list = !isset($data['attr_price_list']) ? array() : $data['attr_price_list'];
+		 		$cat_extended_id = !empty($data['cat_extended_id']) ? array_filter(array_unique($data['cat_extended_id'])) : array();
+		 		$data['type_id'] = empty($data['type_id']) ? 0 : intval($data['type_id']);
+		 		$data['is_best'] = isset($data['is_best']) ? 1 : 0;
+		 		$data['is_hot'] = isset($data['is_hot']) ? 1 : 0;
+		 		$data['is_new'] = isset($data['is_new']) ? 1 : 0;
+		 		$data['is_new'] = isset($data['is_shipping']) ? 1 : 0;
+		 		$data['integral'] = empty($data['integral']) ? 0 : intval($data['integral']);
+		 		$data['give_integral'] = empty($data['give_integral']) ? 0 : intval($data['give_integral']);
+		 		$data['rank_integral'] = empty($data['rank_integral']) ? 0 : intval($data['rank_integral']);
+		 		$data['promotion_price'] = empty($data['promotion_price']) ? 0 : $data['promotion_price'];
+		 		$data['promotion_start'] = empty($data['promotion_start']) ? 0 : $data['promotion_start'];
+		 		$data['promotion_end'] = empty($data['promotion_end']) ? 0 : $data['promotion_end'];
+		 		$data['number'] = empty($data['number']) ? 0 : $data['number'];
+		 		$data['warn_number'] = empty($data['warn_number']) ? 0 : $data['warn_number'];
+		 		$data['keywords'] = empty($data['keywords']) ? '' : $data['keywords'];
+		 		$data['price'] = empty($data['price']) ? 0 : intval($data['price']);
+		 		$data['weight'] = empty($data['weight']) ? 0 : $data['weight'];
+		 		$data['last_update'] = time();
+		 		$good_id = empty($data['good_id']) ? 0 : $data['good_id'];
+		 		$user_price = isset($data['user_price']) ? $data['user_price'] : array();
+		 		$rank_ids = isset($data['rank_id']) ?  $data['rank_id'] : array();
+		 		$volume_number = isset($data['volume_number']) ?  $data['volume_number'] : array();
+		 		$volume_price = isset($data['volume_price']) ?  $data['volume_price'] : array();
+		 		$data['good_name_style'] = $data['name_style_color'] . '|' . $data['name_style_font'];
+				unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id'], $data['cat_extended_id'],$data['user_price'], $data['rank_id'], $data['volume_number'], $data['volume_price']);			 		
+			 		
+		 		if(empty($data['brand_id'])) 
+		 		{
+		 			 unset($data['brand_id']);
+		 		}		 			 		
+				if(empty($data['good_sn'])) 
+				{
+					$data['good_sn'] = generate_good_sn();
+				}
+				if($data['weight_unit'] == 1) 
+				{
+					$data['weight'] *= 0.001;
+				}
+				unset($data['weight_unit']);
 
-			if(empty($data['promotion_price'])) 
-			{
-				$data['promotion_start'] = 0;
-				$data['promotion_end'] = 0;
-			}
+				if(empty($data['promotion_price'])) 
+				{
+					$data['promotion_start'] = 0;
+					$data['promotion_end'] = 0;
+				}
 
-			if($is_insert) 
-			{
-	 			 if(!$good_id = M('goods')->add($data)) 
-	 			 {
-	 				 $this->error("添加失败");
-		 	 	     exit;
-	 			 }
-	 			 foreach($cat_extended_id as $extend_id) 
-	 			 {
-	 				 M('goodExtendedCats')-> add(['good_id'=>$good_id, 'cat_id'=>$extend_id]);
-	 			 }
-	 		}
-	 		else 
-	 		{
-	 			if(!M('goods')->where(['id'=>$good_id])->save($data)) 
-	 			{
-	 			  $this->error('更新失败');
-		 	 	   exit;
-	 			}
-	 			update_extended_goods($good_id, $cat_extended_id);
-	 		}
-		 		
+				if(!empty($volume_number) && !empty($volume_price))
+		 		{
+		 			  $counts = array_count_values($volume_number);
+		 			  foreach($counts as $count)
+		 			  {
+		 			  	if($count > 1)
+		 			  	{
+		 			  		$this->error("重复了volume_number");
+		 			  		exit;
+		 			  	}
+		 			  }
+		 		}
+
+				if($is_insert) 
+				{
+		 			 if(!$good_id = M('goods')->add($data)) 
+		 			 {
+		 				 $this->error("添加失败");
+			 	 	     exit;
+		 			 }
+		 			 foreach($cat_extended_id as $extend_id) 
+		 			 {
+		 				 M('goodExtendedCats')-> add(['good_id'=>$good_id, 'cat_id'=>$extend_id]);
+		 			 }
+		 		}
+		 		else 
+		 		{
+		 			if(!M('goods')->where(['id'=>$good_id])->save($data)) 
+		 			{
+		 			  $this->error('更新失败');
+			 	 	   exit;
+		 			}
+		 			update_extended_goods($good_id, $cat_extended_id);
+		 		}
+
+		 		if(!empty($user_price) && !empty($rank_ids))
+		 		{
+		 			 handle_member_price($good_id, $user_price, $rank_ids);
+		 		}
+
+				if(!empty($volume_number) && !empty($volume_price))
+			 	{
+			 		 handle_volume_price($good_id, $volume_number, $volume_price);
+			 	}
+
+
 		 		if((isset($data['attr_id_list']) && isset($data['attr_value_list'])) || (empty($data['attr_id_list']) && empty($data['attr_value_list']))) 
 		 		{
 			 	 	
@@ -432,67 +464,68 @@ class GoodController extends PublicController
 
 					if(!empty($attr_value_list)) 
 					{
-						$keywords = explode('|', trim($data['keywords'],'|'));
-						$keywords = array_flip($keywords);
+							$keywords = explode('|', trim($data['keywords'],'|'));
+							$keywords = array_flip($keywords);
 
-						if(isset($keywords[''])) 
-						{
-							 unset($keywords['']);
-						}
-		 		 		foreach($attr_id_list as $key => $attr_id) 
-		 		 		{
-		 	 				$attr_value = $attr_value_list[$key];
-		 	 				$attr_price = $attr_price_list[$key];
-		 	 				if(!empty($attr_value))
-		 	 				{
-		 	 					if(isset($good_attr_list[$attr_id][$attr_value]))
-			 	 				{
-			 	 					$good_attr_list[$attr_id][$attr_value]['type'] = 'update';
-			 	 				}
-			 	 				else 
-			 	 				{
-			 	 					$good_attr_list[$attr_id][$attr_value]['type'] = 'insert';
-			 	 				}
-			 	 				$good_attr_list[$attr_id][$attr_value]['attr_price'] = $attr_price;
-		 	 				}
-		 	 				
-						 	if(!isset($keywords[$attr_value]) && $attr_list[$attr_id] == 1)
-						 	{
-					 	 	 	 $keywords[$attr_value] = "k$attr_id";
-					 	    }
-				 	 	 }
-			 	 		$keywords = implode('|',array_flip($keywords));
-	 	       			 M('goods')->where(['id'=>$gid])->setField('keywords', $keywords);		
+							if(isset($keywords[''])) 
+							{
+								 unset($keywords['']);
+							}
+			 		 		foreach($attr_id_list as $key => $attr_id) 
+			 		 		{
+				 	 				$attr_value = $attr_value_list[$key];
+				 	 				$attr_price = $attr_price_list[$key];
+				 	 				if(!empty($attr_value))
+				 	 				{
+					 	 					if(isset($good_attr_list[$attr_id][$attr_value]))
+						 	 				{
+						 	 					$good_attr_list[$attr_id][$attr_value]['type'] = 'update';
+						 	 				}
+						 	 				else 
+						 	 				{
+						 	 					$good_attr_list[$attr_id][$attr_value]['type'] = 'insert';
+						 	 				}
+						 	 				$good_attr_list[$attr_id][$attr_value]['attr_price'] = $attr_price;
+				 	 				}
+			 	 				
+								 	if(!isset($keywords[$attr_value]) && $attr_list[$attr_id] == 1)
+								 	{
+							 	 	 	 $keywords[$attr_value] = "k$attr_id";
+							 	  }
+					 	 	 }
+
+				 	 		     $keywords = implode('|',array_flip($keywords));
+		 	       			 M('goods')->where(['id'=>$gid])->setField('keywords', $keywords);		
 					}
 			 	 				 	 		
 				 	 foreach($good_attr_list as $attr_id => $attr_value_arr) 
 				 	 {
-				 	 	 foreach($attr_value_arr as $attr_value => $value) 
-				 	 	 {
-				 	 	 		if($value['type'] == 'update') 
-				 	 	 		{
-				 	 	 			 M('goodAttrs')->save([
-				 	 	 			 	 'attr_id' => $attr_id,
-				 	 	 			 	 'attr_value' => $attr_value,
-				 	 	 			 	 'good_id' => $good_id,
-				 	 	 			 	 'id' => $value['good_attr_id'],
-				 	 	 			 	 'attr_price' => $value['attr_price']
-				 	 	 			 ]);
-				 	 	 		}
-				 	 	 		elseif($value['type'] == 'insert') 
-				 	 	 		{
-				 	 	 			 M('goodAttrs')->add([
-				 	 	 			 	 'attr_id' => $attr_id,
-				 	 	 			 	 'attr_value' => $attr_value,
-				 	 	 			 	 'good_id' => $good_id,
-				 	 	 			 	 'attr_price' => $value['attr_price']
-				 	 	 			 ]);
-				 	 	 		}
-				 	 	 		else 
-				 	 	 		{
-				 	 	 			  M('goodAttrs')->delete($value['good_attr_id']);
-				 	 	 		}
-				 	 	 }
+					 	 	 foreach($attr_value_arr as $attr_value => $value) 
+					 	 	 {
+						 	 	 		if($value['type'] == 'update') 
+						 	 	 		{
+						 	 	 			 M('goodAttrs')->save([
+						 	 	 			 	 'attr_id' => $attr_id,
+						 	 	 			 	 'attr_value' => $attr_value,
+						 	 	 			 	 'good_id' => $good_id,
+						 	 	 			 	 'id' => $value['good_attr_id'],
+						 	 	 			 	 'attr_price' => $value['attr_price']
+						 	 	 			 ]);
+						 	 	 		}
+						 	 	 		elseif($value['type'] == 'insert') 
+						 	 	 		{
+						 	 	 			 M('goodAttrs')->add([
+						 	 	 			 	 'attr_id' => $attr_id,
+						 	 	 			 	 'attr_value' => $attr_value,
+						 	 	 			 	 'good_id' => $good_id,
+						 	 	 			 	 'attr_price' => $value['attr_price']
+						 	 	 			 ]);
+						 	 	 		}
+						 	 	 		else 
+						 	 	 		{
+						 	 	 			  M('goodAttrs')->delete($value['good_attr_id']);
+						 	 	 		}
+					 	 	 }
 				 	 }
 			 	}
 		 	  $this->redirect('index');
@@ -504,13 +537,16 @@ class GoodController extends PublicController
 	{	
 		 	  $is_add = I('get.act') == 'add' ? true : false;
 		 	  $is_update = I('get.act') == 'update' ? true : false;
-		 	  if(!$is_add) {
-		 	  	if(empty($good_id = I('good_id'))) {
+		 	  if(!$is_add)
+		 	  {
+		 	  	if(empty($good_id = I('good_id')))
+		 	  	{
 			 	  	$this->error('错误');
 			 	  	exit;
-		 	 	}
+		 	 		}
 		 	  }
-		 		if($is_add) {
+		 		if($is_add)
+		 		{
 		 			 $good = array(
 		 			 	 'good_name' => '',
 		 			 	 'good_sn' => '',
@@ -529,7 +565,11 @@ class GoodController extends PublicController
 		 			 	 'id' => 0,
 		 			 	 'name_style_color' => '',
 		 			 	 'name_style_font' => '',
-		 			 	 'brand_id' => 0
+		 			 	 'brand_id' => 0,
+		 			 	 'give_integral' => 0,
+		 			 	 'rank_integral' => 0,
+		 			 	 'integral' => 0,
+		 			 	 'good_desc' => ''
 		 			 );		 
 		 			 $this->assign('act', 'act_insert');
 		 			 $this->assign('extend_cats', [getCategories(0, false)]);
@@ -537,26 +577,45 @@ class GoodController extends PublicController
 		 			 $this->assign('form_header', 'add');
 		 		}
 
-		 		if($is_update) {
-		 			 $good = M('goods')->find($good_id);
-		 			 $style = explode('|', $good['good_name_style']);
-		 			 $good['name_style_color'] = $style[0];
-		 			 $good['name_style_font'] = $style[1];
-		 			 $extend_cat_ids = M('goodExtendedCats')->where(['good_id'=>$good_id])->getField('cat_id', true);
-		 			 $extend_cats = [];
-		 			 foreach($extend_cat_ids as $cat_id) {
-		 			 	$extend_cats[] = getCategories(0, false, $cat_id);
-		 			 }
-		 			 $this->assign('extend_cats', $extend_cats);
-		 			 $this->assign('form_header', 'update');
-		 			 $this->assign('cates', getCategories(0, false, $good['cat_id']));
-		 			 $this->assign('act', 'act_update');
+		 		if($is_update)
+		 		{
+			 			 $good = M('goods')->find($good_id);
+			 			 $style = explode('|', $good['good_name_style']);
+			 			 $good['name_style_color'] = $style[0];
+			 			 $good['name_style_font'] = $style[1];
+			 			 $extend_cat_ids = M('goodExtendedCats')->where(['good_id'=>$good_id])->getField('cat_id', true);
+			 			 $extend_cats = [];
+			 			 foreach($extend_cat_ids as $cat_id)
+			 			 {
+			 			 	 $extend_cats[] = getCategories(0, false, $cat_id);
+			 			 }
+
+			 			 $this->assign('extend_cats', $extend_cats);
+			 			 $this->assign('form_header', 'update');
+			 			 $this->assign('cates', getCategories(0, false, $good['cat_id']));
+			 			 $this->assign('act', 'act_update');
 		 		}
+
+		 	 $this->rank_list = M('userRank')->field(['id', 'rank_name'])->select();
+		 	 if($is_update)
+		 	 {
+			 		 $memPrices = M('memberPrice')->field(['user_rank', 'member_price'])->where(['good_id'=>$good_id])->select();
+			 		 $mPrices = array();
+			 		 foreach($memPrices as $price)
+			 		 {
+			 		 	 $mPrices[$price['user_rank']] = $price['member_price'];
+			 		 }
+			 		 $this->assign('mPrices', $mPrices);
+		 	 
+			 		 $this->volumes = M('volumePrice')->field(['volume_number', 'volume_price'])->where(['price_type'=>1, 'good_id'=>$good_id])->select();
+		 	 }
+
 		 	 $this->assign('good', $good);
 		 	 $brands = M('brands')->field(['id', 'brand_name'])->where(['if_show'=>1])->order('sort_order desc, id')->select();
 		 	 $this->assign('brands', $brands);
 			 $options = M('goodAttrTypes')->where(['status'=>1])->select();
 			 $this->assign('options', $options);
+
 			 $this->display();
 	}
 
@@ -580,47 +639,38 @@ class GoodController extends PublicController
 		 $this->display();
 	}
 
-	function show()
-	{
-		$id = I('request.id');
-		$id = $id ? $id : 0; 
-		if($id === 0) {
-			$this->error('粗无');
-			exit;
-		}
-
-		/*$good = M('goods')
-		  ->alias('g')
-			->join('', 'left')*/
-		$this->assign('good', $good);
-		$this->display();
-	}
-
 	function modifyAttr()
 	{
 
-		$id = I('request.id');
-		$id = $id ? $id : 0; 
-		if($id === 0) {
-			$this->error('粗无');
-			exit;
-		}
-		if(IS_POST) {
-			$model = M('attribute');
-			$model->create();
-			if($model->save()) {
-				$this->success('更新成功');
-			}else {
-				$this->error('更新失败');
+			$id = I('request.id');
+			$id = $id ? $id : 0; 
+			if($id === 0)
+			{
+				$this->error('粗无');
+				exit;
 			}
-		}else {
-			$attr = M('attribute')
-			 ->find($id);
-			$this->assign('attr', $attr);
-			$this->display();
-		}
+			if(IS_POST)
+			{
+					$model = M('attribute');
+					$model->create();
+					if($model->save())
+					{
+							$this->success('更新成功');
+					}
+					else
+					{
+							$this->error('更新失败');
+					}
+			}
+			else
+			{
+				$attr = M('attribute')->find($id);
+				$this->assign('attr', $attr);
+				$this->display();
+			}
 	}
 }
+
 
 
 function getAllAttrs()
@@ -633,11 +683,10 @@ function getAllAttrs()
 	->select();
 	$list = array();
 
-	foreach($attrs as $k => $val) {
+	foreach($attrs as $k => $val)
+	{
 		$list[$val['type_id']][] = [$val['id']=>$val['attribute_name']];
 	}
-
-
 	return $list;
 }
 
@@ -645,7 +694,8 @@ function getTypeList($selected)
 {
 	$types = M('goodAttrTypes')->field(['type_name', 'id'])->where(['status'=>1])->select();
 	$options = '';
-	foreach($types as $type) {
+	foreach($types as $type)
+	{
 		$options .= '<option value="'.$type['id'].'" '.($selected == $type['id'] ? 'selected' : '').'>'.$type['type_name'].'</option>';
 	}
 	return $options;

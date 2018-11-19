@@ -34,7 +34,6 @@
 					</select>
 			</div>
 			
-
 			<div class="form-group">
 				<label for="">商品品牌</label>
 				<select name="brand_id" class="form-control">
@@ -85,36 +84,58 @@
 				<input type="text" name="price" value="{$good.price}" class="form-control">
 			</div>
 
+			<div class="from-group">
+				<label for="">会员价格</label>
+					<foreach name="rank_list" item="rank_item">
+						<div>
+							{$rank_item.rank_name}: <input type="text" name="user_price[]" value="{$mPrices[$rank_item['id']]|default="-1"}">
+							<input type="hidden" name="rank_id[]" value="{$rank_item.id}">
+						</div>
+				</foreach>
+			</div>
+
+			<div class="from-group">
+				<label for="">优惠数量</label>
+				<if condition="$volumes">
+					<foreach name="volumes" item="volum">
+							<div>
+									<span onclick="addVolume(this)">[+]</span>数量 <input type="text" name="volume_number[]" value="{$volum.volume_number}"> 价格<input type="text" name="volume_price[]" value="{$volum.volume_price}">
+							</div>
+			  	</foreach>
+			  <else/>
+			  		<div>
+			   			<span onclick="addVolume(this)">[+]</span>数量 <input type="text" name="volume_number[]" value=""> 价格<input type="text" name="volume_price[]" value="">
+			   		</div>
+			  </if>
+			</div>
+
 			<div class="form-group">
 				<label for="">推荐</label>
 				<div class="checkbox">
 					<label>
-						<eq name="good.is_best" value="1">
-							<input type="checkbox" name="is_best" checked>
-						 <else/>
-							<input type="checkbox" name="is_best">
-					  </eq>
+							<input type="checkbox" name="is_best" <eq name="good.is_new" value="1">checked</eq>>
 						精品
 					</label>
 					<label>
-						<eq name="good.is_hot" value="1">
-							<input type="checkbox" name="is_hot" checked>
-						 <else/>
-							<input type="checkbox" name="is_hot">
-					  </eq>
+							<input type="checkbox" name="is_hot" <eq name="good.is_new" value="1">checked</eq>>
 						热销
 					</label>
 					<label>
-						<eq name="good.is_new" value="1">
-							<input type="checkbox" name="is_new" checked>
-						 <else/>
-							<input type="checkbox" name="is_new">
-					  </eq>
+							<input type="checkbox" name="is_new" <eq name="good.is_new" value="1">checked</eq>>
 						新品 
 					</label>
 				</div>
 			</div>
 			
+			<div class="form-group">
+				<label for="">免邮?</label>
+				<div class="checkbox">
+					<label>
+						<input type="checkbox" name="is_shipping" <eq name="good.is_shipping" value="1">checked</eq>>
+						是否免邮
+					</label>
+				</div>
+			</div>
 			
 			<div class="form-group">
 				<label for="">促销价格</label>
@@ -128,6 +149,21 @@
 			<div class="form-group">
 				<label for="">促销结束</label>
 				<input type="text" name="promotion_end"　value="{$good.promotion_end}"  class="form-control" id="">
+			</div>
+			
+			<div class="form-group">
+				<label for="">赠送积分</label>
+				<input type="text" name="give_integral" value="{$good.give_integral}" class="form-control">
+			</div>
+
+			<div class="form-group">
+				<label for="">等级积分</label>
+				<input type="text" name="rank_integral" value="{$good.rank_integral}" class="form-control">
+			</div>
+
+			<div class="form-group">
+				<label for="">积分抵现</label>
+				<input type="text" name="integral" value="{$good.integral}" class="form-control">
 			</div>
 
 			<div class="form-group">
@@ -143,6 +179,11 @@
 			<div class="form-group">
 				<label for="">关键字</label>
 				<input type="text" name="keywords"　value="{$good.keywords}"  class="form-control" id="">
+			</div>
+
+			<div class="form-group">
+				<label for="">商品描述</label>
+				{$FCKeditor}
 			</div>
 
 			<div class="form-group">
@@ -167,8 +208,9 @@
 	</form>
 </block>
 <block name="script">
-	<script>
 	
+	<script>
+		
 		var href = '{:U("Good/getAttrHtml")}'.replace('.html', '');
 		var good_id = parseInt($('input[name="good_id"]').val());
 
@@ -211,6 +253,13 @@
 			$(obj).parent().remove();
 			return false;
 		}
+
+		function addVolume(obj)
+		{
+			 var html = $(obj).parent().html().replace(/(value\s*=\s*")([^"]*)(")/g, '$1$3');
+			 $('<div>').html(html).appendTo($(obj).parent().parent());
+		}
+
 	</script>
 	
 </block>

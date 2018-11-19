@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.7.9
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 18, 2018 at 02:49 PM
--- Server version: 5.7.19
--- PHP Version: 5.6.31
+-- Generation Time: Nov 19, 2018 at 09:29 AM
+-- Server version: 5.7.21
+-- PHP Version: 5.6.35
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -246,6 +246,11 @@ CREATE TABLE IF NOT EXISTS `goods` (
   `is_alone_sale` tinyint(1) NOT NULL DEFAULT '1',
   `brand_id` int(11) NOT NULL DEFAULT '0',
   `last_update` int(11) NOT NULL,
+  `give_integral` int(11) NOT NULL DEFAULT '0',
+  `rank_integral` int(11) NOT NULL DEFAULT '0',
+  `integral` int(11) NOT NULL DEFAULT '0',
+  `is_shipping` tinyint(1) NOT NULL DEFAULT '1',
+  `good_desc` text,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
@@ -253,11 +258,11 @@ CREATE TABLE IF NOT EXISTS `goods` (
 -- Dumping data for table `goods`
 --
 
-INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`, `brand_id`, `last_update`) VALUES
-(1, 'Holy Bible', '#f00|em', 'gn201811106869915', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1, 0, 1541838405),
-(2, 'iphone Max(512G)', '|', 'gn201811103322215', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '9688', '0', 0, 0, 0, 1, 1, 1, 1541830344),
-(13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 1, 50, 0, '', 0, 0, 0, 22, 0, '0', '5800', '0', 0, 0, 0, 1, 1, 0, 1541830000),
-(14, '华为 Mate20', '|', 'gn201811185898715', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '0', '4666', '0', 0, 0, 0, 1, 1, 0, 1542520953);
+INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`, `brand_id`, `last_update`, `give_integral`, `rank_integral`, `integral`, `is_shipping`, `good_desc`) VALUES
+(1, 'Holy Bible', '#f00|em', 'gn201811106869915', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1, 0, 1541838405, 0, 0, 0, 1, NULL),
+(2, 'iphone Max(512G)', '|', 'gn201811103322215', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '9688', '0', 0, 0, 0, 1, 1, 1, 1541830344, 0, 0, 0, 1, NULL),
+(13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 1, 50, 0, '', 0, 0, 0, 22, 0, '0', '5800', '0', 0, 0, 0, 1, 1, 0, 1541830000, 0, 0, 0, 1, NULL),
+(14, '华为 Mate20', '|', 'gn201811195545915', 3, 1, 50, 4, '', 1, 0, 1, 0, 0, '0', '4666', '0', 0, 0, 0, 1, 1, 0, 1542611137, 100, 0, 0, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -355,7 +360,15 @@ CREATE TABLE IF NOT EXISTS `member_price` (
   `user_rank` int(11) NOT NULL,
   `member_price` decimal(10,0) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `member_price`
+--
+
+INSERT INTO `member_price` (`id`, `good_id`, `user_rank`, `member_price`) VALUES
+(1, 14, 2, '4567'),
+(2, 14, 3, '4400');
 
 -- --------------------------------------------------------
 
@@ -398,7 +411,7 @@ CREATE TABLE IF NOT EXISTS `my_users` (
 --
 
 INSERT INTO `my_users` (`id`, `username`, `email`, `phone`, `status`, `user_money`, `frozen_moeny`, `rank_points`, `pay_points`, `affiliate_id`, `password`, `user_salt`, `salt`, `sex`, `birthday`, `qq`, `pwd_question`, `office_phone`, `home_phone`, `pwd_question_answer`, `reg_time`, `last_login_time`, `last_login_ip`, `rank_id`, `visit_counts`) VALUES
-(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '您的爸爸姓名?', '', '', '袁德坤', 1, 1542269379, '0.0.0.0', 0, 6);
+(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '您的爸爸姓名?', '', '', '袁德坤', 1, 1542591997, '0.0.0.0', 0, 7);
 
 -- --------------------------------------------------------
 
@@ -513,6 +526,30 @@ INSERT INTO `user_rank` (`id`, `rank_name`, `discount`, `min_points`, `max_point
 (1, '注册会员', 100, 0, 10000, 1, 0),
 (2, 'VIP会员', 95, 10000, 10000000, 1, 0),
 (3, '代销用户', 90, 0, 0, 0, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `volume_price`
+--
+
+DROP TABLE IF EXISTS `volume_price`;
+CREATE TABLE IF NOT EXISTS `volume_price` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `price_type` tinyint(1) NOT NULL,
+  `volume_number` smallint(6) NOT NULL,
+  `volume_price` decimal(10,0) NOT NULL,
+  `good_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `volume_price`
+--
+
+INSERT INTO `volume_price` (`id`, `price_type`, `volume_number`, `volume_price`, `good_id`) VALUES
+(6, 1, 2, '4600', 14),
+(5, 1, 3, '4580', 14);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

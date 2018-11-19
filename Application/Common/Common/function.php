@@ -945,3 +945,50 @@ function get_good_properties($good_id)
       }
       return $list;
 }
+
+function handle_member_price($good_id, $user_price, $rank_ids)
+{
+    foreach($rank_ids as $key => $r_id)
+    {
+        $u_price = $user_price[$key];
+
+        $cnt = M('memberPrice')
+         ->field('id')
+         ->where(['good_id'=>$good_id, 'user_rank'=>$r_id])
+         ->find();
+
+        if($cnt)
+        {
+            if($u_price == -1)
+            {
+                M('memberPrice')->delete($cnt['id']);
+            }
+            else
+            {
+                M('memberPrice')->save(['id'=> $cnt['id'], 'good_id'=>$good_id, 'user_rank'=>$r_id, 'member_price'=>$u_price]);
+            }
+        }
+        else
+        {
+            if($u_price >= 0)
+            {
+                M('memberPrice')->add(['good_id'=>$good_id, 'user_rank'=>$r_id, 'member_price'=> $u_price]);
+            }
+        }
+    }
+}
+
+function handle_volume_price($good_id, $volume_number, $volume_price)
+{
+    M('volumePrice')->where(['price_type'=>1, 'good_id'=>$good_id])->delete();
+
+    foreach($volume_number as $k => $v_number)
+    {
+        $v_price = $volume_price[$k];
+        if($v_price)
+        {
+             M('volumePrice')->add(['price_type'=>1, 'good_id'=>$good_id, 'volume_number'=>$v_number, 'volume_price'=> $v_price]);
+        }
+    }
+}
+
