@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 19, 2018 at 09:29 AM
+-- Generation Time: Nov 22, 2018 at 09:58 AM
 -- Server version: 5.7.21
 -- PHP Version: 5.6.35
 
@@ -104,6 +104,31 @@ INSERT INTO `attribute` (`id`, `type_id`, `attribute_name`, `status`, `input_val
 (40, 4, '彩信/彩e', 1, 1, 1, '', 0, ''),
 (41, 4, '红外/蓝牙', 1, 1, 1, '', 0, ''),
 (42, 4, '价格等级', 1, 1, 1, '', 0, '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bonus`
+--
+
+DROP TABLE IF EXISTS `bonus`;
+CREATE TABLE IF NOT EXISTS `bonus` (
+  `id` smallint(6) NOT NULL AUTO_INCREMENT,
+  `bonus_name` varchar(30) NOT NULL,
+  `bonus_money` decimal(10,2) NOT NULL,
+  `min_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `send_type` tinyint(3) NOT NULL,
+  `min_goods_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `bonus`
+--
+
+INSERT INTO `bonus` (`id`, `bonus_name`, `bonus_money`, `min_amount`, `send_type`, `min_goods_amount`) VALUES
+(1, '线下红包', '5.00', '360.00', 3, '0.00'),
+(2, '订单红包', '20.00', '800.00', 2, '1500.00');
 
 -- --------------------------------------------------------
 
@@ -251,6 +276,7 @@ CREATE TABLE IF NOT EXISTS `goods` (
   `integral` int(11) NOT NULL DEFAULT '0',
   `is_shipping` tinyint(1) NOT NULL DEFAULT '1',
   `good_desc` text,
+  `good_img` varchar(80) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
@@ -258,11 +284,11 @@ CREATE TABLE IF NOT EXISTS `goods` (
 -- Dumping data for table `goods`
 --
 
-INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`, `brand_id`, `last_update`, `give_integral`, `rank_integral`, `integral`, `is_shipping`, `good_desc`) VALUES
-(1, 'Holy Bible', '#f00|em', 'gn201811106869915', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1, 0, 1541838405, 0, 0, 0, 1, NULL),
-(2, 'iphone Max(512G)', '|', 'gn201811103322215', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '9688', '0', 0, 0, 0, 1, 1, 1, 1541830344, 0, 0, 0, 1, NULL),
-(13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 1, 50, 0, '', 0, 0, 0, 22, 0, '0', '5800', '0', 0, 0, 0, 1, 1, 0, 1541830000, 0, 0, 0, 1, NULL),
-(14, '华为 Mate20', '|', 'gn201811195545915', 3, 1, 50, 4, '', 1, 0, 1, 0, 0, '0', '4666', '0', 0, 0, 0, 1, 1, 0, 1542611137, 100, 0, 0, 0, NULL);
+INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`, `brand_id`, `last_update`, `give_integral`, `rank_integral`, `integral`, `is_shipping`, `good_desc`, `good_img`) VALUES
+(1, 'Holy Bible', '#f00|em', 'gn201811106869915', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0', '0', 0, 0, 0, 1, 1, 0, 1541838405, 0, 0, 0, 1, NULL, ''),
+(2, 'iphone Max(512G)', '|', 'gn201811103322215', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '9688', '0', 0, 0, 0, 1, 1, 1, 1541830344, 0, 0, 0, 1, NULL, ''),
+(13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 1, 50, 0, '', 0, 0, 0, 22, 0, '0', '5800', '0', 0, 0, 0, 1, 1, 0, 1541830000, 0, 0, 0, 1, NULL, ''),
+(14, '华为 Mate20', '|', 'gn201811222166315', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '0', '4666', '0', 0, 0, 0, 1, 1, 0, 1542858346, 100, 0, 0, 0, NULL, 'uploads/201811/1542858346943517994372834378501352208447.jpg');
 
 -- --------------------------------------------------------
 
@@ -503,6 +529,22 @@ INSERT INTO `system_config` (`id`, `config_name`, `config_title`, `config_value`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `user_bonus`
+--
+
+DROP TABLE IF EXISTS `user_bonus`;
+CREATE TABLE IF NOT EXISTS `user_bonus` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `bonus_type` smallint(6) NOT NULL,
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `bonus_sn` bigint(20) NOT NULL DEFAULT '0',
+  `used` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `user_rank`
 --
 
@@ -541,15 +583,15 @@ CREATE TABLE IF NOT EXISTS `volume_price` (
   `volume_price` decimal(10,0) NOT NULL,
   `good_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `volume_price`
 --
 
 INSERT INTO `volume_price` (`id`, `price_type`, `volume_number`, `volume_price`, `good_id`) VALUES
-(6, 1, 2, '4600', 14),
-(5, 1, 3, '4580', 14);
+(12, 1, 3, '4580', 14),
+(11, 1, 2, '4600', 14);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

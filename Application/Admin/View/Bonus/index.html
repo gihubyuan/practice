@@ -1,0 +1,32 @@
+<extend name="public:base" />
+
+<block name="body">
+		<div class="table-responsive">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>类型名称</th>
+						<th>金额</th>
+						<th>发放类型</th>
+						<th>最小订单金额</th>
+						<th>发送数量</th>
+						<th>使用数量</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="bonus_arr" item="bonus_item">
+						<tr>
+							<td>{$bonus_item.bonus_name}</td>
+							<td>{$bonus_item.bonus_money}</td>
+							<td>{$bonus_item.send_type}</td>
+							<td>{$bonus_item.min_amount}</td>
+							<td>{$bonus_item.send_num}</td>
+							<td>{$bonus_item.used_num}</td>
+							<td><a href="{:U('Bonus/send', array('type'=>$bonus['id']))}">发放</a></td>
+						</tr>
+					</foreach>
+				</tbody>
+			</table>
+		</div>
+</block>

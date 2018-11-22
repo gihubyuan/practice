@@ -992,3 +992,151 @@ function handle_volume_price($good_id, $volume_number, $volume_price)
     }
 }
 
+function check_file_type($file, $real_file, $allow_types)
+{
+    if($real_file)
+    {
+        $ext = substr($real_file, strrpos($real_file, '.') + 1);
+    }
+    else
+    {
+        $ext = substr($file, strrpos($file, '.') + 1);
+    }
+
+    if($ext && stripos($allow_types, '|' . $ext . '|') === false)
+    {
+        return false;
+    }
+
+    $fhr = fopen($file, 'rb');
+
+    if(!$fhr)
+    {
+        return false;
+    }
+
+    $str = fread($fhr, 0x400);
+    @fclose($fhr);
+
+    $type = '';
+    if(isset($str{2}))
+    {
+        if (substr($str, 0, 4) == 'MThd' && $ext != 'txt')
+            {
+                $type = 'mid';
+            }
+            elseif (substr($str, 0, 4) == 'RIFF' && $ext == 'wav')
+            {
+                $type = 'wav';
+            }
+            elseif (substr($str ,0, 3) == "\xFF\xD8\xFF")
+            {
+                $type = 'jpg';
+            }
+            elseif (substr($str ,0, 4) == 'GIF8' && $ext != 'txt')
+            {
+                $type = 'gif';
+            }
+            elseif (substr($str ,0, 8) == "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A")
+            {
+                $type = 'png';
+            }
+            elseif (substr($str ,0, 2) == 'BM' && $ext != 'txt')
+            {
+                $type = 'bmp';
+            }
+            elseif ((substr($str ,0, 3) == 'CWS' || substr($str ,0, 3) == 'FWS') && $ext != 'txt')
+            {
+                $type = 'swf';
+            }
+            elseif (substr($str ,0, 4) == "\xD0\xCF\x11\xE0")
+            {   // D0CF11E == DOCFILE == Microsoft Office Document
+                if (substr($str,0x200,4) == "\xEC\xA5\xC1\x00" || $ext == 'doc')
+                {
+                    $type = 'doc';
+                }
+                elseif (substr($str,0x200,2) == "\x09\x08" || $ext == 'xls')
+                {
+                    $type = 'xls';
+                } elseif (substr($str,0x200,4) == "\xFD\xFF\xFF\xFF" || $ext == 'ppt')
+                {
+                    $type = 'ppt';
+                }
+            } 
+            elseif (substr($str ,0, 4) == "PK\x03\x04")
+            {
+                if (substr($str,0x200,4) == "\xEC\xA5\xC1\x00" || $ext == 'docx')
+                {
+                    $type = 'docx';
+                }
+                elseif (substr($str,0x200,2) == "\x09\x08" || $ext == 'xlsx')
+                {
+                    $type = 'xlsx';
+                } elseif (substr($str,0x200,4) == "\xFD\xFF\xFF\xFF" || $ext == 'pptx')
+                {
+                    $type = 'pptx';
+                }else
+                {
+                    $type = 'zip';
+                }
+            } 
+            elseif (substr($str ,0, 4) == 'Rar!' && $ext != 'txt')
+            {
+                $type = 'rar';
+            } 
+            elseif (substr($str ,0, 4) == "\x25PDF")
+            {
+                $type = 'pdf';
+            } 
+            elseif (substr($str ,0, 3) == "\x30\x82\x0A")
+            {
+                $type = 'cert';
+            } 
+            elseif (substr($str ,0, 4) == 'ITSF' && $ext != 'txt')
+            {
+                $type = 'chm';
+            } 
+            elseif (substr($str ,0, 4) == "\x2ERMF")
+            {
+                $type = 'rm';
+            }
+        }
+
+        if($type && stripos($allow_types, '|'. $type . '|') !== false)
+        {
+            return true;
+        }
+        return false;
+}
+
+function upload_image($img, $dest_img, $type)
+{
+    $stat = ['has_error'=> false, 'error'=>''];
+    if(!check_file_type($img['tmp_name'], $dest_img, '|jpg|jpeg|png|gif|'))
+    {
+        $stat['has_error'] = true;
+        $stat['error'] = '不允许的类型';
+        return $stat;
+    }
+
+    $dir = './uploads/' . date('Ym') . '/';
+    if(!file_exists($dir))
+    {
+        mkdir($dir, 0777, true);
+    }
+    $newName = time();
+    for($i = 0; $i< 10; $i++)
+    {
+        $newName .= mt_rand(100, 999);
+    }
+    $newName .= '.jpg';
+
+    if(!move_uploaded_file($img['tmp_name'], $dir . $newName))
+    {
+        $stat['has_error'] = true;
+        $stat['error'] = '上传失败,请重新尝试';
+        return $stat;
+    }
+    $stat['path'] = trim($dir . $newName, './');
+    return $stat;
+}

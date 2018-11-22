@@ -348,6 +348,34 @@ class GoodController extends PublicController
 	{
 		 if(IS_POST) 
 		 {
+		 		if(!isset($_FILES['good_img']))
+		 		{
+		 			$this->error("您还没有上传图片");
+		 			exit;
+		 		}
+
+		 		if($_FILES['good_img']['error'] > 0)
+		 		{
+		 			 if($_FILES['good_img']['error'] == 1)
+		 			 {
+		 			 	  $upload_max_filesize = ini_get('upload_max_filesize');
+		 			 		$this->error(sprintf('超过%s规定大小', $upload_max_filesize));
+		 			 }
+
+		 			 if($_FILES['good_img']['error'] == 2)
+		 			 {
+		 			 	  $upload_max_filesize = I('post.MAX_FILE_SIZE');
+		 			 		$this->error(sprintf('超过%s规定大小', $upload_max_filesize));
+		 			 }
+		 		}
+
+		 		$stat = upload_image($_FILES['good_img'],'aa.jpg',  $_FILES['good_img']);
+		 		if($stat['has_error'])
+		 		{
+		 			$this->error($stat['error']);
+		 		}
+
+		 		unset($_POST['MAX_FILE_SIZE']);
 		 		$is_insert = I('post.act') == 'act_insert' ? true : false;
 				$data = I('post.');
 		 		$attr_id_list = !isset($data['attr_id_list']) ? array() : $data['attr_id_list'];
@@ -376,6 +404,7 @@ class GoodController extends PublicController
 		 		$rank_ids = isset($data['rank_id']) ?  $data['rank_id'] : array();
 		 		$volume_number = isset($data['volume_number']) ?  $data['volume_number'] : array();
 		 		$volume_price = isset($data['volume_price']) ?  $data['volume_price'] : array();
+		 		$data['good_img'] = $stat['path'];
 		 		$data['good_name_style'] = $data['name_style_color'] . '|' . $data['name_style_font'];
 				unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id'], $data['cat_extended_id'],$data['user_price'], $data['rank_id'], $data['volume_number'], $data['volume_price']);			 		
 			 		
