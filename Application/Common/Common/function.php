@@ -23,7 +23,6 @@ function check_verify($code, $id = '')
     return $verify->check($code, $id);
 }
 
-
 function build_list_html($arr)
 {
     if(empty($arr)) {
@@ -114,7 +113,7 @@ function get_cate_goods($cat_id, $sort_field, $sort_order, $bid)
     $page = new \Think\Page($goods_num, C('LIMIT_COUNT'));
     $show = $page->show();
     $goods = M('goods')
-             ->field(['id','good_name', 'price'])
+             ->field(['id','good_name', 'shop_price'])
              ->where(array_merge([
                 'deleted' => 0,
                 'is_on_sale' => 1,
@@ -123,11 +122,9 @@ function get_cate_goods($cat_id, $sort_field, $sort_order, $bid)
              ], $map))->order("$sort_field $sort_order")
              ->limit($page->firstRow . ',' . $page->listRows)
              ->select();
-
     
     return compact('goods', 'goods_num', 'show');
 }
-
 
 function getChildren($cat_id, $field = 'cat_id')
 {
@@ -298,13 +295,13 @@ function update_user_info()
                 ->find();
             if($rank)
             {
-                session('user.discount', $rank['discount'] / 100.00);
-                session('user.rank_id', $rank['id']);
+                session('discount', $rank['discount'] / 100.00);
+                session('rank_id', $rank['id']);
             }
             else 
             {
-                session('user.discount', 1);
-                session('user.rank_id', 0);
+                session('discount', 1);
+                session('rank_id', 0);
             }
                
         }
@@ -313,13 +310,13 @@ function update_user_info()
              $rank = M('userRank')->field(['discount', 'id'])->find($user['rank_id']);
              if($rank)
              {
-                session('user.discount', $rank['discount'] / 100.00);
-                session('user.rank_id', $rank['id']);
+                session('discount', $rank['discount'] / 100.00);
+                session('rank_id', $rank['id']);
              }
              else
              {
-                session('user.discount', 1);
-                session('user.rank_id', 0);
+                session('discount', 1);
+                session('rank_id', 0);
              }
             
         }
@@ -1140,3 +1137,24 @@ function upload_image($img, $dest_img, $type)
     $stat['path'] = trim($dir . $newName, './');
     return $stat;
 }
+
+function get_good_info($id)
+{
+    $good = M('goods')
+     ->alias('g')
+     ->field(['g.*', 'b.brand_name', 'c.unit', 'ifnull(avg(ct.comment_rank), 0)'=>'comment_rank', 'ifnull(mp.member_price, '.session('discount') .' * g.shop_price)'=>'rank_price'])
+     ->join('categories c on g.cat_id=c.id', 'left')
+     ->join('brands b on g.brand_id=b.id', 'left')
+     ->join('comments ct on ct.reply_id=g.id and ct.status=1', 'left')
+     ->join('member_price mp on g.id=mp.good_id and mp.user_rank='.session('rank_id'), 'left')
+     ->where(['g.deleted'=>0, 'g.is_on_sale'=>1, 'g.id'=>$id])
+     ->group('g.id')
+     ->select();
+
+     $good = $good[0];
+     $good['comment_rank'] = ceil($good['comment_rank']) == 0 ? 5 : ceil($good['comment_rank']);
+     $good['market_price'] = round($good['market_price']);
+     $good['shop_price'] = round($good['shop_price']);
+     return $good;
+}
+

@@ -3,87 +3,42 @@
 	<link rel="stylesheet" href="__PUBLIC__/css/index.css">
 </block>
 <block name="body">
-	<form action="" id="good-info">
-		<div class="row">
-			<div class="col-md-5">
-				<img src="__PUBLIC__/img/iphone.jpg" class="img-responsive" alt="">
-			</div>
-			<div class="col-md-6">
-				<div class="row">
-					<div class="col-md-6">
+	<div class="media" style="margin-top:50px;">
+		<a class="pull-left" href="#">
+			<img class="media-object" src="__PUBLIC__/img/iphone.jpg"  width="400"  alt="Image">
+		</a>
+		<div class="media-body">
+			<h4 class="media-heading">{$good.good_name_style}</h4>
+			<p style="font-size:26px;">￥{$good.price} 元</p>
+			<p>數量: <input type="text" name="number" value="1"></p>
+			<ul>
+				<foreach name="specification" item="specs" key="attr_id">
+					<li>{$specs.name}</li>
+					<li>
 						<ul>
-							<li class="good-name">
-								{$good.good_name_style}
-							</li>
-							<li>商品货号：{$good.good_sn}</li>
-							<li>商品品牌：苹果</li>
-							<li>上架时间：2018-11-19</li>
-							<li>市场价格：<strike class="text-muted">￥11626元</strike></li>
-							<li>注册用户：<span class="text-danger bold">￥9688元</span></li>
-							<li>商品总价：<span class="text-danger bold">￥9688元</span></li>
-							<li>购买数量：<input type="text" name="good_num" value="1"></li>
+							<foreach name="specs" item="spec">
+								<foreach name="spec" item="spe">
+									<li>
+										<label for="spec_{$spe.gid}">{$spe.label}
+										<if condition="$specs.type eq 2">
+											<input type="radio" name="spec_{$attr_id}" id="spec_{$spe.gid}"> {$spe.price} [<if condition="$spe['price'] lt 0"> 减 {$spe.price|abs} <else/>加 {$spe.price}</if>元]
+										<else/>
+											<input type="checkbox" name="spec_{$attr_id}" id="">
+											{$spe.price} [<if condition="$spe['price'] lt 0"> 减 {$spe.price|abs} <else/>加 {$spe.price}</if>元]
+										</if>
+										</label>
+									</li>
+								</foreach>
+							</foreach>
 						</ul>
-					</div>
-					<div class="col-md-6 right-good">
-						<ul>
-							<li>商品库存： 1230</li>
-							<li>商品重量：0克</li>
-							<li>商品点击数：12</li>
-							<li class="mt20">本店售价：<span class="text-danger bold">￥9688元</span></li>
-							<li>vip：<span class="text-danger bold">￥9204元</span></li>
-							<li>购买此商品赠送：200 积分</li>
-							<li>购买此商品可使用：9600 积分</li>
-						</ul>
-					</div>
-						<div class="col-md-12">
-							<div class="table-responsive">
-								<table class="table table-hover table-bordered">
-									<thead>
-										<tr>
-											<th>数量</th>
-											<th>优惠价格</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>2</td>
-											<td>2666</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-						<div class="col-md-12" style="padding-top:10px;border-top:1px solid #ccc;">
-							<strong>颜色</strong>
-							<div class="checkbox">
-								<label>
-									<input type="checkbox" value="">
-									Checkbox
-								</label>
-							</div>
-							<div class="checkbox">
-								<label>
-									<input type="checkbox" value="">
-									Checkbox
-								</label>
-							</div>
-					 </div>
-					 <div class="col-md-12" style="padding-top:10px;border-top:1px solid #ccc;">
-							<strong>颜色</strong>
-							<div class="radio">
-								<label>
-									<input type="radio" name="" id="input" value="" checked="checked">
-									Radio Box
-								</label>
-							</div>
-					 </div>
-					<div class="col-md-12" style="padding-top:10px;border-top:1px solid #ccc;">
-					 	  <button class="btn btn-danger">立刻购买</button>
-					 </div>
-				</div>
-			</div>
+				    </li>
+				</foreach>
+			</ul>
+
+			<button type="button" class="btn btn-info">加入购物车</button>
 		</div>
-	</form>
+	</div>
+
 
 	<div role="tabpanel" style="margin:100px 0;">
 		<!-- Nav tabs -->

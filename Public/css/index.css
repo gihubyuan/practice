@@ -4,6 +4,12 @@ ul,li {
 .bold {
 	font-weight: bold;
 }
+.mt30 {
+	margin-top: 30px;
+}
+.mt20 {
+	margin-top: 20px;
+}
 .sidebar-navs {
 	padding: 10px 0;
 	background: #535556;
@@ -13,7 +19,6 @@ ul,li {
 	margin: 0;
 	padding: 0;
 }
-
 .sidebar-navs a {
 	display: block;
 	color: #f5f5f5;
@@ -21,12 +26,10 @@ ul,li {
 	text-align: center;
 	text-decoration: none;
 }
-
 .sort-panel a {
 	float: right;
 	margin-left: 5px;
 }
-
 .prev, .num, .current, .next {
 	position: relative;
     float: left;
@@ -38,7 +41,6 @@ ul,li {
     background-color: #fff;
     border: 1px solid #ddd;
 }
-
 .current {
 	 z-index: 2;
     color: #fff;
@@ -70,4 +72,18 @@ ul,li {
 	background: #f5f5f5;
 	box-shadow: 1px 1px 2px rgba(0, 0, 0, .6);
 }
-
+#good-info ul {
+	padding: 0;
+}
+#good-info .good-name {
+	font-size: 22px;
+}
+#good-info li {
+	padding: 6px 0;
+}
+#good-info .right-good ul {
+	padding-top: 45px;
+}
+#good-info .right-good li {
+	padding: 4px 0;
+}
