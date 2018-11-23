@@ -1,5 +1,4 @@
 <?php
-
 function P($a, $getVar = false)
 {
     echo '<pre>';
@@ -14,7 +13,6 @@ function P($a, $getVar = false)
         print_r($a);
         echo '</pre>';
     }
-   
 }
 
 function check_verify($code, $id = '')
@@ -23,10 +21,10 @@ function check_verify($code, $id = '')
     return $verify->check($code, $id);
 }
 
-
 function build_list_html($arr)
 {
-    if(empty($arr)) {
+    if(empty($arr))
+    {
         return '';
     }
     $html = '<ul>';
@@ -49,7 +47,6 @@ function getStyleName($name, $style)
     {
         $name = '<font style="color:'.$styles[0].';">' . $name . '</font>';
     }
-
     if(isset($styles[1]))
     {
         $name = "<$styles[1]>" . $name . "</$styles[1]>";
@@ -71,6 +68,7 @@ function build_uri($root, $id = 0, $sort_field = '', $sort_order = '', $brand_id
 
     extract(array_merge($args, compact('id', 'sort_field', 'sort_order', 'brand_id')));
     $url = "Home/Category/$root";
+
     if(!empty($id))
     {
         $url .= "/id/$id";
@@ -87,7 +85,6 @@ function build_uri($root, $id = 0, $sort_field = '', $sort_order = '', $brand_id
     {
         $url .= "/brand_id/$brand_id";
     }
-    
     if(!empty($page))
     {
         $url .= "/p/$page";
@@ -103,7 +100,6 @@ function get_cate_goods($cat_id, $sort_field, $sort_order, $bid)
     {
         $map['brand_id'] = $bid;
     }
-    
     $goods_num =  M('goods')
              ->where(array_merge([
                 'deleted' => 0,
@@ -111,10 +107,12 @@ function get_cate_goods($cat_id, $sort_field, $sort_order, $bid)
                 'is_alone_sale' => 1,
                 '_string' => getChildren($cat_id)
              ], $map))->count();
+
     $page = new \Think\Page($goods_num, C('LIMIT_COUNT'));
     $show = $page->show();
+
     $goods = M('goods')
-             ->field(['id','good_name', 'price'])
+             ->field(['id','good_name', 'shop_price'])
              ->where(array_merge([
                 'deleted' => 0,
                 'is_on_sale' => 1,
@@ -124,10 +122,8 @@ function get_cate_goods($cat_id, $sort_field, $sort_order, $bid)
              ->limit($page->firstRow . ',' . $page->listRows)
              ->select();
 
-    
     return compact('goods', 'goods_num', 'show');
 }
-
 
 function getChildren($cat_id, $field = 'cat_id')
 {
@@ -178,8 +174,6 @@ function login($username, $password, $remember)
     }
 }
 
-
-
 function update_extended_goods($good_id, $idArray)
 {
     $cat_ids = M('goodExtendedCats')->where(['good_id'=>$good_id])->getField('cat_id', true);
@@ -189,9 +183,7 @@ function update_extended_goods($good_id, $idArray)
     {
         M('goodExtendedCats')->where(['cat_id'=>['in', $deleteArray]])->delete();
     }
-
     $addArray = array_diff($idArray, $cat_ids, array(0));
-    
     if(!empty($addArray))
     {
         foreach($addArray as $aid)
@@ -199,9 +191,7 @@ function update_extended_goods($good_id, $idArray)
             M('goodExtendedCats')->add(['good_id'=>$good_id, 'cat_id'=>$aid]);
         }
     }
-    
 }
-
 
 function register($data)
 {
@@ -210,59 +200,56 @@ function register($data)
     $data['office_phone'] = !empty($data['extend_field3']) ? $data['extend_field3'] :'';
     $data['pwd_question'] = !empty($data['extend_field4']) ? compile_str($data['extend_field4']) :'';
     $data['pwd_question_answer'] = !empty($data['pwd_question_answer']) ? compile_str($data['pwd_question_answer']) : '';
-
     $api = new \User\Api\UserApi();
-            $uid = $api->register($data['username'], $data['password'], $data['repassword'], $data['email']);
+    $uid = $api->register($data['username'], $data['password'], $data['repassword'], $data['email']);
 
-            if($uid > 0) 
+    if($uid > 0) 
+    {
+        if(!empty($configs['register_points']))
+        {
+            log_account_change($uid, 0 , 0, $configs['register_points'],$configs['register_points'], '注冊送積分');
+        }
+
+        if(C('AFFILIATE_ENABLED') == 1)
+        {
+            $user = get_affiliate();
+            if($user['uid'] >0)
             {
-                if(!empty($configs['register_points']))
+                $invitation_points = C('INVITATION_POINTS');
+                $invitation_points_up = C('INVITATION_POINTS_UP');
+                if(!empty($invitation_points))
                 {
-                    log_account_change($uid, 0 , 0, $configs['register_points'],$configs['register_points'], '注冊送積分');
-                }
-
-                if(C('AFFILIATE_ENABLED') == 1)
-                {
-                    $user = get_affiliate();
-                    if($user['uid'] >0)
+                    if(!empty($invitation_points_up))
                     {
-                        $invitation_points = C('INVITATION_POINTS');
-                        $invitation_points_up = C('INVITATION_POINTS_UP');
-                        if(!empty($invitation_points))
+                        if($invitation_points + $user['rank_points'] <= $invitation_points_up)
                         {
-                            if(!empty($invitation_points_up))
-                            {
-                                if($invitation_points + $user['rank_points'] <= $invitation_points_up)
-                                {
-                                    log_account_change($user['uid'], 0 , 0, $invitation_points,0 , '邀请得积分');
-                                }
-                            }
-                            else 
-                            {
-                                log_account_change($user['uid'], 0 , 0, $invitation_points, 0 , '邀请得积分');
-                            }
-                            M('myUsers')->where(['id'=>$uid])->setField(['affiliate_id'=>$user['uid']]);
+                            log_account_change($user['uid'], 0 , 0, $invitation_points,0 , '邀请得积分');
                         }
                     }
-                }
-
-                
-                
-                $other_keys = ['msn', 'qq', 'home_phone', 'office_phone', 'pwd_question', 'pwd_question_answer'];
-                $temp = array();
-                foreach($data as $key => $data_item)
-                {
-                    if(in_array($key, $other_keys))
+                    else 
                     {
-                        $temp[$key] = $data_item;
+                        log_account_change($user['uid'], 0 , 0, $invitation_points, 0 , '邀请得积分');
                     }
+                    M('myUsers')->where(['id'=>$uid])->setField(['affiliate_id'=>$user['uid']]);
                 }
-                $temp['reg_time'] = time();
-                M('myUsers')->where(['id'=>$uid])->save($temp);
-                update_user_info();
-                return true;
-            }          
-            return $uid;
+            }
+        }
+
+        $other_keys = ['msn', 'qq', 'home_phone', 'office_phone', 'pwd_question', 'pwd_question_answer'];
+        $temp = array();
+        foreach($data as $key => $data_item)
+        {
+            if(in_array($key, $other_keys))
+            {
+                $temp[$key] = $data_item;
+            }
+        }
+        $temp['reg_time'] = time();
+        M('myUsers')->where(['id'=>$uid])->save($temp);
+        update_user_info();
+        return true;
+    }          
+    return $uid;
 }
 
 function compile_str($str)
@@ -282,7 +269,7 @@ function update_user_info()
     {
         if($user['rank_id'] > 0)
         {
-          $rank =  M('userRank')->field(['is_special'])->find($user['rank_id']);
+           $rank =  M('userRank')->field(['is_special'])->find($user['rank_id']);
            if($rank['is_special'] == 0 || is_null($rank['is_special']))
            {
              M('myUsers')->save(['id'=>$uid, 'rank_id'=>0]);
@@ -298,13 +285,13 @@ function update_user_info()
                 ->find();
             if($rank)
             {
-                session('user.discount', $rank['discount'] / 100.00);
-                session('user.rank_id', $rank['id']);
+                session('discount', $rank['discount'] / 100.00);
+                session('rank_id', $rank['id']);
             }
             else 
             {
-                session('user.discount', 1);
-                session('user.rank_id', 0);
+                session('discount', 1);
+                session('rank_id', 0);
             }
                
         }
@@ -313,15 +300,14 @@ function update_user_info()
              $rank = M('userRank')->field(['discount', 'id'])->find($user['rank_id']);
              if($rank)
              {
-                session('user.discount', $rank['discount'] / 100.00);
-                session('user.rank_id', $rank['id']);
+                session('discount', $rank['discount'] / 100.00);
+                session('rank_id', $rank['id']);
              }
              else
              {
-                session('user.discount', 1);
-                session('user.rank_id', 0);
+                session('discount', 1);
+                session('rank_id', 0);
              }
-            
         }
 
         M('myUsers')->save([
@@ -388,10 +374,9 @@ function log_account_change($uid, $user_money, $frozen_money, $rank_points, $pay
    return true;
 }
 
-
 function build_fields_html($id = 0)
 {
-    $html = '';
+     $html = '';
      if($id != 0)
      {
         $fields = M('registerFields')
@@ -406,9 +391,9 @@ function build_fields_html($id = 0)
      else 
      {
         $fields = M('registerFields')
-             ->field(['id', 'field_name', 'field_title', 'field_values'])
-             ->where(['type'=>1, 'enabled'=>1])
-             ->select();
+         ->field(['id', 'field_name', 'field_title', 'field_values'])
+         ->where(['type'=>1, 'enabled'=>1])
+         ->select();
      }
      
     foreach($fields as $field)
@@ -604,7 +589,6 @@ function build_attr_html($type = 0, $good_id = 0)
     return $html;
 }
 
-
 function getCategories($cid, $type = true, $selected = 0)
 {
     static $arr2 = null;
@@ -682,7 +666,6 @@ function clear_cache($name)
     {
         return '';
     }
-
     return is_array($name) ? array_map('clear_cache', $name) : S($name, null);
 }
 
@@ -869,8 +852,10 @@ function assign_comments($tpl, $id)
       'reply_id'=>$id,
       'status'=>1])
      ->count();
+
      $num = !empty(C('COMMENT_NUMBER')) ? intval(C('COMMENT_NUMBER')) : 2;
      $Page = new \Think\Page($count, $num);
+
      $list = M('comments')
         ->field(['username', 'add_time', 'content', 'comment_rank'])
         ->where([
@@ -1140,3 +1125,24 @@ function upload_image($img, $dest_img, $type)
     $stat['path'] = trim($dir . $newName, './');
     return $stat;
 }
+
+function get_good_info($id)
+{
+    $good = M('goods')
+     ->alias('g')
+     ->field(['g.*', 'b.brand_name', 'c.unit', 'ifnull(avg(ct.comment_rank), 0)'=>'comment_rank', 'ifnull(mp.member_price, '.session('discount') .' * g.shop_price)'=>'rank_price'])
+     ->join('categories c on g.cat_id=c.id', 'left')
+     ->join('brands b on g.brand_id=b.id', 'left')
+     ->join('comments ct on ct.reply_id=g.id and ct.status=1', 'left')
+     ->join('member_price mp on g.id=mp.good_id and mp.user_rank='.session('rank_id'), 'left')
+     ->where(['g.deleted'=>0, 'g.is_on_sale'=>1, 'g.id'=>$id])
+     ->group('g.id')
+     ->select();
+
+     $good = $good[0];
+     $good['comment_rank'] = ceil($good['comment_rank']) == 0 ? 5 : ceil($good['comment_rank']);
+     $good['market_price'] = round($good['market_price']);
+     $good['shop_price'] = round($good['shop_price']);
+     return $good;
+}
+

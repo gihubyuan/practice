@@ -8,21 +8,24 @@ class GoodController extends \Home\Controller\HomeController
 	public function index()
 	{
 		$id = I('get.id');
-		if(!$id || (!$good = M('goods')->find($id)))
+		if(!$id || (!M('goods')->find($id)))
 		{
 			$this->redirect('Index/index');
 			exit;
 		}		
 
-		$good['good_name_style'] = getStyleName($good['good_name'], $good['good_name_style']);
-
-		assign_comments($this->view, $good['id']);
-
 		$properties = get_good_properties($id);
+		$good = get_good_info($id);
+		assign_comments($this->view, $good['id']);
+		$good['good_name_style'] = getStyleName($good['good_name'], $good['good_name_style']);
+		$this->assign('good', $good);
 		$this->assign('properties', $properties['prop']);
 		$this->assign('specification', $properties['spec']);
 		$this->assign('good', $good);
-		if(C('CAPTCHA') & CAPTCHA_COMMENT) {
+		// $rank_prices = get_rank_prices($id);
+		// $volume_prices = get_volume_prices($id);
+		if(C('CAPTCHA') & CAPTCHA_COMMENT)
+		{
 			$this->assign('captcha_on', 'on');
 		}
 		$this->display();

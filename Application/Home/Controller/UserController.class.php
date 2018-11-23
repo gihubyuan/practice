@@ -99,36 +99,45 @@ class UserController extends \Think\Controller
 
     public function login()
     {
-       if(is_null(session('user.login_fail'))) {
-           session('user.login_fail', 0);
-      }
-      if(IS_POST) {
-         
-        $data = I('post.');
-
-        if((C('CAPTCHA') & CAPTCHA_LOGIN) && (!(C('CAPTCHA') & CAPTCHA_LOGIN_FAIL) || ((C('CAPTCHA') & CAPTCHA_LOGIN_FAIL) && session('user.login_fail') > 2))) {
-            if(empty($data['vcode'])) {
-                    $this->error("验证码不得唯恐");
+          if(is_null(session('user.login_fail')))
+          {
+              session('user.login_fail', 0);
+          }
+          if(IS_POST)
+          {
+                $data = I('post.');
+                if((C('CAPTCHA') & CAPTCHA_LOGIN) && (!(C('CAPTCHA') & CAPTCHA_LOGIN_FAIL) || ((C('CAPTCHA') & CAPTCHA_LOGIN_FAIL) && session('user.login_fail') > 2))) {
+                    if(empty($data['vcode']))
+                    {
+                        $this->error("验证码不得唯恐");
+                    }
+                    if(!check_verify($data['vcode'], 2))
+                    {
+                        $this->error("验证码错误");
+                    }
                 }
-            if(!check_verify($data['vcode'], 2)) {
-                    $this->error("验证码错误");
-             }
-        }
 
-        if(login($data['username'], $data['password'], $data['remember'])) {
-            $this->success('登陆成功', U('Index/index'));
-        }else {
-            $this->error('登陆失败');
-        }
-
-      }else {
-        if((C('CAPTCHA') & CAPTCHA_LOGIN) && (!(C('CAPTCHA') & CAPTCHA_LOGIN_FAIL) || ((C('CAPTCHA') & CAPTCHA_LOGIN_FAIL) && session('user.login_fail') > 2))) {
-            $this->assign('captcha_enabled', 1);
-        }else {
-            $this->assign('captcha_enabled', 0);
-        }
-        $this->display();
-      }
+                if(login($data['username'], $data['password'], $data['remember']))
+                {
+                    $this->success('登陆成功', U('Index/index'));
+                }
+                else
+                {
+                    $this->error('登陆失败');
+                }
+          }
+          else
+          {
+                if((C('CAPTCHA') & CAPTCHA_LOGIN) && (!(C('CAPTCHA') & CAPTCHA_LOGIN_FAIL) || ((C('CAPTCHA') & CAPTCHA_LOGIN_FAIL) && session('user.login_fail') > 2)))
+                {
+                    $this->assign('captcha_enabled', 1);
+                }
+                else
+                {
+                    $this->assign('captcha_enabled', 0);
+                }
+                $this->display();
+          }
     }
        
     public function register()

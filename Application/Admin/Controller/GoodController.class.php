@@ -55,95 +55,101 @@ class GoodController extends PublicController
 	public function catHandle()
 	{
 		 $act = !empty(I('post.act')) ? I('post.act') : '';
-		 if(empty($act) || !in_array($act, array('act_insert', 'act_update'))) {
-		 	 $this->error("错误");
-		 	 exit;
+		 if(empty($act) || !in_array($act, array('act_insert', 'act_update')))
+		 {
+		 	$this->error("错误");
+		 	exit;
 		 }
 		 $is_insert = $act == 'act_insert' ? true: false;
 		 $is_update = $act == 'act_update' ? true: false;
-		 if($is_update) {
-			 	 $id = I('post.id');
-			 	 if(!$id) {
-			 	 		$this->error("错误");
-			 	  	exit;
-			 	 }
+		 if($is_update)
+		 {
+		 	 $id = I('post.id');
+		 	 if(!$id)
+		 	 {
+		 	 	$this->error("错误");
+		 	    exit;
+		 	 }
 		}
 		 $data = I('post.');
 
-		 if($data['old_cat_name'] != $data['cat_name']) { 
-		 		if(cat_exists($data['pid'], $data['cat_name'], $data['id'])) {
-		 			 $this->error("该分类名已存在");
-				 	 exit;
-		 		}
-		 		
+		 if($data['old_cat_name'] != $data['cat_name'])
+		 { 
+	 		 if(cat_exists($data['pid'], $data['cat_name'], $data['id']))
+	 		 {
+	 			 $this->error("该分类名已存在");
+			 	 exit;
+	 		 }
 		 }
 
-		 if(in_array($data['id'], array_keys(getCategories($data['pid'])))) {
-		 			 $this->error("父级分类选择错误");
-				 	 exit;
+		 if(in_array($data['pid'], array_keys(getCategories($data['id'])))) {
+ 			 $this->error("父级分类选择错误");
+		 	 exit;
 		 }
 
-	 		 $data['view_order'] = !empty(intval($data['view_order'])) ? intval($data['view_order']) : 100;
-			 $data['filter_attr'] = implode(',', array_unique(array_diff($data['attr_id'], array(0))));
-				unset($data['old_cat_name'],$data['act'], $data['attr_id']);
-			 if($is_update) {
-			 	 M('categories')->save($data);
-			 }		
+ 		 $data['view_order'] = !empty(intval($data['view_order'])) ? intval($data['view_order']) : 100;
+		 $data['filter_attr'] = implode(',', array_unique(array_diff($data['attr_id'], array(0))));
+		 unset($data['old_cat_name'],$data['act'], $data['attr_id']);
+		 if($is_update)
+		 {
+		    M('categories')->save($data);
+		 }		
 
-			 if($is_insert) {
-			 		unset($data['id']);
-			 		M('categories')->add($data);
-			 }
+		 if($is_insert)
+		 {
+	 		unset($data['id']);
+	 		M('categories')->add($data);
+		 }
 
-			clear_cache(['cate_relation_sort', 'cat_pid_asc']);
-			$this->redirect('cates');
+		 clear_cache(['cate_relation_sort', 'cat_pid_asc']);
+		 $this->redirect('cates');
 		 
 	}
 
 	public function addBrand()
 	{
-			 $act = !empty(I('get.act')) ? I('get.act') : '';
-			 if(empty($act) || !in_array($act, array('add', 'update'))) {
-			 	 $this->error("错误");
-			 	 exit;
-			 }
+		 $act = !empty(I('get.act')) ? I('get.act') : '';
+		 if(empty($act) || !in_array($act, array('add', 'update'))) {
+		 	 $this->error("错误");
+		 	 exit;
+		 }
 
-			 $is_add = $act == 'add' ? true: false;
-			 $is_update = $act == 'update' ? true: false;
+		 $is_add = $act == 'add' ? true: false;
+		 $is_update = $act == 'update' ? true: false;
 
-			 if($is_update) {
-			 	 $id = I('get.id');
-			 	 if(!$id) {
-			 	 		$this->error("错误");
-			 	  	exit;
-			 	 }
-			 	 $form_header  = '更新';
-			 	 $act = 'act_update';
-				 $brand = M('brands')->find($id);
-				 $brand['old_brand_name'] = $brand['brand_name'];
-			 }
+		 if($is_update) {
+		 	 $id = I('get.id');
+		 	 if(!$id) {
+		 	 		$this->error("错误");
+		 	  	exit;
+		 	 }
+		 	 $form_header  = '更新';
+		 	 $act = 'act_update';
+			 $brand = M('brands')->find($id);
+			 $brand['old_brand_name'] = $brand['brand_name'];
+		 }
 
-			 if(empty($brand)) {
-			 	  $brand = [
-			 	  	'id' => 0,
-			 	  	'brand_name' => '',
-			 	  	'brand_desc' => '',
-			 	  	'brand_url' => '',
-			 	  	'sort_order' => 100,
-			 	  	'if_show' => 1,
-			 	  	'old_brand_name' => ''
-			 	  ];
-			 }
+		 if(empty($brand)) {
+		 	  $brand = [
+		 	  	'id' => 0,
+		 	  	'brand_name' => '',
+		 	  	'brand_desc' => '',
+		 	  	'brand_url' => '',
+		 	  	'sort_order' => 100,
+		 	  	'if_show' => 1,
+		 	  	'old_brand_name' => ''
+		 	  ];
+		 }
 
-			 if($is_add) {
-			 	  $act = 'act_insert';
-			 	 	$form_header  = '添加';
-			 }
+		 if($is_add) {
+		 	  $act = 'act_insert';
+		 	 	$form_header  = '添加';
+		 }
 
-			 $this->assign('form_header', $form_header);
-			 $this->assign('brand', $brand);
-			 $this->assign('act', $act);
-			 $this->display();
+		 $this->assign('form_header', $form_header);
+		 $this->assign('brand', $brand);
+		 $this->assign('act', $act);
+		 $this->display();
 	}
 
 	public function brands()
@@ -204,7 +210,8 @@ class GoodController extends PublicController
 		 	  	'if_show' => 1,
 		 	  	'view_order' => 100,
 		 	  	'old_cat_name' => '',
-		 	  	'pid' => 0
+		 	  	'pid' => 0,
+		 	  	'unit' => ''
 		 	  ];
 		 }
 
@@ -348,33 +355,28 @@ class GoodController extends PublicController
 	{
 		 if(IS_POST) 
 		 {
-		 		if(!isset($_FILES['good_img']))
+		 		if(!empty($_FILES['good_img']['name']))
 		 		{
-		 			$this->error("您还没有上传图片");
-		 			exit;
+				 		if($_FILES['good_img']['error'] > 0)
+				 		{
+				 			 if($_FILES['good_img']['error'] == 1)
+				 			 {
+				 			 	  $upload_max_filesize = ini_get('upload_max_filesize');
+				 			 		$this->error(sprintf('超过%s规定大小', $upload_max_filesize));
+				 			 }
+
+				 			 if($_FILES['good_img']['error'] == 2)
+				 			 {
+				 			 	  $upload_max_filesize = I('post.MAX_FILE_SIZE');
+				 			 		$this->error(sprintf('超过%s规定大小', $upload_max_filesize));
+				 			 }
+				 		}
+				 		$stat = upload_image($_FILES['good_img'],'aa.jpg',  $_FILES['good_img']);
+				 		if($stat['has_error'])
+				 		{
+				 			$this->error($stat['error']);
+				 		}
 		 		}
-
-		 		if($_FILES['good_img']['error'] > 0)
-		 		{
-		 			 if($_FILES['good_img']['error'] == 1)
-		 			 {
-		 			 	  $upload_max_filesize = ini_get('upload_max_filesize');
-		 			 		$this->error(sprintf('超过%s规定大小', $upload_max_filesize));
-		 			 }
-
-		 			 if($_FILES['good_img']['error'] == 2)
-		 			 {
-		 			 	  $upload_max_filesize = I('post.MAX_FILE_SIZE');
-		 			 		$this->error(sprintf('超过%s规定大小', $upload_max_filesize));
-		 			 }
-		 		}
-
-		 		$stat = upload_image($_FILES['good_img'],'aa.jpg',  $_FILES['good_img']);
-		 		if($stat['has_error'])
-		 		{
-		 			$this->error($stat['error']);
-		 		}
-
 		 		unset($_POST['MAX_FILE_SIZE']);
 		 		$is_insert = I('post.act') == 'act_insert' ? true : false;
 				$data = I('post.');
@@ -396,7 +398,8 @@ class GoodController extends PublicController
 		 		$data['number'] = empty($data['number']) ? 0 : $data['number'];
 		 		$data['warn_number'] = empty($data['warn_number']) ? 0 : $data['warn_number'];
 		 		$data['keywords'] = empty($data['keywords']) ? '' : $data['keywords'];
-		 		$data['price'] = empty($data['price']) ? 0 : intval($data['price']);
+		 		$data['shop_price'] = empty($data['shop_price']) ? 0 : intval($data['shop_price']);
+		 		$data['market_price'] = empty($data['market_price']) ? 0 : intval($data['market_price']);
 		 		$data['weight'] = empty($data['weight']) ? 0 : $data['weight'];
 		 		$data['last_update'] = time();
 		 		$good_id = empty($data['good_id']) ? 0 : $data['good_id'];
@@ -404,7 +407,7 @@ class GoodController extends PublicController
 		 		$rank_ids = isset($data['rank_id']) ?  $data['rank_id'] : array();
 		 		$volume_number = isset($data['volume_number']) ?  $data['volume_number'] : array();
 		 		$volume_price = isset($data['volume_price']) ?  $data['volume_price'] : array();
-		 		$data['good_img'] = $stat['path'];
+		 		$data['good_img'] = !isset($stat['path']) ? '': $stat['path'];
 		 		$data['good_name_style'] = $data['name_style_color'] . '|' . $data['name_style_font'];
 				unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id'], $data['cat_extended_id'],$data['user_price'], $data['rank_id'], $data['volume_number'], $data['volume_price']);			 		
 			 		
@@ -472,7 +475,6 @@ class GoodController extends PublicController
 			 	{
 			 		 handle_volume_price($good_id, $volume_number, $volume_price);
 			 	}
-
 
 		 		if((isset($data['attr_id_list']) && isset($data['attr_value_list'])) || (empty($data['attr_id_list']) && empty($data['attr_value_list']))) 
 		 		{
@@ -587,7 +589,8 @@ class GoodController extends PublicController
 		 			 	 'number' => 0,
 		 			 	 'warn_number' => 0,
 		 			 	 'weight' => 0,
-		 			 	 'price' => 0,
+		 			 	 'shop_price' => 0,
+		 			 	 'market_price' => 0,
 		 			 	 'promotion_price' => 0,
 		 			 	 'promotion_start' => 0,
 		 			 	 'promotion_end' => 0,
@@ -598,7 +601,7 @@ class GoodController extends PublicController
 		 			 	 'give_integral' => 0,
 		 			 	 'rank_integral' => 0,
 		 			 	 'integral' => 0,
-		 			 	 'good_desc' => ''
+		 			 	 'good_desc' => '',
 		 			 );		 
 		 			 $this->assign('act', 'act_insert');
 		 			 $this->assign('extend_cats', [getCategories(0, false)]);

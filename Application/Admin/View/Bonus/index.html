@@ -23,7 +23,12 @@
 							<td>{$bonus_item.min_amount}</td>
 							<td>{$bonus_item.send_num}</td>
 							<td>{$bonus_item.used_num}</td>
-							<td><a href="{:U('Bonus/send', array('type'=>$bonus['id']))}">发放</a></td>
+							<td>
+								<if condition="$bonus_item['send_type'] neq 2">
+									<a href="{:U('Bonus/toSend/send_type/' . $bonus_item['send_type'])}">发放</a>
+								</if>
+								<a href="">编辑</a>
+							</td>
 						</tr>
 					</foreach>
 				</tbody>
