@@ -16,25 +16,34 @@
 								{$good.good_name_style}
 							</li>
 							<li>商品货号：{$good.good_sn}</li>
-							<li>商品品牌：苹果</li>
-							<li>上架时间：2018-11-19</li>
-							<li>市场价格：<strike class="text-muted">￥11626元</strike></li>
-							<li>注册用户：<span class="text-danger bold">￥9688元</span></li>
-							<li>商品总价：<span class="text-danger bold">￥9688元</span></li>
+							<if condition="$good['brand_name']">
+								<li>商品品牌：{$good.brand_name}</li>
+						    </if>
+							<li>上架时间：{$good.add_time|date="Y-m-d",###}</li>
+							<li>市场价格：<strike class="text-muted">{$good.market_price}</strike></li>
+							<foreach name="rank_prices" item="r_price" key="r_name">
+							<li>{$r_name}：<span class="text-danger bold">{$r_price.rank_price}</span></li>
+							</foreach>
 							<li>购买数量：<input type="text" name="good_num" value="1"></li>
 						</ul>
 					</div>
 					<div class="col-md-6 right-good">
 						<ul>
-							<li>商品库存： 1230</li>
+							<if condition="$good['number'] gt 0">
+								<li>商品库存： {$good['number']} {$good['unit']}</li>
+							<else/>
+								<li>商品库存： <span class="text-danger">缺貨</span></li>
+							</if>
 							<li>商品重量：0克</li>
-							<li>商品点击数：12</li>
-							<li class="mt20">本店售价：<span class="text-danger bold">￥9688元</span></li>
-							<li>vip：<span class="text-danger bold">￥9204元</span></li>
-							<li>购买此商品赠送：200 积分</li>
+							<li class="mt20">本店售价：<span class="text-danger bold">{$good.shop_price_formated}</span></li>
+							<li>商品总价：<span class="text-danger bold">￥9688元</span></li>
+							<if condition="$good['give_integral'] gt 0">
+								<li>购买此商品赠送：{$good.give_integral} 积分</li>
+							</if>
 							<li>购买此商品可使用：9600 积分</li>
 						</ul>
 					</div>
+					<if condition="$volume_prices">
 						<div class="col-md-12">
 							<div class="table-responsive">
 								<table class="table table-hover table-bordered">
@@ -45,38 +54,41 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr>
-											<td>2</td>
-											<td>2666</td>
-										</tr>
+										<foreach name="volume_prices" item="v_price">
+											<tr>
+												<td>{$v_price.volume_number}</td>
+												<td>{$v_price.volume_price}</td>
+											</tr>
+										</foreach>
 									</tbody>
 								</table>
 							</div>
 						</div>
+					</if>
+						<foreach name="specification" item="specific" key="attr_id">
 						<div class="col-md-12" style="padding-top:10px;border-top:1px solid #ccc;">
-							<strong>颜色</strong>
-							<div class="checkbox">
-								<label>
-									<input type="checkbox" value="">
-									Checkbox
-								</label>
-							</div>
-							<div class="checkbox">
-								<label>
-									<input type="checkbox" value="">
-									Checkbox
-								</label>
-							</div>
+							<strong>{$specific.name}</strong>
+								<foreach name="specific" item="specs">
+								<foreach name="specs" item="spec">
+								<if condition="$specific['type'] eq 3">
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" value="">
+												{$spec.label} [<if condition="$spec['price'] gt 0">加 <else/>減 </if>{$spec.price|abs}元]
+											</label>
+										</div>
+								<else/>
+										<div class="radio">
+											<label>
+												<input type="radio" name="spec_{$attr_id}" id="input" value="" checked="checked">
+												{$spec.label} [<if condition="$spec['price'] gt 0">加 <else/>減 </if>{$spec.price|abs}元]
+											</label>
+										</div>
+								</if>
+							</foreach>
+							</foreach>
 					 </div>
-					 <div class="col-md-12" style="padding-top:10px;border-top:1px solid #ccc;">
-							<strong>颜色</strong>
-							<div class="radio">
-								<label>
-									<input type="radio" name="" id="input" value="" checked="checked">
-									Radio Box
-								</label>
-							</div>
-					 </div>
+					</foreach>
 					<div class="col-md-12" style="padding-top:10px;border-top:1px solid #ccc;">
 					 	  <button class="btn btn-danger">立刻购买</button>
 					 </div>

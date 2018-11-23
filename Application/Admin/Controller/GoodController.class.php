@@ -355,211 +355,212 @@ class GoodController extends PublicController
 	{
 		 if(IS_POST) 
 		 {
-		 		if(!empty($_FILES['good_img']['name']))
+	 		if(!empty($_FILES['good_img']['name']))
+	 		{
+		 		if($_FILES['good_img']['error'] > 0)
 		 		{
-				 		if($_FILES['good_img']['error'] > 0)
-				 		{
-				 			 if($_FILES['good_img']['error'] == 1)
-				 			 {
-				 			 	  $upload_max_filesize = ini_get('upload_max_filesize');
-				 			 		$this->error(sprintf('超过%s规定大小', $upload_max_filesize));
-				 			 }
-
-				 			 if($_FILES['good_img']['error'] == 2)
-				 			 {
-				 			 	  $upload_max_filesize = I('post.MAX_FILE_SIZE');
-				 			 		$this->error(sprintf('超过%s规定大小', $upload_max_filesize));
-				 			 }
-				 		}
-				 		$stat = upload_image($_FILES['good_img'],'aa.jpg',  $_FILES['good_img']);
-				 		if($stat['has_error'])
-				 		{
-				 			$this->error($stat['error']);
-				 		}
-		 		}
-		 		unset($_POST['MAX_FILE_SIZE']);
-		 		$is_insert = I('post.act') == 'act_insert' ? true : false;
-				$data = I('post.');
-		 		$attr_id_list = !isset($data['attr_id_list']) ? array() : $data['attr_id_list'];
-		 		$attr_value_list = !isset($data['attr_value_list']) ? array() : $data['attr_value_list'];
-		 		$attr_price_list = !isset($data['attr_price_list']) ? array() : $data['attr_price_list'];
-		 		$cat_extended_id = !empty($data['cat_extended_id']) ? array_filter(array_unique($data['cat_extended_id'])) : array();
-		 		$data['type_id'] = empty($data['type_id']) ? 0 : intval($data['type_id']);
-		 		$data['is_best'] = isset($data['is_best']) ? 1 : 0;
-		 		$data['is_hot'] = isset($data['is_hot']) ? 1 : 0;
-		 		$data['is_new'] = isset($data['is_new']) ? 1 : 0;
-		 		$data['is_new'] = isset($data['is_shipping']) ? 1 : 0;
-		 		$data['integral'] = empty($data['integral']) ? 0 : intval($data['integral']);
-		 		$data['give_integral'] = empty($data['give_integral']) ? 0 : intval($data['give_integral']);
-		 		$data['rank_integral'] = empty($data['rank_integral']) ? 0 : intval($data['rank_integral']);
-		 		$data['promotion_price'] = empty($data['promotion_price']) ? 0 : $data['promotion_price'];
-		 		$data['promotion_start'] = empty($data['promotion_start']) ? 0 : $data['promotion_start'];
-		 		$data['promotion_end'] = empty($data['promotion_end']) ? 0 : $data['promotion_end'];
-		 		$data['number'] = empty($data['number']) ? 0 : $data['number'];
-		 		$data['warn_number'] = empty($data['warn_number']) ? 0 : $data['warn_number'];
-		 		$data['keywords'] = empty($data['keywords']) ? '' : $data['keywords'];
-		 		$data['shop_price'] = empty($data['shop_price']) ? 0 : intval($data['shop_price']);
-		 		$data['market_price'] = empty($data['market_price']) ? 0 : intval($data['market_price']);
-		 		$data['weight'] = empty($data['weight']) ? 0 : $data['weight'];
-		 		$data['last_update'] = time();
-		 		$good_id = empty($data['good_id']) ? 0 : $data['good_id'];
-		 		$user_price = isset($data['user_price']) ? $data['user_price'] : array();
-		 		$rank_ids = isset($data['rank_id']) ?  $data['rank_id'] : array();
-		 		$volume_number = isset($data['volume_number']) ?  $data['volume_number'] : array();
-		 		$volume_price = isset($data['volume_price']) ?  $data['volume_price'] : array();
-		 		$data['good_img'] = !isset($stat['path']) ? '': $stat['path'];
-		 		$data['good_name_style'] = $data['name_style_color'] . '|' . $data['name_style_font'];
-				unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id'], $data['cat_extended_id'],$data['user_price'], $data['rank_id'], $data['volume_number'], $data['volume_price']);			 		
-			 		
-		 		if(empty($data['brand_id'])) 
-		 		{
-		 			 unset($data['brand_id']);
-		 		}		 			 		
-				if(empty($data['good_sn'])) 
-				{
-					$data['good_sn'] = generate_good_sn();
-				}
-				if($data['weight_unit'] == 1) 
-				{
-					$data['weight'] *= 0.001;
-				}
-				unset($data['weight_unit']);
-
-				if(empty($data['promotion_price'])) 
-				{
-					$data['promotion_start'] = 0;
-					$data['promotion_end'] = 0;
-				}
-
-				if(!empty($volume_number) && !empty($volume_price))
-		 		{
-		 			  $counts = array_count_values($volume_number);
-		 			  foreach($counts as $count)
-		 			  {
-		 			  	if($count > 1)
-		 			  	{
-		 			  		$this->error("重复了volume_number");
-		 			  		exit;
-		 			  	}
-		 			  }
-		 		}
-
-				if($is_insert) 
-				{
-		 			 if(!$good_id = M('goods')->add($data)) 
+		 			 if($_FILES['good_img']['error'] == 1)
 		 			 {
-		 				 $this->error("添加失败");
-			 	 	     exit;
+		 			 	  $upload_max_filesize = ini_get('upload_max_filesize');
+		 			 		$this->error(sprintf('超过%s规定大小', $upload_max_filesize));
 		 			 }
-		 			 foreach($cat_extended_id as $extend_id) 
+
+		 			 if($_FILES['good_img']['error'] == 2)
 		 			 {
-		 				 M('goodExtendedCats')-> add(['good_id'=>$good_id, 'cat_id'=>$extend_id]);
+		 			 	  $upload_max_filesize = I('post.MAX_FILE_SIZE');
+		 			 		$this->error(sprintf('超过%s规定大小', $upload_max_filesize));
 		 			 }
 		 		}
-		 		else 
+		 		$stat = upload_image($_FILES['good_img'],'aa.jpg',  $_FILES['good_img']);
+		 		if($stat['has_error'])
 		 		{
-		 			if(!M('goods')->where(['id'=>$good_id])->save($data)) 
-		 			{
-		 			  $this->error('更新失败');
-			 	 	   exit;
-		 			}
-		 			update_extended_goods($good_id, $cat_extended_id);
+		 			$this->error($stat['error']);
 		 		}
+	 		}
+	 		unset($_POST['MAX_FILE_SIZE']);
+	 		$is_insert = I('post.act') == 'act_insert' ? true : false;
+			$data = I('post.');
+	 		$attr_id_list = !isset($data['attr_id_list']) ? array() : $data['attr_id_list'];
+	 		$attr_value_list = !isset($data['attr_value_list']) ? array() : $data['attr_value_list'];
+	 		$attr_price_list = !isset($data['attr_price_list']) ? array() : $data['attr_price_list'];
+	 		$cat_extended_id = !empty($data['cat_extended_id']) ? array_filter(array_unique($data['cat_extended_id'])) : array();
+	 		$data['type_id'] = empty($data['type_id']) ? 0 : intval($data['type_id']);
+	 		$data['is_best'] = isset($data['is_best']) ? 1 : 0;
+	 		$data['is_hot'] = isset($data['is_hot']) ? 1 : 0;
+	 		$data['is_new'] = isset($data['is_new']) ? 1 : 0;
+	 		$data['is_new'] = isset($data['is_shipping']) ? 1 : 0;
+	 		$data['integral'] = empty($data['integral']) ? 0 : intval($data['integral']);
+	 		$data['give_integral'] = empty($data['give_integral']) ? 0 : intval($data['give_integral']);
+	 		$data['rank_integral'] = empty($data['rank_integral']) ? 0 : intval($data['rank_integral']);
+	 		$data['promotion_price'] = empty($data['promotion_price']) ? 0 : $data['promotion_price'];
+	 		$data['promotion_start'] = empty($data['promotion_start']) ? 0 : $data['promotion_start'];
+	 		$data['promotion_end'] = empty($data['promotion_end']) ? 0 : $data['promotion_end'];
+	 		$data['number'] = empty($data['number']) ? 0 : $data['number'];
+	 		$data['warn_number'] = empty($data['warn_number']) ? 0 : $data['warn_number'];
+	 		$data['keywords'] = empty($data['keywords']) ? '' : $data['keywords'];
+	 		$data['shop_price'] = empty($data['shop_price']) ? 0 : intval($data['shop_price']);
+	 		$data['market_price'] = empty($data['market_price']) ? 0 : intval($data['market_price']);
+	 		$data['weight'] = empty($data['weight']) ? 0 : $data['weight'];
+	 		$data['last_update'] = time();
+	 		$good_id = empty($data['good_id']) ? 0 : $data['good_id'];
+	 		$user_price = isset($data['user_price']) ? $data['user_price'] : array();
+	 		$rank_ids = isset($data['rank_id']) ?  $data['rank_id'] : array();
+	 		$volume_number = isset($data['volume_number']) ?  $data['volume_number'] : array();
+	 		$volume_price = isset($data['volume_price']) ?  $data['volume_price'] : array();
+	 		$data['good_img'] = !isset($stat['path']) ? '': $stat['path'];
+	 		$data['good_name_style'] = $data['name_style_color'] . '|' . $data['name_style_font'];
+			unset($data['attr_id_list'],$data['__hash__'], $data['name_style_color'], $data['name_style_font'],$data['attr_value_list'], $data['good_id'], $data['cat_extended_id'],$data['user_price'], $data['rank_id'], $data['volume_number'], $data['volume_price']);			 		
+		 		
+	 		if(empty($data['brand_id'])) 
+	 		{
+	 			 unset($data['brand_id']);
+	 		}		 			 		
+			if(empty($data['good_sn'])) 
+			{
+				$data['good_sn'] = generate_good_sn();
+			}
+			if($data['weight_unit'] == 1) 
+			{
+				$data['weight'] *= 0.001;
+			}
+			unset($data['weight_unit']);
 
-		 		if(!empty($user_price) && !empty($rank_ids))
-		 		{
-		 			 handle_member_price($good_id, $user_price, $rank_ids);
-		 		}
+			if(empty($data['promotion_price'])) 
+			{
+				$data['promotion_start'] = 0;
+				$data['promotion_end'] = 0;
+			}
 
-				if(!empty($volume_number) && !empty($volume_price))
-			 	{
-			 		 handle_volume_price($good_id, $volume_number, $volume_price);
-			 	}
+			if(!empty($volume_number) && !empty($volume_price))
+	 		{
+	 			  $counts = array_count_values($volume_number);
+	 			  foreach($counts as $count)
+	 			  {
+	 			  	 if($count > 1)
+	 			  	 {
+	 			  		$this->error("重复了volume_number");
+	 			  		exit;
+	 			  	 }
+	 			  }
+	 		}
 
-		 		if((isset($data['attr_id_list']) && isset($data['attr_value_list'])) || (empty($data['attr_id_list']) && empty($data['attr_value_list']))) 
-		 		{
-			 	 	
-				 	 $good_attr_list = array();
-				 	 $rs = M('goodAttrs')->where(['good_id'=>$good_id])->select();
-				 	 foreach($rs as $v) 
-				 	 {
-				 	 	 $good_attr_list[$v['attr_id']][$v['attr_value']] = array('good_attr_id'=> $v['id'], 'type'=>'delete');
-				 	 }
+			if($is_insert) 
+			{
+				 $data['add_time'] = time();
+	 			 if(!$good_id = M('goods')->add($data)) 
+	 			 {
+	 				 $this->error("添加失败");
+		 	 	     exit;
+	 			 }
+	 			 foreach($cat_extended_id as $extend_id) 
+	 			 {
+	 				 M('goodExtendedCats')-> add(['good_id'=>$good_id, 'cat_id'=>$extend_id]);
+	 			 }
+	 		}
+	 		else 
+	 		{
+	 			if(!M('goods')->where(['id'=>$good_id])->save($data)) 
+	 			{
+	 			  $this->error('更新失败');
+		 	 	   exit;
+	 			}
+	 			update_extended_goods($good_id, $cat_extended_id);
+	 		}
 
-		 	 		 $attr_list = array();
-				 	 $rs = M('attribute')->where(['type_id'=>$data['type_id']])->select();
-				 	 foreach($rs as $v) 
-				 	 {
-				 	 	 $attr_list[$v['id']] = $v['attr_index'];
-				 	 }
+	 		if(!empty($user_price) && !empty($rank_ids))
+	 		{
+	 			 handle_member_price($good_id, $user_price, $rank_ids);
+	 		}
 
-					if(!empty($attr_value_list)) 
-					{
-							$keywords = explode('|', trim($data['keywords'],'|'));
-							$keywords = array_flip($keywords);
+			if(!empty($volume_number) && !empty($volume_price))
+		 	{
+		 		 handle_volume_price($good_id, $volume_number, $volume_price);
+		 	}
 
-							if(isset($keywords[''])) 
-							{
-								 unset($keywords['']);
-							}
-			 		 		foreach($attr_id_list as $key => $attr_id) 
-			 		 		{
-				 	 				$attr_value = $attr_value_list[$key];
-				 	 				$attr_price = $attr_price_list[$key];
-				 	 				if(!empty($attr_value))
-				 	 				{
-					 	 					if(isset($good_attr_list[$attr_id][$attr_value]))
-						 	 				{
-						 	 					$good_attr_list[$attr_id][$attr_value]['type'] = 'update';
-						 	 				}
-						 	 				else 
-						 	 				{
-						 	 					$good_attr_list[$attr_id][$attr_value]['type'] = 'insert';
-						 	 				}
-						 	 				$good_attr_list[$attr_id][$attr_value]['attr_price'] = $attr_price;
-				 	 				}
-			 	 				
-								 	if(!isset($keywords[$attr_value]) && $attr_list[$attr_id] == 1)
-								 	{
-							 	 	 	 $keywords[$attr_value] = "k$attr_id";
-							 	  }
-					 	 	 }
+	 		if((isset($data['attr_id_list']) && isset($data['attr_value_list'])) || (empty($data['attr_id_list']) && empty($data['attr_value_list']))) 
+	 		{
+		 	 	
+			 	 $good_attr_list = array();
+			 	 $rs = M('goodAttrs')->where(['good_id'=>$good_id])->select();
+			 	 foreach($rs as $v) 
+			 	 {
+			 	 	 $good_attr_list[$v['attr_id']][$v['attr_value']] = array('good_attr_id'=> $v['id'], 'type'=>'delete');
+			 	 }
 
-				 	 		     $keywords = implode('|',array_flip($keywords));
-		 	       			 M('goods')->where(['id'=>$gid])->setField('keywords', $keywords);		
-					}
-			 	 				 	 		
-				 	 foreach($good_attr_list as $attr_id => $attr_value_arr) 
-				 	 {
-					 	 	 foreach($attr_value_arr as $attr_value => $value) 
-					 	 	 {
-						 	 	 		if($value['type'] == 'update') 
-						 	 	 		{
-						 	 	 			 M('goodAttrs')->save([
-						 	 	 			 	 'attr_id' => $attr_id,
-						 	 	 			 	 'attr_value' => $attr_value,
-						 	 	 			 	 'good_id' => $good_id,
-						 	 	 			 	 'id' => $value['good_attr_id'],
-						 	 	 			 	 'attr_price' => $value['attr_price']
-						 	 	 			 ]);
-						 	 	 		}
-						 	 	 		elseif($value['type'] == 'insert') 
-						 	 	 		{
-						 	 	 			 M('goodAttrs')->add([
-						 	 	 			 	 'attr_id' => $attr_id,
-						 	 	 			 	 'attr_value' => $attr_value,
-						 	 	 			 	 'good_id' => $good_id,
-						 	 	 			 	 'attr_price' => $value['attr_price']
-						 	 	 			 ]);
-						 	 	 		}
-						 	 	 		else 
-						 	 	 		{
-						 	 	 			  M('goodAttrs')->delete($value['good_attr_id']);
-						 	 	 		}
-					 	 	 }
-				 	 }
-			 	}
-		 	  $this->redirect('index');
+	 	 		 $attr_list = array();
+			 	 $rs = M('attribute')->where(['type_id'=>$data['type_id']])->select();
+			 	 foreach($rs as $v) 
+			 	 {
+			 	 	 $attr_list[$v['id']] = $v['attr_index'];
+			 	 }
+
+				if(!empty($attr_value_list)) 
+				{
+						$keywords = explode('|', trim($data['keywords'],'|'));
+						$keywords = array_flip($keywords);
+
+						if(isset($keywords[''])) 
+						{
+							 unset($keywords['']);
+						}
+		 		 		foreach($attr_id_list as $key => $attr_id) 
+		 		 		{
+			 	 				$attr_value = $attr_value_list[$key];
+			 	 				$attr_price = $attr_price_list[$key];
+			 	 				if(!empty($attr_value))
+			 	 				{
+				 	 					if(isset($good_attr_list[$attr_id][$attr_value]))
+					 	 				{
+					 	 					$good_attr_list[$attr_id][$attr_value]['type'] = 'update';
+					 	 				}
+					 	 				else 
+					 	 				{
+					 	 					$good_attr_list[$attr_id][$attr_value]['type'] = 'insert';
+					 	 				}
+					 	 				$good_attr_list[$attr_id][$attr_value]['attr_price'] = $attr_price;
+			 	 				}
+		 	 				
+							 	if(!isset($keywords[$attr_value]) && $attr_list[$attr_id] == 1)
+							 	{
+						 	 	 	 $keywords[$attr_value] = "k$attr_id";
+						 	  }
+				 	 	 }
+
+			 	 		     $keywords = implode('|',array_flip($keywords));
+	 	       			 M('goods')->where(['id'=>$gid])->setField('keywords', $keywords);		
+				}
+		 	 				 	 		
+			 	 foreach($good_attr_list as $attr_id => $attr_value_arr) 
+			 	 {
+				 	 	 foreach($attr_value_arr as $attr_value => $value) 
+				 	 	 {
+					 	 	 		if($value['type'] == 'update') 
+					 	 	 		{
+					 	 	 			 M('goodAttrs')->save([
+					 	 	 			 	 'attr_id' => $attr_id,
+					 	 	 			 	 'attr_value' => $attr_value,
+					 	 	 			 	 'good_id' => $good_id,
+					 	 	 			 	 'id' => $value['good_attr_id'],
+					 	 	 			 	 'attr_price' => $value['attr_price']
+					 	 	 			 ]);
+					 	 	 		}
+					 	 	 		elseif($value['type'] == 'insert') 
+					 	 	 		{
+					 	 	 			 M('goodAttrs')->add([
+					 	 	 			 	 'attr_id' => $attr_id,
+					 	 	 			 	 'attr_value' => $attr_value,
+					 	 	 			 	 'good_id' => $good_id,
+					 	 	 			 	 'attr_price' => $value['attr_price']
+					 	 	 			 ]);
+					 	 	 		}
+					 	 	 		else 
+					 	 	 		{
+					 	 	 			  M('goodAttrs')->delete($value['good_attr_id']);
+					 	 	 		}
+				 	 	 }
+			 	 }
+		 	}
+	 	  $this->redirect('index');
 		 }
 	}
 

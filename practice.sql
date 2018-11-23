@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.9
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 23, 2018 at 09:52 AM
--- Server version: 5.7.21
--- PHP Version: 5.6.35
+-- Generation Time: Nov 23, 2018 at 02:52 PM
+-- Server version: 5.7.19
+-- PHP Version: 5.6.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -279,6 +279,7 @@ CREATE TABLE IF NOT EXISTS `goods` (
   `is_shipping` tinyint(1) NOT NULL DEFAULT '1',
   `good_desc` text,
   `good_img` varchar(80) NOT NULL DEFAULT '',
+  `add_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
@@ -286,11 +287,11 @@ CREATE TABLE IF NOT EXISTS `goods` (
 -- Dumping data for table `goods`
 --
 
-INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `market_price`, `shop_price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`, `brand_id`, `last_update`, `give_integral`, `rank_integral`, `integral`, `is_shipping`, `good_desc`, `good_img`) VALUES
-(1, 'Holy Bible', '#f00|em', 'gn201811106869915', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0.00', '0', '0', 0, 0, 0, 1, 1, 0, 1541838405, 0, 0, 0, 1, NULL, ''),
-(2, 'iphone Max(512G)', '|', 'gn201811103322215', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '0.00', '9688', '0', 0, 0, 0, 1, 1, 1, 1541830344, 0, 0, 0, 1, NULL, ''),
-(13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 1, 50, 0, '', 0, 0, 0, 22, 0, '0', '0.00', '5800', '0', 0, 0, 0, 1, 1, 0, 1541830000, 0, 0, 0, 1, NULL, ''),
-(14, '华为 Mate20', '|', 'gn201811235910715', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '0', '5000.00', '4666', '0', 0, 0, 0, 1, 1, 0, 1542966120, 100, 0, 0, 0, NULL, '');
+INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `market_price`, `shop_price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`, `brand_id`, `last_update`, `give_integral`, `rank_integral`, `integral`, `is_shipping`, `good_desc`, `good_img`, `add_time`) VALUES
+(1, 'Holy Bible', '#f00|em', 'gn201811106869915', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0.00', '0', '0', 0, 0, 0, 1, 1, 0, 1541838405, 0, 0, 0, 1, NULL, '', 1541682980),
+(2, 'iphone Max(512G)', '|', 'gn201811103322215', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '0.00', '9688', '0', 0, 0, 0, 1, 1, 1, 1541830344, 0, 0, 0, 1, NULL, '', 1541682980),
+(13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 1, 50, 0, '', 0, 0, 0, 22, 0, '0', '0.00', '5800', '0', 0, 0, 0, 1, 1, 0, 1541830000, 0, 0, 0, 1, NULL, '', 1541682980),
+(14, '华为 Mate20', '|', 'gn201811235910715', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '0', '5000.00', '4666', '0', 0, 0, 0, 1, 1, 0, 1542966120, 100, 0, 0, 0, NULL, '', 1541682980);
 
 -- --------------------------------------------------------
 
@@ -582,7 +583,7 @@ CREATE TABLE IF NOT EXISTS `volume_price` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `price_type` tinyint(1) NOT NULL,
   `volume_number` smallint(6) NOT NULL,
-  `volume_price` decimal(10,0) NOT NULL,
+  `volume_price` decimal(10,2) NOT NULL,
   `good_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
@@ -592,8 +593,8 @@ CREATE TABLE IF NOT EXISTS `volume_price` (
 --
 
 INSERT INTO `volume_price` (`id`, `price_type`, `volume_number`, `volume_price`, `good_id`) VALUES
-(14, 1, 2, '4600', 14),
-(13, 1, 3, '4580', 14);
+(14, 1, 2, '4600.00', 14),
+(13, 1, 3, '4580.00', 14);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
