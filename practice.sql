@@ -293,6 +293,7 @@ INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, 
 (13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 1, 50, 0, '', 0, 0, 0, 22, 0, '0', '0.00', '5800', '0', 0, 0, 0, 1, 1, 0, 1541830000, 0, 0, 0, 1, NULL, '', 1541682980),
 (14, '华为 Mate20', '|', 'gn201811235910715', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '0', '5000.00', '4666', '0', 0, 0, 0, 1, 1, 0, 1542966120, 100, 0, 0, 0, NULL, '', 1541682980);
 
+
 -- --------------------------------------------------------
 
 --
@@ -595,6 +596,7 @@ CREATE TABLE IF NOT EXISTS `volume_price` (
 INSERT INTO `volume_price` (`id`, `price_type`, `volume_number`, `volume_price`, `good_id`) VALUES
 (14, 1, 2, '4600.00', 14),
 (13, 1, 3, '4580.00', 14);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

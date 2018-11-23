@@ -85,6 +85,7 @@ class GoodController extends PublicController
 		 if(in_array($data['pid'], array_keys(getCategories($data['id'])))) {
  			 $this->error("父级分类选择错误");
 		 	 exit;
+
 		 }
 
  		 $data['view_order'] = !empty(intval($data['view_order'])) ? intval($data['view_order']) : 100;

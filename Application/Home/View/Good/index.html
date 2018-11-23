@@ -24,6 +24,7 @@
 							<foreach name="rank_prices" item="r_price" key="r_name">
 							<li>{$r_name}：<span class="text-danger bold">{$r_price.rank_price}</span></li>
 							</foreach>
+
 							<li>购买数量：<input type="text" name="good_num" value="1"></li>
 						</ul>
 					</div>
@@ -44,6 +45,7 @@
 						</ul>
 					</div>
 					<if condition="$volume_prices">
+
 						<div class="col-md-12">
 							<div class="table-responsive">
 								<table class="table table-hover table-bordered">
@@ -60,6 +62,7 @@
 												<td>{$v_price.volume_price}</td>
 											</tr>
 										</foreach>
+
 									</tbody>
 								</table>
 							</div>
@@ -89,6 +92,7 @@
 							</foreach>
 					 </div>
 					</foreach>
+
 					<div class="col-md-12" style="padding-top:10px;border-top:1px solid #ccc;">
 					 	  <button class="btn btn-danger">立刻购买</button>
 					 </div>

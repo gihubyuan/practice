@@ -1143,6 +1143,7 @@ function get_good_info($id)
      $good['comment_rank'] = ceil($good['comment_rank']) == 0 ? 5 : ceil($good['comment_rank']);
      $good['market_price'] = sprintf('￥%d元', round($good['market_price']));
      $good['shop_price_formated'] = sprintf('￥%d元',round($good['shop_price']));
+
      return $good;
 }
 

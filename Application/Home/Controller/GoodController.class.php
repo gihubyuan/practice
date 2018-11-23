@@ -25,6 +25,7 @@ class GoodController extends \Home\Controller\HomeController
 		$this->assign('good', $good);
 		$this->rank_prices = get_rank_prices($id, $shop_price);
 		$this->volume_prices = get_volume_prices($id);
+
 		if(C('CAPTCHA') & CAPTCHA_COMMENT)
 		{
 			$this->assign('captcha_on', 'on');
