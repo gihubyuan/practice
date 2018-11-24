@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.7.9
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 23, 2018 at 02:52 PM
--- Server version: 5.7.19
--- PHP Version: 5.6.31
+-- Generation Time: Nov 24, 2018 at 09:05 AM
+-- Server version: 5.7.21
+-- PHP Version: 5.6.35
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -78,7 +78,7 @@ INSERT INTO `attribute` (`id`, `type_id`, `attribute_name`, `status`, `input_val
 (10, 1, '印张', 1, 1, 1, '', 0, ''),
 (11, 1, '字数', 1, 1, 1, '', 0, ''),
 (12, 1, '所属分类', 1, 1, 1, '', 0, ''),
-(13, 4, '网络制式', 1, 2, 2, '2g\r\n3g\r\n4g\r\n5g', 0, ''),
+(13, 4, '配件', 1, 3, 2, '耳机\r\n数据线\r\n钢化膜\r\n手机套\r\n', 0, ''),
 (14, 4, '支持频率/网络频率', 1, 1, 1, '', 0, ''),
 (15, 4, '尺寸体积', 1, 1, 2, '小体积\r\n中体积\r\n大体积', 0, ''),
 (16, 4, '外观样式/手机类型', 1, 1, 1, '', 0, ''),
@@ -95,7 +95,7 @@ INSERT INTO `attribute` (`id`, `type_id`, `attribute_name`, `status`, `input_val
 (31, 4, '通话时间', 1, 1, 1, '', 0, ''),
 (32, 4, '待机时间', 1, 1, 1, '', 0, ''),
 (33, 4, '标准配置', 1, 1, 1, '', 0, ''),
-(34, 4, 'WAP上网', 1, 1, 1, '', 0, ''),
+(34, 4, '颜色', 1, 2, 1, '', 0, ''),
 (35, 4, '数据业务', 1, 1, 1, '', 0, ''),
 (36, 4, '天线位置', 1, 1, 1, '', 0, ''),
 (37, 4, '随机配件', 1, 1, 1, '', 0, ''),
@@ -291,8 +291,7 @@ INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, 
 (1, 'Holy Bible', '#f00|em', 'gn201811106869915', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0.00', '0', '0', 0, 0, 0, 1, 1, 0, 1541838405, 0, 0, 0, 1, NULL, '', 1541682980),
 (2, 'iphone Max(512G)', '|', 'gn201811103322215', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '0.00', '9688', '0', 0, 0, 0, 1, 1, 1, 1541830344, 0, 0, 0, 1, NULL, '', 1541682980),
 (13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 1, 50, 0, '', 0, 0, 0, 22, 0, '0', '0.00', '5800', '0', 0, 0, 0, 1, 1, 0, 1541830000, 0, 0, 0, 1, NULL, '', 1541682980),
-(14, '华为 Mate20', '|', 'gn201811235910715', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '0', '5000.00', '4666', '0', 0, 0, 0, 1, 1, 0, 1542966120, 100, 0, 0, 0, NULL, '', 1541682980);
-
+(14, '华为 Mate20', '|', 'gn201811243001015', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '0', '5000.00', '4666', '0', 0, 0, 0, 1, 1, 0, 1543025257, 100, 0, 0, 0, NULL, '', 1541682980);
 
 -- --------------------------------------------------------
 
@@ -308,23 +307,22 @@ CREATE TABLE IF NOT EXISTS `good_attrs` (
   `attr_value` varchar(20) NOT NULL,
   `attr_price` varchar(20) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `good_attrs`
 --
 
 INSERT INTO `good_attrs` (`id`, `good_id`, `attr_id`, `attr_value`, `attr_price`) VALUES
-(1, 1, 2, '基督教', ''),
-(2, 1, 6, '324', ''),
-(3, 13, 2, '基督教', ''),
-(4, 13, 6, '326', ''),
-(12, 14, 13, '5g', '500'),
-(21, 14, 29, '8g', ''),
+(31, 14, 29, '8g', ''),
+(30, 14, 13, '手机套', '20'),
 (22, 14, 19, '2020x1240', ''),
 (23, 14, 24, '玻璃', ''),
 (24, 14, 30, 'emui', ''),
-(25, 14, 13, '3g', '-200');
+(29, 14, 13, '耳机', '60'),
+(26, 14, 34, '金色', '100'),
+(27, 14, 34, '深空灰', '300'),
+(28, 14, 34, '红色', '300');
 
 -- --------------------------------------------------------
 
@@ -587,16 +585,15 @@ CREATE TABLE IF NOT EXISTS `volume_price` (
   `volume_price` decimal(10,2) NOT NULL,
   `good_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `volume_price`
 --
 
 INSERT INTO `volume_price` (`id`, `price_type`, `volume_number`, `volume_price`, `good_id`) VALUES
-(14, 1, 2, '4600.00', 14),
-(13, 1, 3, '4580.00', 14);
-
+(18, 1, 2, '4600.00', 14),
+(17, 1, 3, '4580.00', 14);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

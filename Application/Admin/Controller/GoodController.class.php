@@ -460,6 +460,7 @@ class GoodController extends PublicController
 	 		}
 	 		else 
 	 		{
+	 			$data['last_update'] = time();
 	 			if(!M('goods')->where(['id'=>$good_id])->save($data)) 
 	 			{
 	 			  $this->error('更新失败');
