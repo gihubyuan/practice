@@ -1,0 +1,47 @@
+<extend name="public:base" />
+
+<block name="body">
+	<form action="{:U('productAdd')}" method="post">
+			<table class="table table-bordered table-condensed text-center">
+				<thead>
+					<tr>
+						<th colspan="{$colspans}" class="text-center">{$good_name} - {$sn}</th>
+					</tr>
+				</thead>
+				<tbody>
+						<tr>
+							<foreach name="attribute" item="attr">
+							<td>{$attr.name}</td>
+							</foreach>
+							<td>product_sn</td>
+							<td>数量</td>
+						</tr>
+						<tr>
+							<td>黑色</td>
+							<td>a32sdfq3d</td>
+							<td>22</td>
+						</tr>
+						<tr>
+								<foreach name="attribute" item="attr" key="attr_id">
+									 <td>
+											<select name="attr[{$attr_id}][]" id="" class="form-control">
+												<option value="" selected>--please select--</option>
+												<foreach name="attr.attr_values" item="value">
+													<option value="{$value}">{$value}</option>
+												</foreach>
+										  </select>
+									 </td>
+							   </foreach>
+							<td><input type="text" class="form-control" name="product_sn[]"></td>
+							<td><input type="text" class="form-control" name="product_number[]"></td>
+						</tr>
+						<tr>
+						<td colspan="{$colspans}" class="text-center">
+							<input type="hidden" name="good_id" value="{$good_id}">
+							<button type="submit" class="btn btn-primary">save</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+	</form>
+</block>

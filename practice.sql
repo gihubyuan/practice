@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 24, 2018 at 09:05 AM
+-- Generation Time: Nov 25, 2018 at 09:47 AM
 -- Server version: 5.7.21
 -- PHP Version: 5.6.35
 
@@ -467,6 +467,22 @@ INSERT INTO `navs` (`id`, `nav_name`, `if_show`, `view_order`, `url`, `open_new`
 (4, '服装', 1, 50, '', 0),
 (5, '食品', 1, 50, '', 1),
 (6, '玩具', 1, 50, '', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products`
+--
+
+DROP TABLE IF EXISTS `products`;
+CREATE TABLE IF NOT EXISTS `products` (
+  `product_id` int(11) NOT NULL AUTO_INCREMENT,
+  `good_id` int(11) NOT NULL,
+  `product_sn` varchar(16) NOT NULL,
+  `good_attr` varchar(40) NOT NULL,
+  `product_number` int(11) NOT NULL,
+  PRIMARY KEY (`product_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 

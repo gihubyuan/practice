@@ -1147,3 +1147,59 @@ function get_good_info($id)
      return $good;
 }
 
+function handle_goods_attr($good_id, $id_list, $spec_list, $attr_value_list)
+{
+    $result_arr = array();
+    foreach($id_list as $k => $id)
+    {
+        $value = $price = '';
+        if($spec_list[$k] === false)
+        {
+            $value = $attr_value_list[$k];
+            $price = '';
+        }
+        else
+        {
+            $attr_arr = explode(chr(13), $attr_value_list[$k]);
+            if(is_array($attr_arr))
+            {
+                foreach($attr_arr as $val)
+                {
+                    $arr = explode(chr(9), $val);
+                    $value[] = $arr[0];
+                    $price[] = $arr[1];
+                }
+            }
+            $value = implode('', $value);
+            $price = implode('', $price);
+
+            $attr_info = M('goodAttrs')
+             ->where([
+                'good_id' => $good_id,
+                'attr_id' => $k,
+                'attr_value' => $value])
+             ->find();
+             if($attr_info)
+             {
+                M('goodAttrs')
+                 ->save([
+                    'good_id' => $good_id,
+                    'attr_id' => $k,
+                    'attr_value' => $value
+                 ]);
+                 $result_arr[$k] = $attr_info['id'];
+             }
+             else
+             {
+                $r_id = M('goodAttrs')
+                 ->add([
+                    'good_id' => $good_id,
+                    'attr_id' => $k,
+                    'attr_value' => $value
+                 ]);
+                 $result_arr[$k] = $r_id;
+             }
+        }
+        return $result_arr;
+    }
+}
