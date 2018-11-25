@@ -1160,34 +1160,35 @@ function handle_goods_attr($good_id, $id_list, $spec_list, $attr_value_list)
         }
         else
         {
-            $attr_arr = explode(chr(13), $attr_value_list[$k]);
-            if(is_array($attr_arr))
+            $value_list = $price_list = array();
+            if(!empty($attr_value_list[$k]))
             {
+                $attr_arr = explode(chr(13), $attr_value_list[$k]);
                 foreach($attr_arr as $val)
                 {
                     $arr = explode(chr(9), $val);
-                    $value[] = $arr[0];
-                    $price[] = $arr[1];
+                    $value_list[] = $arr[0];
+                    $price_list[] = $arr[1];
                 }
             }
-            $value = implode('', $value);
-            $price = implode('', $price);
+            
+            $value = implode(chr(13), $value_list);
+            $price = implode(chr(13), $price_list);
 
-            $attr_info = M('goodAttrs')
+            $goodAttrId = M('goodAttrs')
              ->where([
                 'good_id' => $good_id,
                 'attr_id' => $k,
                 'attr_value' => $value])
-             ->find();
-             if($attr_info)
+             ->getField('id');
+             if($goodAttrId)
              {
                 M('goodAttrs')
                  ->save([
-                    'good_id' => $good_id,
-                    'attr_id' => $k,
-                    'attr_value' => $value
+                    'attr_value' => $value,
+                    'id' => $goodAttrId
                  ]);
-                 $result_arr[$k] = $attr_info['id'];
+                 $result_arr[$k] = $goodAttrId;
              }
              else
              {
@@ -1195,11 +1196,42 @@ function handle_goods_attr($good_id, $id_list, $spec_list, $attr_value_list)
                  ->add([
                     'good_id' => $good_id,
                     'attr_id' => $k,
-                    'attr_value' => $value
+                    'attr_value' => $value,
+                    'attr_price' => $price
                  ]);
                  $result_arr[$k] = $r_id;
              }
         }
-        return $result_arr;
     }
+    return $result_arr;
 }
+
+function product_list($id)
+{
+    $products = M('products')->where(['good_id'=>$id])->select();
+    $attrs = M('goodAttrs')->field(['id', 'attr_value'])->where(['good_id'=>$id])->select();
+    $list = array();
+    foreach($attrs as $v)
+    {
+        $list[$v['id']] = $v['attr_value'];
+    }
+    foreach($products as $key => $val)
+    {
+        $good_atrs = explode('|', $val['good_attr']);
+        $temp = [];
+        foreach($good_atrs as $atr_id)
+        {
+            $temp[] = $list[$atr_id];
+        }
+        $products[$key]['attrs'] = $temp;
+    }
+    return $products;
+}
+
+/*function sortGoodAttrId($idArr)
+{
+    M('goodAttrs')
+     ->where('id ' . db_create_in($idArr))
+     ->order('attr_id asc')
+     ->select();
+}*/

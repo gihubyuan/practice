@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.9
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 25, 2018 at 09:47 AM
--- Server version: 5.7.21
--- PHP Version: 5.6.35
+-- Generation Time: Nov 25, 2018 at 03:26 PM
+-- Server version: 5.7.19
+-- PHP Version: 5.6.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -291,7 +291,7 @@ INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, 
 (1, 'Holy Bible', '#f00|em', 'gn201811106869915', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0.00', '0', '0', 0, 0, 0, 1, 1, 0, 1541838405, 0, 0, 0, 1, NULL, '', 1541682980),
 (2, 'iphone Max(512G)', '|', 'gn201811103322215', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '0.00', '9688', '0', 0, 0, 0, 1, 1, 1, 1541830344, 0, 0, 0, 1, NULL, '', 1541682980),
 (13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 1, 50, 0, '', 0, 0, 0, 22, 0, '0', '0.00', '5800', '0', 0, 0, 0, 1, 1, 0, 1541830000, 0, 0, 0, 1, NULL, '', 1541682980),
-(14, '华为 Mate20', '|', 'gn201811243001015', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '0', '5000.00', '4666', '0', 0, 0, 0, 1, 1, 0, 1543025257, 100, 0, 0, 0, NULL, '', 1541682980);
+(14, '华为 Mate20', '|', 'gn201811243001015', 3, 1, 50, 4, '', 0, 0, 0, 258, 0, '0', '5000.00', '4666', '0', 0, 0, 0, 1, 1, 0, 1543025257, 100, 0, 0, 0, NULL, '', 1541682980);
 
 -- --------------------------------------------------------
 
@@ -478,11 +478,19 @@ DROP TABLE IF EXISTS `products`;
 CREATE TABLE IF NOT EXISTS `products` (
   `product_id` int(11) NOT NULL AUTO_INCREMENT,
   `good_id` int(11) NOT NULL,
-  `product_sn` varchar(16) NOT NULL,
+  `product_sn` varchar(26) NOT NULL,
   `good_attr` varchar(40) NOT NULL,
   `product_number` int(11) NOT NULL,
   PRIMARY KEY (`product_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`product_id`, `good_id`, `product_sn`, `good_attr`, `product_number`) VALUES
+(4, 14, 'gn201811243001015g_p4', '27', 58),
+(5, 14, 'gn201811243001015g_p5', '26', 200);
 
 -- --------------------------------------------------------
 
@@ -528,7 +536,7 @@ CREATE TABLE IF NOT EXISTS `system_config` (
   `groups` tinyint(4) NOT NULL DEFAULT '0',
   `type` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `system_config`
@@ -542,7 +550,9 @@ INSERT INTO `system_config` (`id`, `config_name`, `config_title`, `config_value`
 (5, 'register_closed', '关闭注册', '0', 1, 10, 0, 1),
 (10, 'captcha', '验证码', '704', 1, 10, 0, 1),
 (7, 'comment_factor', '评论开启条件', '0', 1, 10, 0, 1),
-(11, 'comment_check', '评论审核', '1', 1, 10, 0, 1);
+(11, 'comment_check', '评论审核', '1', 1, 10, 0, 1),
+(12, 'use_storage', '开启库存', '1', 1, 10, 0, 1),
+(13, 'default_storage', '默认库存', '1', 1, 10, 0, 1);
 
 -- --------------------------------------------------------
 

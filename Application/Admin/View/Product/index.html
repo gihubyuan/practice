@@ -11,27 +11,31 @@
 				<tbody>
 						<tr>
 							<foreach name="attribute" item="attr">
-							<td>{$attr.name}</td>
+							<td><strong class="text-danger">{$attr.name}</strong></td>
 							</foreach>
-							<td>product_sn</td>
-							<td>数量</td>
+							<td><strong class="text-danger">product_sn</strong></td>
+							<td><strong class="text-danger">数量</strong></td>
 						</tr>
+						<foreach name="products" item="product">
+							<tr>
+								<foreach name="product.attrs" item="val">
+								<td>{$val}</td>
+								</foreach>
+								<td>{$product.product_sn|default=''}</td>
+								<td>{$product.product_number}</td>
+							</tr>
+						</foreach>
 						<tr>
-							<td>黑色</td>
-							<td>a32sdfq3d</td>
-							<td>22</td>
-						</tr>
-						<tr>
-								<foreach name="attribute" item="attr" key="attr_id">
-									 <td>
-											<select name="attr[{$attr_id}][]" id="" class="form-control">
-												<option value="" selected>--please select--</option>
-												<foreach name="attr.attr_values" item="value">
-													<option value="{$value}">{$value}</option>
-												</foreach>
-										  </select>
-									 </td>
-							   </foreach>
+							<foreach name="attribute" item="attr" key="attr_id">
+								 <td>
+									 <select name="attr[{$attr_id}][]" id="" class="form-control">
+										<option value="" selected>--please select--</option>
+										<foreach name="attr.attr_values" item="value">
+											<option value="{$value}">{$value}</option>
+										</foreach>
+									  </select>
+								 </td>
+							 </foreach>
 							<td><input type="text" class="form-control" name="product_sn[]"></td>
 							<td><input type="text" class="form-control" name="product_number[]"></td>
 						</tr>
