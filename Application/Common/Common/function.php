@@ -1228,6 +1228,230 @@ function product_list($id)
     return $products;
 }
 
+function get_volume_prices($id, $price_type = 1)
+{
+    $prices = M('volumePrice')
+        ->where(['good_id'=>$id, 'price_type'=>$price_type])
+        ->order('volume_number desc')
+        ->select();
+     $list = array();
+     foreach($prices as $k => $p)
+     {
+        $list[$k] = array();
+        $list[$k]['volume_number'] = $p['volume_number']; 
+        $list[$k]['volume_price'] = sprintf('￥%d元', round($p['volume_price'])); 
+        $list[$k]['volume_price_orgin'] = $p['volume_price']; 
+     }
+     return $list;
+}
+
+function getFinalPrice($good_id, $number, $specs, $calcSpec = false)
+{
+     $volume_price = $promotion_price = $final_price =0;
+     $number = $number > 0 ? $number : 1;
+     $arr_prices = get_volume_prices($good_id);
+     foreach($arr_prices as $val)
+     {
+         if($number >= $val['volume_number'])
+         {
+             $volume_price = $val['volume_price_orgin'];
+             break;
+         }
+     }
+     $good_info = M('goods')->field(['shop_price * '.session('discount') => 'user_price', 'promotion_price', 'promotion_start', 'promotion_end'])->find($good_id);
+
+     $user_price = $good_info['user_price'];
+     if($good_info['promotion_price'] > 0)
+     {
+          $gtime = time();
+          if($gtime >= $good_info['promotion_start'] && $gtime <= $good_info['promotion_end'])
+          {
+            $promotion_price = $good_info['promotion_price'];
+          }
+          else
+          {
+            $promotion_price = 0;
+          }
+     }
+
+     $compare_arr = [$volume_price, $promotion_price, $user_price];
+     $compare_arr = empty(array_filter($compare_arr)) ? [0] : array_filter($compare_arr);
+     $final_price = min($compare_arr);
+
+     if($calcSpec)
+     {
+         $ids = explode(',', $specs);
+         $attr_prices = M('goodAttrs')->field(['attr_price'])->where(db_create_in($ids, 'id'))->select();
+         foreach($attr_prices as $val)
+         {
+             if(!empty($val['attr_price']))
+             {
+                 $final_price += $val['attr_price'];
+             }
+         }
+     }
+     return $final_price;
+}
+
+function add_to_cart($id, $num, $specs, $parent_id = 0)
+{
+    $result = array('error'=>'', 'content' => '');
+    $good = M('goods')->where(['deleted'=>0])->find($id);
+    if(!$good)
+    {
+        $result['error'] = '商品不存在';
+        return $result;
+    }
+    if($good['is_on_sale'] ==0 )
+    {
+        $result['error'] = '商品已下架';
+        return $result;
+    }
+    if($parent_id == 0 && $good['is_alone_sale'] = 0)
+    {
+        $result['error'] = '该商品是配件';
+        return $result;
+    }
+    $prod = M('products')->where(['good_id'=>$id])->count();
+    if(is_spec($specs) && $prod > 0)
+    {
+        $product_info = get_product_info($id, $specs);
+    }
+    
+    if(empty($product_info))
+    {
+        $product_info = array('product_number' => 0);
+    }
+
+    if(C('USE_STORAGE') > 0)
+    {
+        if($num > $good['number'])
+        {
+            $result['error'] = '超过库存最大量';
+            return $result;
+        }
+
+        if(is_spec($specs) && $prod > 0)
+        {
+            if($num > $product_info['product_number'])
+            {
+                $result['error'] = '超过库存最大量';
+                return $result;
+            }
+        }
+    }
+
+    $data['good_attr_id'] = implode(',', $specs);
+    $data['good_id'] = $id;
+    $data['good_sn'] = $good['good_sn'];
+    $data['is_real'] = 1;
+    $data['good_name'] = $good['good_name'];
+    $data['product_id'] = $product_info['product_id'];
+    $data['rec_type'] = 1;
+    $data['is_shipping'] = 1;
+    $data['is_gift'] = 0;
+    $data['good_number'] = $num;
+    $data['parent_id'] = $parent_id;
+    $data['extension_code'] = '';
+    $data['user_id'] = empty(session('user_auth.uid')) ? 0 : session('user_auth.uid');
+    $data['market_price'] = $good['market_price'] + spec_price($specs);
+    $data['good_attr'] = get_good_attr_info($specs);
+    $data['good_price'] = getFinalPrice($id, $num, $specs, $true);
+    if($num > 0)
+    {
+       $cart = M('carts')
+        ->where([
+            'good_id' => $id,
+        ])->find();
+
+        if($cart)
+        {
+           $num += $cart['good_number'];
+           if(is_spec($specs) && !empty($prod))
+           {
+              $default_storage = $product_info['product_number'];
+           }
+           else
+           {
+              $default_storage = $good['number']; 
+           }
+
+           if(C('USE_STORAGE') ==0 || $num <= $default_storage)
+           {
+              $data['good_number'] = $num;
+              M('carts')
+               ->where(['good_id'=>$id])
+               ->save($data);
+           }
+        }
+        else 
+        {
+          M('carts')->add($data);
+        }
+    }
+
+    return $result;
+}
+
+function get_good_attr_info($specs)
+{
+  $arr = M('goodAttrs')
+   ->alias('ga')
+   ->field(['a.attribute_name', 'ga.attr_value', 'ga.attr_price'])
+   ->join('attribute a on ga.attr_id=a.id', 'inner')
+   ->where(db_create_in($specs, 'ga.id'))
+   ->select();
+
+  $attr = '';
+  $format = "%s:%s[%s] \n";
+  if(!empty($arr))
+  {
+    foreach ($arr as $key => $value) {
+       $attr_price = round(floatval($value['attr_value']), 2);
+       $attr .= sprintf($format, $value['attribute_name'], $value['attr_value'],  $attr_price);
+    }
+  }
+  return $attr;
+}
+
+function is_spec($good_attr_ids)
+{
+    if(!$good_attr_ids || !is_array($good_attr_ids))
+    {
+        return false;
+    }
+
+    $result = M('goodAttrs')->where('id ' . db_create_in($good_attr_ids))->select();
+    if(!empty($result))
+    {
+        return true;
+    }
+    return false;
+}
+
+function get_product_info($good_id, $specs)
+{
+    $attr_ids = M('attribute')
+     ->alias('a')
+     ->field(['ga.id'])
+     ->join('good_attrs ga on a.id=ga.attr_id', 'left')
+     ->where(['_string'=> db_create_in($specs, 'ga.id'), 'a.input_value_type'=>2])
+     ->order('a.id asc')
+     ->select();
+     $attr_ids = array_column($attr_ids, 'id');
+     if(!empty($attr_ids))
+     {
+        $good_attr = implode('|', $attr_ids);
+        return  M('products')->where(['good_id'=>$good_id, 'good_attr'=> $good_attr])->find();
+     }
+     return false;
+}
+
+function spec_price($specs)
+{
+   return  M('goodAttrs')->where(db_create_in($specs, 'id'))->getField('SUM(attr_price)');
+}
+
 /*function sortGoodAttrId($idArr)
 {
     M('goodAttrs')

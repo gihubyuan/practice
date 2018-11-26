@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.7.9
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 25, 2018 at 03:26 PM
--- Server version: 5.7.19
--- PHP Version: 5.6.31
+-- Generation Time: Nov 26, 2018 at 09:49 AM
+-- Server version: 5.7.21
+-- PHP Version: 5.6.35
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -153,6 +153,41 @@ CREATE TABLE IF NOT EXISTS `brands` (
 
 INSERT INTO `brands` (`id`, `brand_name`, `brand_desc`, `brand_url`, `sort_order`, `if_show`) VALUES
 (1, '苹果', '苹果公司是一家大型跨国公司', 'https://www.apple.com', 100, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `carts`
+--
+
+DROP TABLE IF EXISTS `carts`;
+CREATE TABLE IF NOT EXISTS `carts` (
+  `cart_id` int(11) NOT NULL AUTO_INCREMENT,
+  `good_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `good_number` mediumint(9) NOT NULL,
+  `good_sn` varchar(60) NOT NULL,
+  `good_name` varchar(40) NOT NULL,
+  `market_price` decimal(10,2) NOT NULL,
+  `good_price` decimal(10,2) NOT NULL,
+  `good_attr` varchar(40) NOT NULL,
+  `is_real` tinyint(1) NOT NULL,
+  `extension_code` varchar(30) NOT NULL,
+  `parent_id` int(11) NOT NULL,
+  `rec_type` int(11) NOT NULL,
+  `is_gift` tinyint(1) NOT NULL,
+  `is_shipping` tinyint(1) NOT NULL,
+  `good_attr_id` varchar(40) NOT NULL,
+  PRIMARY KEY (`cart_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `carts`
+--
+
+INSERT INTO `carts` (`cart_id`, `good_id`, `user_id`, `product_id`, `good_number`, `good_sn`, `good_name`, `market_price`, `good_price`, `good_attr`, `is_real`, `extension_code`, `parent_id`, `rec_type`, `is_gift`, `is_shipping`, `good_attr_id`) VALUES
+(2, 14, 0, 4, 13, 'gn201811243001015', '华为 Mate20', '5300.00', '4580.00', '颜色:深空灰[0] \n', 1, '', 0, 1, 0, 1, '27');
 
 -- --------------------------------------------------------
 

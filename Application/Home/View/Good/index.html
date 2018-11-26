@@ -3,7 +3,7 @@
 	<link rel="stylesheet" href="__PUBLIC__/css/index.css">
 </block>
 <block name="body">
-	<form action="" id="good-info">
+	<form action="javascript:;" id="good-info">
 		<div class="row">
 			<div class="col-md-5">
 				<img src="__PUBLIC__/img/iphone.jpg" class="img-responsive" alt="">
@@ -91,7 +91,7 @@
 					</foreach>
 
 					<div class="col-md-12" style="padding-top:10px;border-top:1px solid #ccc;">
-					 	  <button class="btn btn-danger">立刻购买</button>
+					 	  <button class="btn btn-danger" onclick="addToCart()">立刻购买</button>
 					 </div>
 				</div>
 			</div>
@@ -352,6 +352,29 @@
 				}
 		}
 
+		function addToCart()
+		{
+			var frm = document.getElementById('good-info');
+			//.replace(/\.html/i, '')
+			var url = "{:U('Flow/addToCart')}";
+			var data = {};
+			data.num = frm.elements['good_num'].value ? parseInt(frm.elements['good_num'].value) : 1;
+			data.specs = getSelectedAttribute();
+			data.id = "{$good_id}";
+			$.post(url, data, addToCartResponse);
+		}
+
+		function addToCartResponse(reponse)
+		{
+			if(reponse.error.length > 0)
+			{
+				alert(reponse.error);
+			}	
+			else
+			{
+				alert('添加成功');
+			}
+		}
 	</script>
 </block>
 
