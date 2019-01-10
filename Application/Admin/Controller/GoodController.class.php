@@ -354,8 +354,6 @@ class GoodController extends PublicController
 
 	function goodHandle()
 	{
-		 if(IS_POST) 
-		 {
 	 		if(!empty($_FILES['good_img']['name']))
 	 		{
 		 		if($_FILES['good_img']['error'] > 0)
@@ -534,36 +532,40 @@ class GoodController extends PublicController
 		 	 				 	 		
 			 	 foreach($good_attr_list as $attr_id => $attr_value_arr) 
 			 	 {
-				 	 	 foreach($attr_value_arr as $attr_value => $value) 
-				 	 	 {
-					 	 	 		if($value['type'] == 'update') 
-					 	 	 		{
-					 	 	 			 M('goodAttrs')->save([
-					 	 	 			 	 'attr_id' => $attr_id,
-					 	 	 			 	 'attr_value' => $attr_value,
-					 	 	 			 	 'good_id' => $good_id,
-					 	 	 			 	 'id' => $value['good_attr_id'],
-					 	 	 			 	 'attr_price' => $value['attr_price']
-					 	 	 			 ]);
-					 	 	 		}
-					 	 	 		elseif($value['type'] == 'insert') 
-					 	 	 		{
-					 	 	 			 M('goodAttrs')->add([
-					 	 	 			 	 'attr_id' => $attr_id,
-					 	 	 			 	 'attr_value' => $attr_value,
-					 	 	 			 	 'good_id' => $good_id,
-					 	 	 			 	 'attr_price' => $value['attr_price']
-					 	 	 			 ]);
-					 	 	 		}
-					 	 	 		else 
-					 	 	 		{
-					 	 	 			  M('goodAttrs')->delete($value['good_attr_id']);
-					 	 	 		}
-				 	 	 }
+			 	 	 foreach($attr_value_arr as $attr_value => $value) 
+			 	 	 {
+			 	 	 		if($value['type'] == 'update') 
+			 	 	 		{
+			 	 	 			 M('goodAttrs')->save([
+			 	 	 			 	 'attr_id' => $attr_id,
+			 	 	 			 	 'attr_value' => $attr_value,
+			 	 	 			 	 'good_id' => $good_id,
+			 	 	 			 	 'id' => $value['good_attr_id'],
+			 	 	 			 	 'attr_price' => $value['attr_price']
+			 	 	 			 ]);
+			 	 	 		}
+			 	 	 		elseif($value['type'] == 'insert') 
+			 	 	 		{
+			 	 	 			 M('goodAttrs')->add([
+			 	 	 			 	 'attr_id' => $attr_id,
+			 	 	 			 	 'attr_value' => $attr_value,
+			 	 	 			 	 'good_id' => $good_id,
+			 	 	 			 	 'attr_price' => $value['attr_price']
+			 	 	 			 ]);
+			 	 	 		}
+			 	 	 		else 
+			 	 	 		{
+			 	 	 			  M('goodAttrs')->delete($value['good_attr_id']);
+			 	 	 		}
+			 	 	 }
 			 	 }
 		 	}
-	 	  $this->redirect('index');
-		 }
+
+		 	if(get_specification_list($good_id))
+		 	{
+		 		$this->redirect('Product/index', array('id'=>$good_id));
+		 	}
+	 	   $this->redirect('index');
 	}
 
 

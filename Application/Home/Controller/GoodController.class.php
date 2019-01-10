@@ -46,7 +46,9 @@ class GoodController extends \Home\Controller\HomeController
 		 }
 		 else
 		 {
-		 	 $final_price = getFinalPrice($good_id, $number, $ids, true);
+		 	 $good_price = getFinalPrice($good_id, $number, 0);
+		 	 $spec_price = spec_price($ids);
+		 	 $final_price = ($good_price * $number) + $spec_price;
 		 	 $result['content'] = sprintf('￥%d元', round($final_price));
 		 }
 		$this->ajaxReturn($result);

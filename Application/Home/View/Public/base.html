@@ -24,7 +24,7 @@
 		        <else/>
 		        	<li><a href="{:U('User/login')}">登陆</a></li>
 		        </if>
-		        <li><a href="">购物车</a></li>
+		        <li><a href="{:U('Flow/cart',array('id'=>$_SESSION['user_auth']['uid']))}">购物车</a></li>
 		     </ul>
 		</div>
 	</nav>

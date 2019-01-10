@@ -5,91 +5,102 @@
 
 			 <legend>{$form_header} good</legend>
 		
-			<div class="form-group">
-				<label for="">商品名</label>
-				<input type="text" name="good_name" value="{$good.good_name}" style="color:{$good.name_style_color};" class="form-control">
-				颜色<input type="text" name="name_style_color" value="{$good.name_style_color}" class="form-control">
-				样式<select name="name_style_font" class="form-control">
-					    <option value="">默认</option>
-						<eq name="good.name_style_font" value="u">
-							<option value="u" selected>下划线</option>
-						<else/>
-							<option value="u">下划线</option>
-						</eq>
-						<eq name="good.name_style_font" value="strong">
-							<option value="strong" selected>加粗</option>
-						<else/>
-							<option value="strong">加粗</option>
-						</eq>
-					 <eq name="good.name_style_font" value="strike">
-							<option value="strike" selected>删除线</option>
-						<else/>
-							<option value="strike">删除线</option>
-						</eq>
-						 <eq name="good.name_style_font" value="em">
-							<option value="em" selected>斜体</option>
-						<else/>
-							<option value="em">斜体</option>
-						</eq>
-					</select>
-			</div>
-			
-			<div class="form-group">
-				<label for="">商品品牌</label>
-				<select name="brand_id" class="form-control">
-				<option value="0">--请选择--</option>
-				<volist name="brands" id="brand">
-					<option value="{$brand.id}" <eq name="brand.id" value="$good.brand_id">selected</eq>>{$brand.brand_name}</option>
-				</volist>
-			</select>
-		 </div>
+		<ul class="nav nav-tabs" role="tablist">
+		    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">通用信息</a></li>
+		    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">详细描述</a></li>
+		    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">其他信息</a></li>
+		    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">商品属性</a></li>
+		    <li role="presentation"><a href="#fittings" aria-controls="fittings" role="tab" data-toggle="tab">配件</a></li>
+		  </ul>
 
-			<div class="form-group">
-				<label for="">商品分类</label>
-				<select name="cat_id" id="" class="form-control">
-					<option value="0">请选择</option>
-					{$cates}
+		  <!-- Tab panes -->
+		  <div class="tab-content">
+		    <div role="tabpanel" class="tab-pane fade in active" id="home">
+		    	<div class="form-group">
+					<label for="">商品名</label>
+					<input type="text" name="good_name" value="{$good.good_name}" style="color:{$good.name_style_color};" class="form-control">
+					颜色<input type="text" name="name_style_color" value="{$good.name_style_color}" class="form-control">
+					样式<select name="name_style_font" class="form-control">
+						    <option value="">默认</option>
+							<eq name="good.name_style_font" value="u">
+								<option value="u" selected>下划线</option>
+							<else/>
+								<option value="u">下划线</option>
+							</eq>
+							<eq name="good.name_style_font" value="strong">
+								<option value="strong" selected>加粗</option>
+							<else/>
+								<option value="strong">加粗</option>
+							</eq>
+						 <eq name="good.name_style_font" value="strike">
+								<option value="strike" selected>删除线</option>
+							<else/>
+								<option value="strike">删除线</option>
+							</eq>
+							 <eq name="good.name_style_font" value="em">
+								<option value="em" selected>斜体</option>
+							<else/>
+								<option value="em">斜体</option>
+							</eq>
+						</select>
+				</div>
+				
+				<div class="form-group">
+					<label for="">商品品牌</label>
+					<select name="brand_id" class="form-control">
+					<option value="0">--请选择--</option>
+					<volist name="brands" id="brand">
+						<option value="{$brand.id}" <eq name="brand.id" value="$good.brand_id">selected</eq>>{$brand.brand_name}</option>
+					</volist>
 				</select>
-			</div>
+			 </div>
 
-			<div class="form-group">
-				<label for="">扩展分类</label>
-				<button type="button" class="btn btn-info btn-sm" id="extended-cats">添加</button>
-				<volist name="extend_cats" id="extend_cat">
-					<select name="cat_extended_id[]"  class="form-control" style="margin-bottom: 2px;">
-						<option value="0">--请选择--</option>
-						{$extend_cat}
+				<div class="form-group">
+					<label for="">商品分类</label>
+					<select name="cat_id" id="" class="form-control">
+						<option value="0">请选择</option>
+						{$cates}
 					</select>
-				</volist>
-			</div>
-			
+				</div>
 
-			<div class="form-group">
-				<label for="">重量</label>
-				<div class="row">
-					<div class="col-md-10">
-						<input type="text" name="weight" value="{$good.weight}" class="form-control" id="">
-					</div>
-					<div class="col-md-2" style="padding-left: 0;">
-						<select name="weight_unit" class="form-control">
-						<option value="0" selected>千克</option>
-						<option value="1">克</option>
-				</select>
+				<div class="form-group">
+					<label for="">扩展分类</label>
+					<button type="button" class="btn btn-info btn-sm" id="extended-cats">添加</button>
+					<volist name="extend_cats" id="extend_cat">
+						<select name="cat_extended_id[]"  class="form-control" style="margin-bottom: 2px;">
+							<option value="0">--请选择--</option>
+							{$extend_cat}
+						</select>
+					</volist>
+				</div>
+				
+
+				<div class="form-group">
+					<label for="">重量</label>
+					<div class="row">
+						<div class="col-md-10">
+							<input type="text" name="weight" value="{$good.weight}" class="form-control" id="">
+						</div>
+						<div class="col-md-2" style="padding-left: 0;">
+							<select name="weight_unit" class="form-control">
+							<option value="0" selected>千克</option>
+							<option value="1">克</option>
+					</select>
+						</div>
 					</div>
 				</div>
-			</div>
 
-			<div class="form-group">
-				<label for="">市场价格</label>
-				<input type="text" name="market_price" value="{$good.market_price}" class="form-control">
-			</div>
-			
-		 	<div class="form-group">
-				<label for="">价格</label>
-				<input type="text" name="shop_price" value="{$good.shop_price}" class="form-control">
-			</div>
+				<div class="form-group">
+					<label for="">市场价格</label>
+					<input type="text" name="market_price" value="{$good.market_price}" class="form-control">
+				</div>
+				
+			 	<div class="form-group">
+					<label for="">价格</label>
+					<input type="text" name="shop_price" value="{$good.shop_price}" class="form-control">
+				</div>
 
-			<div class="from-group">
+				<div class="from-group">
 				<label for="">会员价格</label>
 					<foreach name="rank_list" item="rank_item">
 						<div>
@@ -97,42 +108,96 @@
 							<input type="hidden" name="rank_id[]" value="{$rank_item.id}">
 						</div>
 				</foreach>
-			</div>
-
-			<div class="from-group">
-				<label for="">优惠数量</label>
-				<if condition="$volumes">
-					<foreach name="volumes" item="volum">
-							<div>
-									<span onclick="addVolume(this)">[+]</span>数量 <input type="text" name="volume_number[]" value="{$volum.volume_number}"> 价格<input type="text" name="volume_price[]" value="{$volum.volume_price}">
-							</div>
-			  	</foreach>
-			  <else/>
-			  		<div>
-			   			<span onclick="addVolume(this)">[+]</span>数量 <input type="text" name="volume_number[]" value=""> 价格<input type="text" name="volume_price[]" value="">
-			   		</div>
-			  </if>
-			</div>
-
-			<div class="form-group">
-				<label for="">推荐</label>
-				<div class="checkbox">
-					<label>
-							<input type="checkbox" name="is_best" <eq name="good.is_new" value="1">checked</eq>>
-						精品
-					</label>
-					<label>
-							<input type="checkbox" name="is_hot" <eq name="good.is_new" value="1">checked</eq>>
-						热销
-					</label>
-					<label>
-							<input type="checkbox" name="is_new" <eq name="good.is_new" value="1">checked</eq>>
-						新品 
-					</label>
 				</div>
-			</div>
-			
-			<div class="form-group">
+
+				<div class="from-group">
+					<label for="">优惠数量</label>
+					<if condition="$volumes">
+						<foreach name="volumes" item="volum">
+								<div>
+										<span onclick="addVolume(this)">[+]</span>数量 <input type="text" name="volume_number[]" value="{$volum.volume_number}"> 价格<input type="text" name="volume_price[]" value="{$volum.volume_price}">
+								</div>
+				  	</foreach>
+				  <else/>
+				  		<div>
+				   			<span onclick="addVolume(this)">[+]</span>数量 <input type="text" name="volume_number[]" value=""> 价格<input type="text" name="volume_price[]" value="">
+				   		</div>
+				  </if>
+				</div>
+
+				<div class="form-group">
+					<label for="">推荐</label>
+					<div class="checkbox">
+						<label>
+								<input type="checkbox" name="is_best" <eq name="good.is_new" value="1">checked</eq>>
+							精品
+						</label>
+						<label>
+								<input type="checkbox" name="is_hot" <eq name="good.is_new" value="1">checked</eq>>
+							热销
+						</label>
+						<label>
+								<input type="checkbox" name="is_new" <eq name="good.is_new" value="1">checked</eq>>
+							新品 
+						</label>
+					</div>
+				</div>
+
+				<div class="form-group">
+				<label for="">促销价格</label>
+					<input type="text" name="promotion_price" value="{$good.promotion_price}" class="form-control" id="">
+				</div>
+
+				<div class="form-group">
+					<label for="">促销开始</label>
+					<input type="text" name="promotion_start"　value="{$good.promotion_start}" class="form-control" id="">
+				</div>
+				<div class="form-group">
+					<label for="">促销结束</label>
+					<input type="text" name="promotion_end"　value="{$good.promotion_end}"  class="form-control" id="">
+				</div>
+				<div class="form-group">
+				<label for="">上传图片</label>
+				<input type="hidden" name="MAX_FILE_SIZE" value="2097152">
+			  <input type="file" name="good_img">
+		 		</div>
+		<button type="submit" class="btn btn-primary">Submit</button>
+		 		
+		    </div>
+		    <div role="tabpanel" class="tab-pane fade" id="profile">
+		    	
+					<div class="form-group">
+						<label for="">赠送积分</label>
+						<input type="text" name="give_integral" value="{$good.give_integral}" class="form-control">
+					</div>
+
+					<div class="form-group">
+						<label for="">等级积分</label>
+						<input type="text" name="rank_integral" value="{$good.rank_integral}" class="form-control">
+					</div>
+
+					<div class="form-group">
+						<label for="">积分抵现</label>
+						<input type="text" name="integral" value="{$good.integral}" class="form-control">
+					</div>
+
+					<div class="form-group">
+						<label for="">库存</label>
+						<input type="text" name="number"　value="{$good.number}"  class="form-control" id="">
+					</div>
+
+					<div class="form-group">
+						<label for="">警告库存</label>
+						<input type="text" name="warn_number"　value="{$good.warn_number}" class="form-control" id="">
+					</div>
+
+					<div class="form-group">
+						<label for="">关键字</label>
+						<input type="text" name="keywords"　value="{$good.keywords}"  class="form-control" id="">
+					</div>
+		    </div>
+		    <div role="tabpanel" class="tab-pane fade" id="messages">
+				<div class="form-group">
 				<label for="">免邮?</label>
 				<div class="checkbox">
 					<label>
@@ -141,76 +206,39 @@
 					</label>
 				</div>
 			</div>
+
 			
-			<div class="form-group">
-				<label for="">促销价格</label>
-				<input type="text" name="promotion_price" value="{$good.promotion_price}" class="form-control" id="">
-			</div>
-
-			<div class="form-group">
-				<label for="">促销开始</label>
-				<input type="text" name="promotion_start"　value="{$good.promotion_start}" class="form-control" id="">
-			</div>
-			<div class="form-group">
-				<label for="">促销结束</label>
-				<input type="text" name="promotion_end"　value="{$good.promotion_end}"  class="form-control" id="">
-			</div>
-			
-			<div class="form-group">
-				<label for="">赠送积分</label>
-				<input type="text" name="give_integral" value="{$good.give_integral}" class="form-control">
-			</div>
-
-			<div class="form-group">
-				<label for="">等级积分</label>
-				<input type="text" name="rank_integral" value="{$good.rank_integral}" class="form-control">
-			</div>
-
-			<div class="form-group">
-				<label for="">积分抵现</label>
-				<input type="text" name="integral" value="{$good.integral}" class="form-control">
-			</div>
-
-			<div class="form-group">
-				<label for="">库存</label>
-				<input type="text" name="number"　value="{$good.number}"  class="form-control" id="">
-			</div>
-
-			<div class="form-group">
-				<label for="">警告库存</label>
-				<input type="text" name="warn_number"　value="{$good.warn_number}" class="form-control" id="">
-			</div>
-
-			<div class="form-group">
-				<label for="">关键字</label>
-				<input type="text" name="keywords"　value="{$good.keywords}"  class="form-control" id="">
-			</div>
-
-			<div class="form-group">
-				<label for="">上传图片</label>
-				<input type="hidden" name="MAX_FILE_SIZE" value="2097152">
-			  <input type="file" name="good_img">
-		 </div>
-		  
-			<div class="form-group">
+		    </div>
+		    <div role="tabpanel" class="tab-pane fade" id="settings">
+		    	<div class="form-group">
 				<label for="">属性分类</label>
-				<select name="type_id" id="category" class="form-control" required="required">
-					<option value="0">-select-</option>
-					<volist name="options" id="option">
-							<eq name="option['id']" value="$good['type_id']">
-								<option value="{$option.id}" selected>{$option.type_name}</option>
-						  <else/>
-								<option value="{$option.id}">{$option.type_name}</option>
-					  </eq>
-				  </volist>
-			  </select>
-			</div>
-			<div id="attributes" style="padding: 0 0 0 20px;">
-				
-			</div>
+					<select name="type_id" id="category" class="form-control" required="required">
+						<option value="0">-select-</option>
+						<volist name="options" id="option">
+								<eq name="option['id']" value="$good['type_id']">
+									<option value="{$option.id}" selected>{$option.type_name}</option>
+							  <else/>
+									<option value="{$option.id}">{$option.type_name}</option>
+						  </eq>
+					  </volist>
+				  </select>
+				</div>
+				<div id="attributes" style="padding: 0 0 0 20px;">
+					
+				</div>
+		    </div>
+		    <div role="tabpanel" class="tab-pane fade" id="fittings">
+				<div>
+					<span>[+]</span>
+			    	<select name="fittings[]" id="">
+			    		<option value=""></option>
+			    	</select>
+			    	<input type="text" name="fitting_price[]">
+				</div>		    	
+		    </div>
+		  </div>
 		<input type="hidden" name="good_id" value="{$good.id}">
 		<input type="hidden" name="act" value="{$act}">
-		<button type="submit" class="btn btn-primary">Submit</button>
 	</form>
 </block>
 <block name="script">

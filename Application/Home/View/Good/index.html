@@ -25,7 +25,7 @@
 							<li>{$r_name}：<span class="text-danger bold">{$r_price.rank_price}</span></li>
 							</foreach>
 
-							<li>购买数量：<input type="text" name="good_num" value="1" onkeyup="getActualPrice()"></li>
+							<li>购买数量：<input type="text" name="good_num" value="1" onblur="getActualPrice()"></li>
 						</ul>
 					</div>
 					<div class="col-md-6 right-good">
@@ -342,14 +342,14 @@
 
 		function getActualPriceResponse(response)
 		{
-				if(response.error.length > 0)
-				{
-					alert(response.error);
-				}
-				else
-				{
-					document.getElementById('AMOUNT').innerHTML = response.content;
-				}
+			if(response.error.length > 0)
+			{
+				alert(response.error);
+			}
+			else
+			{
+				document.getElementById('AMOUNT').innerHTML = response.content;
+			}
 		}
 
 		function addToCart()

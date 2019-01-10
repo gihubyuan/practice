@@ -42,5 +42,4 @@ class IndexController extends HomeController
         }
         $this->ajaxReturn(['status'=>1, 'data'=>$decendants]);
     }
-   
 }

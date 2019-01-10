@@ -14,6 +14,21 @@ function P($a, $getVar = false)
         echo '</pre>';
     }
 }
+function random_number($length = 6)
+{
+    if($length < 1)
+    {
+        $length = 6;
+    }
+
+    $min = 1;
+    for($i=0; $i<$length-1 ; $i++)
+    {
+        $min *= 10 ;
+    }
+    $max = $min * 10 - 1;
+    return mt_rand($min, $max);
+}
 
 function check_verify($code, $id = '')
 {
@@ -733,7 +748,7 @@ function categories_sort($index_id, $list)
                     }
                     else 
                     {
-                          $level_arr = [];
+                           $level_arr = [];
                             $pid = 0;
                             $level = 0;
                             $cat_id_arr = [];
@@ -1258,7 +1273,10 @@ function getFinalPrice($good_id, $number, $specs, $calcSpec = false)
              break;
          }
      }
-     $good_info = M('goods')->field(['shop_price * '.session('discount') => 'user_price', 'promotion_price', 'promotion_start', 'promotion_end'])->find($good_id);
+     $good_info = M('goods')
+        ->alias('g')
+        ->join('member_price mp on g.id=mp.good_id and mp.user_rank = ' . session('rank_id') , 'left')
+        ->field(['IFNULL(mp.member_price, shop_price * '  .session('discount') . ')' => 'user_price', 'promotion_price', 'promotion_start', 'promotion_end'])->where(['g.id'=>$good_id, 'deleted'=>0])->find();
 
      $user_price = $good_info['user_price'];
      if($good_info['promotion_price'] > 0)
@@ -1362,6 +1380,7 @@ function add_to_cart($id, $num, $specs, $parent_id = 0)
        $cart = M('carts')
         ->where([
             'good_id' => $id,
+            'good_attr_id' => implode(',', $specs)
         ])->find();
 
         if($cart)
@@ -1380,7 +1399,7 @@ function add_to_cart($id, $num, $specs, $parent_id = 0)
            {
               $data['good_number'] = $num;
               M('carts')
-               ->where(['good_id'=>$id])
+               ->where(['good_id'=>$id,'good_attr_id' => implode(',', $specs)])
                ->save($data);
            }
         }
@@ -1407,9 +1426,10 @@ function get_good_attr_info($specs)
   if(!empty($arr))
   {
     foreach ($arr as $key => $value) {
-       $attr_price = round(floatval($value['attr_value']), 2);
+       $attr_price = round(floatval($value['attr_price']), 2);
        $attr .= sprintf($format, $value['attribute_name'], $value['attr_value'],  $attr_price);
     }
+    $attr = str_replace('[0]', '', $attr);
   }
   return $attr;
 }
@@ -1450,6 +1470,79 @@ function get_product_info($good_id, $specs)
 function spec_price($specs)
 {
    return  M('goodAttrs')->where(db_create_in($specs, 'id'))->getField('SUM(attr_price)');
+}
+
+function get_specification_list($good_id)
+{
+    $cnt = M('attribute')
+     ->alias('a')
+     ->join('good_attrs ga on a.id=ga.attr_id', 'left')
+     ->where(['ga.good_id'=>$good_id,'a.input_value_type'=>2])
+     ->count();
+     return $cnt > 0 ? true : false;
+}
+
+function send_mail()
+{
+    $name = '2546857860@qq.com';
+    $email = '2546857860@qq.com';
+    $subject = '邮箱验证申请';
+    $type = 1;
+    $notification = false;
+    $shop_name = '测试组';
+    $from = 'yuan3666073@163.com';
+$content =<<<'cont'
+    <div id="qm_con_body">
+    <div class="qmbox qm_con_body_content" id="mailContentContainer" style="">
+    <p style="margin:0px;padding:0px;"><strong style="font-size:14px;line-height:24px;color:#333333;font-family:arial,sans-serif;">亲爱的用户：<></p>
+    <p style="margin:0px;padding:0px;line-height:24px;font-size:12px;color:#333333;font-family:'宋体',arial,sans-serif;"><span style="font-size: larger;">您好！</span><span style="font-size: larger;"><br />
+    </span></p>
+    <p style="margin:0px;padding:0px;line-height:24px;font-size:12px;color:#333333;font-family:'宋体',arial,sans-serif;"><span style="font-size: larger;">您当前正在进行邮箱身份验证，请在页面的邮箱验证码输入框中输入此次验证码：</span></p>
+    <p style="margin:0px;padding:0px;line-height:24px;font-size:12px;color:#333333;font-family:'宋体',arial,sans-serif;"><span style="color: rgb(51, 102, 255);"><span style="font-size: larger;"><span style="border-bottom: 1px dashed rgb(204, 204, 204); z-index: 1;">3306</span></span></span><span style="font-size: larger;"> </span><span style="font-size: larger;">验证码的有效时间为30分钟，请在有效时间内完成验证。</span></p>
+    <p style="margin:0px;padding:0px;line-height:24px;font-size:12px;color:#333333;font-family:'宋体',arial,sans-serif;"><span style="font-size: larger;">如非本人操作，请忽略此邮件，由此给您带来的不便请谅解！</span><span style="font-size: medium;"> </span></p>
+    <p>测试组<br />
+    <span style="border-bottom:1px dashed #ccc;">2019/01/09 10:48</span></p>
+    </div>
+    </div>
+cont;
+    $charset = "UTF8";
+    $content_type = ($type == 0) ?
+                'Content-Type: text/plain; charset=' . $charset : 'Content-Type: text/html; charset=' . $charset;
+    $content   =  base64_encode($content);
+
+    $headers = array();
+    $headers[] = 'Date: ' . gmdate('D, j M Y H:i:s') . ' +0000';
+    $headers[] = 'To: "' . '=?' . $charset . '?B?' . base64_encode($name) . '?=' . '" <' . $email. '>';
+    $headers[] = 'From: "' . '=?' . $charset . '?B?' . base64_encode($shop_name) . '?='.'" <' . $from . '>';
+    $headers[] = 'Subject: ' . '=?' . $charset . '?B?' . base64_encode($subject) . '?=';
+    $headers[] = $content_type . '; format=flowed';
+    $headers[] = 'Content-Transfer-Encoding: base64';
+    $headers[] = 'Content-Disposition: inline';
+    if ($notification)
+    {
+        $headers[] = 'Disposition-Notification-To: ' . '=?' . $charset . '?B?' . base64_encode($shop_name) . '?='.'" <' . $GLOBALS['_CFG']['smtp_mail'] . '>';
+    }
+
+    /* 获得邮件服务器的参数设置 */
+    $params['host'] = 'smtp.163.com';
+    $params['port'] = 25;
+    $params['user'] = 'yuan3666073@163.com';
+    $params['pass'] = 'tuanpi_3666073';
+
+    $send_params['recipients'] = $email;
+    $send_params['body'] = $content;
+    $send_params['headers'] = $headers;
+    $send_params['from'] = $from;
+
+    define('SMTP_STATUS_NOT_CONNECTED', 1, true);
+    define('SMTP_STATUS_CONNECTED',     2, true);
+
+    $smt = new smtp($params);
+    if($smt->connect() && $smt->send($send_params))
+    {
+        echo '发送成功';
+        exit;
+    }
 }
 
 /*function sortGoodAttrId($idArr)
