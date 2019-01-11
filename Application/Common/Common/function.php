@@ -30,6 +30,19 @@ function random_number($length = 6)
     return mt_rand($min, $max);
 }
 
+function check_email($email)
+{
+    if(!empty($email) && strpos($email, '@') !== false && strpos($email, '.') !== false)
+    {
+        $pattern = "/^([a-z0-9+_]|\\.|\\-)+@(([a-z0-9_]|\\-)+\\.)+[a-z]{2,6}\$/i";
+        if(preg_match($pattern, $email))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 function check_verify($code, $id = '')
 {
     $verify = new \Think\Verify();
@@ -68,7 +81,7 @@ function getStyleName($name, $style)
     }
     return $name;
 }
-function build_uri($root, $id = 0, $sort_field = '', $sort_order = '', $brand_id = 0, $page = 0)
+function build_uri($root, $id = 0, $sort_field = '', $sort_order = '', $brand_id = 0, $filter_attr = '', $page = 0)
 {
     if(empty($root) || !is_string($root))
     {
@@ -78,10 +91,11 @@ function build_uri($root, $id = 0, $sort_field = '', $sort_order = '', $brand_id
         'id' => 0,
         'sort_field' => '',
         'sort_order' => '',
-        'brand_id' => 0
+        'brand_id' => 0,
+        'filter_attr' => ''
     ];
 
-    extract(array_merge($args, compact('id', 'sort_field', 'sort_order', 'brand_id')));
+    extract(array_merge($args, compact('id', 'sort_field', 'sort_order', 'brand_id', 'filter_attr')));
     $url = "Home/Category/$root";
 
     if(!empty($id))
@@ -100,6 +114,10 @@ function build_uri($root, $id = 0, $sort_field = '', $sort_order = '', $brand_id
     {
         $url .= "/brand_id/$brand_id";
     }
+    if(!empty($filter_attr))
+    {
+        $url .= "/filter_attr/$filter_attr";
+    }
     if(!empty($page))
     {
         $url .= "/p/$page";
@@ -108,31 +126,35 @@ function build_uri($root, $id = 0, $sort_field = '', $sort_order = '', $brand_id
     return U($url);
 }
 
-function get_cate_goods($cat_id, $sort_field, $sort_order, $bid)
+function get_cate_goods($cat_id, $sort_field, $sort_order, $bid, $ext_sql = '')
 {
     $map = [];
     if($bid > 0)
     {
         $map['brand_id'] = $bid;
     }
+    $ext = $ext_sql ? " $ext_sql AND " : '';
+    $cats = getChildren($cat_id, 'cat_id');
     $goods_num =  M('goods')
+             ->alias('g')
              ->where(array_merge([
                 'deleted' => 0,
                 'is_on_sale' => 1,
                 'is_alone_sale' => 1,
-                '_string' => getChildren($cat_id)
+                '_string' => $ext . $cats
              ], $map))->count();
 
     $page = new \Think\Page($goods_num, C('LIMIT_COUNT'));
     $show = $page->show();
 
     $goods = M('goods')
+             ->alias('g')
              ->field(['id','good_name', 'shop_price'])
              ->where(array_merge([
                 'deleted' => 0,
                 'is_on_sale' => 1,
                 'is_alone_sale' => 1,
-                '_string' => getChildren($cat_id)
+                '_string' => $ext . $cats
              ], $map))->order("$sort_field $sort_order")
              ->limit($page->firstRow . ',' . $page->listRows)
              ->select();
@@ -140,7 +162,7 @@ function get_cate_goods($cat_id, $sort_field, $sort_order, $bid)
     return compact('goods', 'goods_num', 'show');
 }
 
-function getChildren($cat_id, $field = 'cat_id')
+function getChildren($cat_id, $field = '')
 {
     return db_create_in(array_unique(array_merge(array($cat_id), array_keys(getCategories($cat_id)))),$field);
 }
@@ -348,15 +370,6 @@ function get_affiliate()
         }
     }
     return 0;
-}
-
-function check_email($email)
-{
-    if(!preg_match('/[a-zA-Z][a-zA-Z0-9_]+@[a-zA-Z_0-9]+(\.com|\.cn|\.edu)+/', $email))
-    {
-        return false;
-    }
-    return true;
 }
 
 function log_account_change($uid, $user_money, $frozen_money, $rank_points, $pay_points, $change_desc = '', $change_type = 1)
@@ -827,7 +840,7 @@ function db_create_in($value_list, $fields = '')
 {
     if(empty($value_list))
     {
-        return "IN ('')";
+        return "";
     }
     else
     {

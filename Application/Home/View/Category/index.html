@@ -7,13 +7,26 @@
 		<div class="sort-box">
 			<ul class="nav nav-pills sort-pills">
 				<if condition="$brand_arr">
-					<li><span class="bold">品牌:</span></li>
+					<li><span class="bold" style="width:100px;">品牌:</span></li>
 					<volist name="brand_arr" id="barr">
 						<li><eq name="barr.selected" value="1"><span class="active">{$barr.brand_name}</span><else/><a href="{$barr.url}">{$barr.brand_name}</a></eq>
 						</li>
 				    </volist>
 			   </if>
 	   </ul>
+	   <if condition="$filter_attr_list">
+				<foreach name="filter_attr_list" item="filter_attr">
+					<ul class="nav nav-pills sort-pills">
+							<if condition="$filter_attr">
+								<li><span class="bold" style="width:100px;">{$filter_attr.filter_attr_name}:</span></li>
+								<volist name="filter_attr.attr_list" id="filter_item">
+									<li><eq name="filter_item.selected" value="1"><span class="active">{$filter_item.attr_value}</span><else/><a href="{$filter_item.url}">{$filter_item.attr_value}</a></eq>
+									</li>
+							    </volist>
+						   </if>
+				   </ul>
+				</foreach>
+	   </if>
 		</div>
 		
 	<div class="row">
