@@ -19,6 +19,7 @@ class GoodController extends \Home\Controller\HomeController
 		$shop_price = $good['shop_price'];
 		assign_comments($this->view, $good['id']);
 		$good['good_name_style'] = getStyleName($good['good_name'], $good['good_name_style']);
+		$good['shop_price'] = get_good_price($id);
 		$this->assign('good', $good);
 		$this->assign('properties', $properties['prop']);
 		$this->assign('specification', $properties['spec']);
@@ -73,3 +74,41 @@ function get_rank_prices($id, $price)
     return $list;
 }
 
+function get_good_price($good_id)
+{
+	$min_price = getFinalPrice($good_id, 1, 0);
+	$attr_arr =  M('goodAttrs')
+	 ->where('good_id =' . $good_id . ' AND attr_price > 0')
+	 ->select();
+	 $res = array();
+	 foreach($attr_arr as $attr)
+	 {
+	 	  $res[$attr['attr_id']][$attr['attr_price']] = $attr;
+	 }
+
+	 $tmp = array();
+	 foreach($res as $value)
+	 {
+	 	  ksort($value);
+	 	  $tmp[] = end($value);
+	 }
+
+	 $max_price = $min_price;
+	 foreach($tmp as $v)
+	 {
+	 	 $max_price += $v['attr_price'];
+	 }
+
+	 if($max_price == $min_price)
+	 {
+			return sprintf("￥%d元", $max_price);	 	  
+	 }
+	 elseif($max_price > $min_price)
+	 {
+	 	  return sprintf("￥%d", $min_price) . ' ~ ' . sprintf("%d元", $max_price);
+	 }
+	 else
+	 {
+			return sprintf("￥%d元", $max_price);	 	  
+	 }
+}

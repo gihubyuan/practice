@@ -8,6 +8,10 @@ class GoodController extends PublicController
 	public function index()
 	{
 		$goods = M('goods')->order('sort desc, id')->select();
+		foreach($goods as $k => $good)
+		{
+			 $goods[$k]['enable_storage'] = get_specification_list($good['id']) ? 1 : 0;
+		}
 		$this->assign('goods', $goods);
 		$this->display();
 	}
@@ -556,6 +560,7 @@ class GoodController extends PublicController
 			 	 	 		else 
 			 	 	 		{
 			 	 	 			  M('goodAttrs')->delete($value['good_attr_id']);
+			 	 	 			  M('products')->where('good_id=' . $good_id . ' AND good_attr like %' . $value['good_attr_id'] . '%')->delete();
 			 	 	 		}
 			 	 	 }
 			 	 }
@@ -565,7 +570,7 @@ class GoodController extends PublicController
 		 	{
 		 		$this->redirect('Product/index', array('id'=>$good_id));
 		 	}
-	 	   $this->redirect('index');
+	 	 $this->redirect('index');
 	}
 
 

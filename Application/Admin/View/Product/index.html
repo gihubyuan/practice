@@ -18,7 +18,7 @@
 						</tr>
 						<foreach name="products" item="product">
 							<tr>
-								<foreach name="product.attrs" item="val">
+								<foreach name="product.attr_list" item="val">
 								<td>{$val}</td>
 								</foreach>
 								<td>{$product.product_sn|default=''}</td>

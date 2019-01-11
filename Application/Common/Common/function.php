@@ -1158,11 +1158,10 @@ function get_good_info($id)
 {
     $good = M('goods')
      ->alias('g')
-     ->field(['g.*', 'b.brand_name', 'c.unit', 'ifnull(avg(ct.comment_rank), 0)'=>'comment_rank', 'ifnull(mp.member_price, '.session('discount') .' * g.shop_price)'=>'rank_price'])
+     ->field(['g.*', 'b.brand_name', 'c.unit', 'ifnull(avg(ct.comment_rank), 0)'=>'comment_rank'])
      ->join('categories c on g.cat_id=c.id', 'left')
      ->join('brands b on g.brand_id=b.id', 'left')
      ->join('comments ct on ct.reply_id=g.id and ct.status=1', 'left')
-     ->join('member_price mp on g.id=mp.good_id and mp.user_rank='.session('rank_id'), 'left')
      ->where(['g.deleted'=>0, 'g.is_on_sale'=>1, 'g.id'=>$id])
      ->group('g.id')
      ->select();
@@ -1170,7 +1169,6 @@ function get_good_info($id)
      $good = $good[0];
      $good['comment_rank'] = ceil($good['comment_rank']) == 0 ? 5 : ceil($good['comment_rank']);
      $good['market_price'] = sprintf('￥%d元', round($good['market_price']));
-     $good['shop_price_formated'] = sprintf('￥%d元',round($good['shop_price']));
 
      return $good;
 }

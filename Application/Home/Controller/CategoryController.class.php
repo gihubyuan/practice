@@ -1,7 +1,6 @@
 <?php
 namespace Home\Controller;
 
-
 class CategoryController extends \Home\Controller\HomeController
 {
     public function index()
@@ -24,7 +23,7 @@ class CategoryController extends \Home\Controller\HomeController
         $filter_attrs = empty($filter_str) ?  '' : explode('.', $filter_str); 
         $brand_id = !empty(I('get.brand_id')) ? I('get.brand_id') : 0;
        
-        $children = get_children($id);
+        $children = getChildren($id);
 
         $brands = M('brands')
              ->alias('b')
@@ -144,7 +143,6 @@ class CategoryController extends \Home\Controller\HomeController
 
 
     }
-   
 }
 
 function get_extended_goods($cat_ids)
