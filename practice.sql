@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 26, 2018 at 09:49 AM
+-- Generation Time: Jan 12, 2019 at 09:30 AM
 -- Server version: 5.7.21
 -- PHP Version: 5.6.35
 
@@ -180,14 +180,18 @@ CREATE TABLE IF NOT EXISTS `carts` (
   `is_shipping` tinyint(1) NOT NULL,
   `good_attr_id` varchar(40) NOT NULL,
   PRIMARY KEY (`cart_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `carts`
 --
 
 INSERT INTO `carts` (`cart_id`, `good_id`, `user_id`, `product_id`, `good_number`, `good_sn`, `good_name`, `market_price`, `good_price`, `good_attr`, `is_real`, `extension_code`, `parent_id`, `rec_type`, `is_gift`, `is_shipping`, `good_attr_id`) VALUES
-(2, 14, 0, 4, 13, 'gn201811243001015', '华为 Mate20', '5300.00', '4580.00', '颜色:深空灰[0] \n', 1, '', 0, 1, 0, 1, '27');
+(2, 14, 1, 4, 13, 'gn201811243001015', '华为 Mate20', '5300.00', '4580.00', '颜色:深空灰\r\n', 1, '', 0, 1, 0, 1, '27'),
+(6, 15, 1, 0, 1, 'gn201901124278517', '钢化模', '66.00', '50.00', '', 1, '', 14, 1, 0, 1, ''),
+(7, 15, 1, 0, 1, 'gn201901124278517', '钢化模', '66.00', '50.00', '', 1, '', 14, 1, 0, 1, ''),
+(8, 16, 1, 0, 1, 'gn201901123108117', '手机套', '32.00', '26.00', '', 1, '', 14, 1, 0, 1, ''),
+(9, 16, 1, 0, 1, 'gn201901123108117', '手机套', '32.00', '26.00', '', 1, '', 14, 1, 0, 1, '');
 
 -- --------------------------------------------------------
 
@@ -214,7 +218,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
 INSERT INTO `categories` (`id`, `cat_name`, `pid`, `if_show`, `view_order`, `filter_attr`, `unit`) VALUES
 (1, '数码设备', -1, 1, 100, '19,24', ''),
 (2, '服装', 0, 1, 100, '', ''),
-(3, '手机', 1, 1, 100, '', '个'),
+(3, '手机', 1, 1, 100, '30,34', '个'),
 (4, '书籍', 0, 1, 100, '', '');
 
 -- --------------------------------------------------------
@@ -316,7 +320,7 @@ CREATE TABLE IF NOT EXISTS `goods` (
   `good_img` varchar(80) NOT NULL DEFAULT '',
   `add_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `goods`
@@ -324,9 +328,11 @@ CREATE TABLE IF NOT EXISTS `goods` (
 
 INSERT INTO `goods` (`id`, `good_name`, `good_name_style`, `good_sn`, `cat_id`, `status`, `sort`, `type_id`, `keywords`, `is_hot`, `is_new`, `is_best`, `number`, `warn_number`, `weight`, `market_price`, `shop_price`, `promotion_price`, `promotion_start`, `promotion_end`, `deleted`, `is_on_sale`, `is_alone_sale`, `brand_id`, `last_update`, `give_integral`, `rank_integral`, `integral`, `is_shipping`, `good_desc`, `good_img`, `add_time`) VALUES
 (1, 'Holy Bible', '#f00|em', 'gn201811106869915', 4, 1, 50, 1, '', 0, 0, 0, 0, 0, '0', '0.00', '0', '0', 0, 0, 0, 1, 1, 0, 1541838405, 0, 0, 0, 1, NULL, '', 1541682980),
-(2, 'iphone Max(512G)', '|', 'gn201811103322215', 3, 1, 50, 4, '', 0, 0, 0, 0, 0, '7', '0.00', '9688', '0', 0, 0, 0, 1, 1, 1, 1541830344, 0, 0, 0, 1, NULL, '', 1541682980),
-(13, '三星Galaxy s9', '|', 'gn20181031400623', 3, 1, 50, 0, '', 0, 0, 0, 22, 0, '0', '0.00', '5800', '0', 0, 0, 0, 1, 1, 0, 1541830000, 0, 0, 0, 1, NULL, '', 1541682980),
-(14, '华为 Mate20', '|', 'gn201811243001015', 3, 1, 50, 4, '', 0, 0, 0, 258, 0, '0', '5000.00', '4666', '0', 0, 0, 0, 1, 1, 0, 1543025257, 100, 0, 0, 0, NULL, '', 1541682980);
+(2, 'iphone Max', '|', 'gn201901113819315', 3, 1, 50, 4, '', 1, 0, 1, 77, 0, '7', '0.00', '9688', '0', 0, 0, 0, 1, 1, 1, 1547186819, 0, 0, 0, 0, NULL, '', 1541682980),
+(13, '三星Galaxy s9', '|', 'gn201901077251815', 3, 1, 50, 4, '', 0, 1, 0, 0, 0, '0', '0.00', '5800', '0', 0, 0, 0, 1, 1, 0, 1546844397, 0, 0, 0, 0, NULL, '', 1541682980),
+(14, '华为 Mate20', '|', 'gn201901112252615', 3, 1, 50, 0, '', 0, 0, 0, 0, 0, '0', '5000.00', '4666', '0', 0, 0, 0, 1, 1, 0, 1547186938, 100, 0, 0, 0, NULL, '', 1541682980),
+(15, '钢化模', '|', 'gn201901124278517', 0, 1, 50, 0, '', 0, 1, 0, 22, 0, '0', '66.00', '60', '0', 0, 0, 0, 1, 1, 0, 1547281266, 0, 0, 0, 0, NULL, '', 1547256417),
+(16, '手机套', '|', 'gn201901123108117', 0, 1, 50, 0, '', 0, 1, 0, 12, 0, '0', '32.00', '30', '0', 0, 0, 0, 1, 1, 0, 1547281278, 0, 0, 0, 0, NULL, '', 1547256457);
 
 -- --------------------------------------------------------
 
@@ -342,22 +348,17 @@ CREATE TABLE IF NOT EXISTS `good_attrs` (
   `attr_value` varchar(20) NOT NULL,
   `attr_price` varchar(20) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `good_attrs`
 --
 
 INSERT INTO `good_attrs` (`id`, `good_id`, `attr_id`, `attr_value`, `attr_price`) VALUES
-(31, 14, 29, '8g', ''),
-(30, 14, 13, '手机套', '20'),
-(22, 14, 19, '2020x1240', ''),
-(23, 14, 24, '玻璃', ''),
-(24, 14, 30, 'emui', ''),
-(29, 14, 13, '耳机', '60'),
-(26, 14, 34, '金色', '100'),
-(27, 14, 34, '深空灰', '300'),
-(28, 14, 34, '红色', '300');
+(32, 2, 30, 'ios', ''),
+(33, 2, 34, '红色', '50'),
+(34, 2, 34, '金色', '66'),
+(35, 13, 30, 'android', '');
 
 -- --------------------------------------------------------
 
@@ -407,8 +408,29 @@ CREATE TABLE IF NOT EXISTS `good_extended_cats` (
 --
 
 INSERT INTO `good_extended_cats` (`good_id`, `cat_id`) VALUES
-(1, 4),
-(13, 0);
+(1, 4);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `group_goods`
+--
+
+DROP TABLE IF EXISTS `group_goods`;
+CREATE TABLE IF NOT EXISTS `group_goods` (
+  `parent_id` int(11) NOT NULL,
+  `good_id` int(11) NOT NULL,
+  `good_price` decimal(10,2) NOT NULL,
+  `good_name` varchar(70) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `group_goods`
+--
+
+INSERT INTO `group_goods` (`parent_id`, `good_id`, `good_price`, `good_name`) VALUES
+(14, 15, '50.00', '钢化膜'),
+(14, 16, '26.00', '手机套');
 
 -- --------------------------------------------------------
 
@@ -474,7 +496,7 @@ CREATE TABLE IF NOT EXISTS `my_users` (
 --
 
 INSERT INTO `my_users` (`id`, `username`, `email`, `phone`, `status`, `user_money`, `frozen_moeny`, `rank_points`, `pay_points`, `affiliate_id`, `password`, `user_salt`, `salt`, `sex`, `birthday`, `qq`, `pwd_question`, `office_phone`, `home_phone`, `pwd_question_answer`, `reg_time`, `last_login_time`, `last_login_ip`, `rank_id`, `visit_counts`) VALUES
-(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '您的爸爸姓名?', '', '', '袁德坤', 1, 1542591997, '0.0.0.0', 0, 7);
+(1, 'yuanwei', 'yuanwei@yuanwei.com', '', 1, 0, 0, 0, 0, 0, '7545e36acb87b3020a78ebe5dbc365c6', '83248', 0, 0, '0', '', '您的爸爸姓名?', '', '', '袁德坤', 1, 1547281044, '0.0.0.0', 0, 11);
 
 -- --------------------------------------------------------
 
@@ -517,7 +539,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   `good_attr` varchar(40) NOT NULL,
   `product_number` int(11) NOT NULL,
   PRIMARY KEY (`product_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `products`
@@ -525,7 +547,9 @@ CREATE TABLE IF NOT EXISTS `products` (
 
 INSERT INTO `products` (`product_id`, `good_id`, `product_sn`, `good_attr`, `product_number`) VALUES
 (4, 14, 'gn201811243001015g_p4', '27', 58),
-(5, 14, 'gn201811243001015g_p5', '26', 200);
+(5, 14, 'gn201811243001015g_p5', '26', 200),
+(7, 2, 'gn201901113819315_P7', '32|33', 22),
+(8, 2, 'gn201901113819315_P8', '32|34', 55);
 
 -- --------------------------------------------------------
 
@@ -646,15 +670,15 @@ CREATE TABLE IF NOT EXISTS `volume_price` (
   `volume_price` decimal(10,2) NOT NULL,
   `good_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `volume_price`
 --
 
 INSERT INTO `volume_price` (`id`, `price_type`, `volume_number`, `volume_price`, `good_id`) VALUES
-(18, 1, 2, '4600.00', 14),
-(17, 1, 3, '4580.00', 14);
+(24, 1, 3, '4580.00', 14),
+(23, 1, 2, '4600.00', 14);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -596,7 +596,7 @@ class GoodController extends PublicController
 		 			 	 'is_hot' => 0,
 		 			 	 'is_new' => 0,
 		 			 	 'is_best' => 0,
-		 			 	 'number' => 0,
+		 			 	 'number' => 1,
 		 			 	 'warn_number' => 0,
 		 			 	 'weight' => 0,
 		 			 	 'shop_price' => 0,

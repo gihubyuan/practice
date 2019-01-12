@@ -1322,9 +1322,27 @@ function getFinalPrice($good_id, $number, $specs, $calcSpec = false)
      return $final_price;
 }
 
-function add_to_cart($id, $num, $specs, $parent_id = 0)
+function add_to_cart($parent_id = 0, $id, $num, $specs)
 {
+    $user_id = session('user_auth.uid');
+    if(empty($user_id))
+    {
+      $this->error('请先登录');
+      exit;
+    }
+
     $result = array('error'=>'', 'content' => '');
+
+    if($parent_id > 0)
+    {
+        $parent_cnt = M('carts')->where(['user_id'=> $user_id, 'good_id'=>$parent_id])->count();
+        if(!$parent_cnt)
+        {
+            $this->error("没有基本件");
+            exit;
+        }
+    }
+
     $good = M('goods')->where(['deleted'=>0])->find($id);
     if(!$good)
     {
@@ -1338,18 +1356,20 @@ function add_to_cart($id, $num, $specs, $parent_id = 0)
     }
     if($parent_id == 0 && $good['is_alone_sale'] = 0)
     {
-        $result['error'] = '该商品是配件';
+        $result['error'] = '该商品不单独销售';
         return $result;
     }
+
     $prod = M('products')->where(['good_id'=>$id])->count();
-    if(is_spec($specs) && $prod > 0)
+
+     if(is_spec($specs) && $prod > 0)
     {
         $product_info = get_product_info($id, $specs);
     }
     
     if(empty($product_info))
     {
-        $product_info = array('product_number' => 0);
+        $product_info = array('product_id'=> 0, 'product_number' => 0);
     }
 
     if(C('USE_STORAGE') > 0)
@@ -1375,22 +1395,86 @@ function add_to_cart($id, $num, $specs, $parent_id = 0)
     $data['good_sn'] = $good['good_sn'];
     $data['is_real'] = 1;
     $data['good_name'] = $good['good_name'];
-    $data['product_id'] = $product_info['product_id'];
     $data['rec_type'] = 1;
     $data['is_shipping'] = 1;
     $data['is_gift'] = 0;
-    $data['good_number'] = $num;
-    $data['parent_id'] = $parent_id;
     $data['extension_code'] = '';
-    $data['user_id'] = empty(session('user_auth.uid')) ? 0 : session('user_auth.uid');
+    $data['user_id'] = $user_id;
     $data['market_price'] = $good['market_price'] + spec_price($specs);
+    $data['product_id'] = $product_info['product_id'];
     $data['good_attr'] = get_good_attr_info($specs);
-    $data['good_price'] = getFinalPrice($id, $num, $specs, $true);
+    $good_price = getFinalPrice($id, $num, $specs, $true);
+
+    if($parent_id > 0)
+    {
+        $basic_list = M('groupGoods')
+         ->field(['parent_id', 'good_price'])
+         ->where(['good_id'=>$id, 'parent_id'=> $parent_id, '_string' => 'good_price < '. $good_price])
+         ->select();
+         $basic_e = array();
+         foreach ($basic_list as $key => $value) {
+            $basic_e[$value['parent_id']] = $value['good_price'];
+         }
+
+         $basic_count_list = array();
+         if($basic_e)
+         {
+           $basic_count_list = M('carts')
+             ->field(['SUM(good_number)' => 'number', 'good_id'])
+             ->where(['user_id'=>$user_id, 'parent_id'=>0, 'good_id'=>$parent_id])
+             ->group('good_id')
+             ->select();
+             $basic_count_list_e = array();
+            foreach($basic_count_list as $value)
+            {
+                $basic_count_list_e[$value['good_id']] = $value['number'];
+            }
+         }
+
+         if($basic_count_list_e)
+         {
+            $fitting_list = M('carts')
+             ->field(['SUM(good_number)' => 'number', 'parent_id'])
+             ->where(['user_id'=>$user_id, 'parent_id'=>$parent_id, 'good_id'=>$id])
+             ->group('parent_id')
+             ->select();
+
+            $fitting_list_e = array();
+            foreach ($fitting_list as $key => $value) {
+                $basic_count_list_e[$value['parent_id']] -= $value['number'];
+            }
+         }
+
+         foreach($basic_e as $pid => $basic_price)
+         {
+            if($num <= 0)
+            {
+                continue;
+            }
+            if(!isset($basic_count_list_e[$pid]))
+            {
+                continue;
+            }
+
+            if($basic_count_list_e[$pid] <= 0)
+            {
+                continue;
+            }
+            $data['good_number'] =  min($num, $basic_count_list_e[$pid]);
+            $data['good_price'] = max($basic_price, 0);
+            $data['parent_id'] = $parent_id;
+            M('carts')->add($data);
+            $num -= $basic_count_list_e[$pid];
+         }
+    }
+
     if($num > 0)
     {
        $cart = M('carts')
         ->where([
             'good_id' => $id,
+            'user_id' => $user_id,
+            'parent_id' => 0,
             'good_attr_id' => implode(',', $specs)
         ])->find();
 
@@ -1409,14 +1493,19 @@ function add_to_cart($id, $num, $specs, $parent_id = 0)
            if(C('USE_STORAGE') ==0 || $num <= $default_storage)
            {
               $data['good_number'] = $num;
+              $data['good_price'] = $good_price;
+              $data['parent_id'] = 0;
               M('carts')
-               ->where(['good_id'=>$id,'good_attr_id' => implode(',', $specs)])
+               ->where(['good_id'=>$id, 'user_id' => $user_id, 'good_attr_id' => implode(',', $specs)])
                ->save($data);
            }
         }
         else 
         {
-          M('carts')->add($data);
+             $data['good_number'] = $num;
+             $data['good_price'] = $good_price;
+             $data['parent_id'] = 0;
+             M('carts')->add($data);
         }
     }
 
@@ -1425,6 +1514,10 @@ function add_to_cart($id, $num, $specs, $parent_id = 0)
 
 function get_good_attr_info($specs)
 {
+  if(empty($specs))
+  {
+    return '';
+  }
   $arr = M('goodAttrs')
    ->alias('ga')
    ->field(['a.attribute_name', 'ga.attr_value', 'ga.attr_price'])
@@ -1480,6 +1573,9 @@ function get_product_info($good_id, $specs)
 
 function spec_price($specs)
 {
+    if(empty($specs)) {
+        return 0;
+    }
    return  M('goodAttrs')->where(db_create_in($specs, 'id'))->getField('SUM(attr_price)');
 }
 
