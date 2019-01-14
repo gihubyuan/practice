@@ -18,8 +18,8 @@ class FavourableController extends PublicController
 		{
 			 $act_name = !empty(I('post.act_name')) ? I('post.act_name') : '';
 			 $act_recipient = !empty(I('post.act_recipient')) ? implode(',', I('post.act_recipient')) : array();
-			 $act_start_time = !empty(I('post.act_start_time')) ? (I('post.act_start_time') + time()) : 0;
-			 $act_end_time = !empty(I('post.act_end_time')) ? (I('post.act_end_time') + time()): 0;
+			 $act_start_time = !empty(I('post.act_start_time')) ? (I('post.act_start_time') + time()) : time();
+			 $act_end_time = !empty(I('post.act_end_time')) ? (I('post.act_end_time') + time()): (time() + 172800);
 			 $act_range = !empty(I('post.act_range')) ? I('post.act_range') : 0;
 			 $act_range_ext = !empty(I('post.act_range_ext')) ? implode(',', I('post.act_range_ext')) : '';
 			 $act_min_amount = !empty(I('post.act_min_amount')) ? I('post.act_min_amount') : 0;
@@ -32,11 +32,21 @@ class FavourableController extends PublicController
 			 	 $this->error('参数错误');
 			 }
 
+			 if($act_max_amount > 0 && $act_min_amount > $act_max_amount)
+			 {
+			 	 $this->error('参数错误');
+			 }
+
 			 if($act_type == TYPE_GIFT)
 			 {
 			 	  $gift_id = I('post.gift_id');
 			 	  $gift_price = I('post.gift_price');
-			 	  $ext = serialize(array('gift_id'=>$gift_id, 'gift_price' => $gift_price));
+			 	  foreach($gift_id as $k => $gid)
+			 	  {
+			 	  	 $tmp[] = array('id' => $gid, 'price' => $gift_price[$k]);
+			 	  }
+
+			 	  $ext = serialize($tmp);
 			 }
 			 else
 			 {

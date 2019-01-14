@@ -53,6 +53,43 @@
 					 </tr>
 				</foreach>
 			</table>
+			
+			<foreach name="favors" item="favor">
+				<table class="table table-bordered table-striped">
+					 <tr>
+					 	<th colspan="2">{$favor.act_name}</th>
+					 </tr>
+					 <tr>
+					 	<td>活动范围</td>
+					 	<td>
+					 		<php>
+					 			echo $range_text[$favor['act_range']];
+					 		</php>
+					 		<br>{$favor.range_desc}
+					 	</td>
+					 </tr>
+					 <tr>
+					 	<td>活动时间</td>
+					 	<td>{$favor.act_start_time} -- {$favor.act_end_time}</td>
+					 </tr>
+					 <tr>
+					 	<td>参与活动金额</td>
+					 	<td>
+					 		<if condition="$favor.act_max_amount eq 0">
+					 			大于 {$favor.min_amount_formatted}
+					 		<else/>
+					 	 	{$favor.min_amount_formatted} -- {$favor.max_amount_formatted}</td>
+					 		</if>
+					 </tr>
+					 <tr>
+					 	<td>活动描述</td>
+					 	<td>{$favor.description}</td>
+					 </tr>
+					 <if condition="$favor.available">
+					 	<button>添加购物车</button>
+					 </if>
+				</table>
+			</foreach>
 		</div>
 	</div>
 </block>
