@@ -1,0 +1,99 @@
+<extend name="public:base" />
+
+<block name="body">
+	<form method="POST" name="theform" action="" role="form">
+
+			 <legend>添加活动</legend>
+			
+				<div class="form-group">
+					<label for="">活动名称</label>
+					<input type="text" name="act_name" class="form-control" id="" >
+				</div>
+			
+				<div class="form-group">
+					<label for="">活动适用对象</label>
+					<br>
+					<label class="checkbox-inline">
+					  <input type="checkbox" name="act_recipient[]" id="inlineCheckbox1" value="option1"> 所有人
+					</label>
+					<foreach name="ranks" key="rank_id" item="rank">
+						<label class="checkbox-inline">
+						  <input type="checkbox" name="act_recipient[]" id="inlineCheckbox2" value="{$rank_id}"> {$rank}
+						</label>
+					</foreach>
+				</div>
+				
+				<div class="form-group">
+					<label for="">活动开始时间</label>
+					<input type="text" name="act_start_time" class="form-control" id="" >
+				</div>
+
+				<div class="form-group">
+					<label for="">活动结束时间</label>
+					<input type="text" name="act_end_time" class="form-control" id="" >
+				</div>
+				
+				<div class="form-group">
+					<label for="">活动范围</label>
+					<select class="form-control" name="act_range">
+						<option value="0">所有商品</option>
+						<option value="1">指定分类</option>
+						<option value="2">指定品牌</option>
+						<option value="3" selected="">指定商品</option>
+					</select>
+				</div>
+				
+				<div class="form-group">
+					<label for="">指定商品</label>
+					<select name="act_range_ext[]" id="" class="form-control">
+						  <foreach name="good_list" key="good_name" item="good_id">
+						  	  <option value="{$good_id}">{$good_name}</option>
+						  </foreach>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label for="">订单最小金额</label>
+					<input type="text" name="act_min_amount" class="form-control" id="" >
+				</div>
+
+				<div class="form-group">
+					<label for="">订单最大金额</label>
+					<input type="text" name="act_max_amount" class="form-control" id="" >
+				</div>
+				
+				<div class="form-group">
+					<label for="">活动类型</label>
+					<select class="form-control" name="act_type">
+						<option value="0">指定赠品</option>
+						<option value="1">总价折扣</option>
+						<option value="2">总价抵减</option>
+					</select>
+					<input type="text" name="act_type_ext">
+				</div>
+
+				<div class="form-group">
+					<label for="">赠品</label>
+					<select name="gift_id[]" id="" class="form-control">
+							<option value="0">--please select--</option>			
+						  <foreach name="good_list" key="good_name" item="good_id">
+						  	  <option value="{$good_id}">{$good_name}</option>
+						  </foreach>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="">赠品价格</label>
+					<input type="text" name="gift_price[]" class="form-control" id="" >
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+	</form>
+</block>
+<block name="script">
+	
+	<script>
+		
+		
+
+	</script>
+	
+</block>

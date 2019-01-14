@@ -82,4 +82,55 @@ function get_fittings($parent_id)
    return $group_goods;
 }
 
+function favourable_list()
+{
+	$cart_favors = cart_favourable();
+	$now = time();
+	$user_rank = empty(session('rank_id')) ?  0 : session('rank_id');
+	$favors = M('favourableActicity')
+	 ->where("concat(',', act_recipient, ',') like '%,$user_rank,%' and act_start_time <= $now and $act_end_time >= $now and act_type = '0'" )
+	 ->select();
+	 foreach ($favors as $key => $value) {
+	 	  $favors[$key]['act_desc'] = get_favourable_desc($value);
+	 }
+}
+
+function cart_favourable()
+{
+	$user_id = session('user_auth.uid');
+	if(empty($user_id))
+  {
+  	 $this->error('请先登录');
+  	 exit;
+  }
+	$gifts = M('carts')
+	 ->field(['count(*)' => 'num'])
+	 ->where('is_gift > 0 AND user_id = ' . $user_id . ' AND rec_type = 1')
+	 ->group('is_gift')
+	 ->select();
+	 $return = array();
+	foreach ($gifts as $key => $value) {
+		$return[$value['is_gift']] = $value['num'];
+	}
+	return $return;
+}
+
+function get_favourable_desc($favor)
+{
+	 $desc = '';
+	 if($favor['act_type'] == 0)
+	 {
+	 	  $desc = sprintf("购买")
+	 }
+	 elseif($favor['act_type'] == 1)
+	 {
+	 	
+	 }
+	 elseif($favor['act_type'] == 2)
+	 {
+
+	 }
+}
+
+
 

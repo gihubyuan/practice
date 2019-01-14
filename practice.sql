@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Jan 12, 2019 at 09:30 AM
+-- Generation Time: Jan 14, 2019 at 09:26 AM
 -- Server version: 5.7.21
 -- PHP Version: 5.6.35
 
@@ -278,6 +278,35 @@ CREATE TABLE IF NOT EXISTS `document_article` (
   `article_id` int(11) NOT NULL,
   `content` text NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `favourable_activity`
+--
+
+DROP TABLE IF EXISTS `favourable_activity`;
+CREATE TABLE IF NOT EXISTS `favourable_activity` (
+  `id` smallint(6) NOT NULL AUTO_INCREMENT,
+  `act_recipient` varchar(30) NOT NULL,
+  `act_start_time` int(11) NOT NULL,
+  `act_end_time` int(11) NOT NULL,
+  `act_range` tinyint(4) NOT NULL,
+  `act_range_ext` varchar(200) NOT NULL DEFAULT '',
+  `act_min_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `act_max_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `act_type` tinyint(4) NOT NULL,
+  `act_type_ext` varchar(200) NOT NULL DEFAULT '',
+  `ext` varchar(200) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `favourable_activity`
+--
+
+INSERT INTO `favourable_activity` (`id`, `act_recipient`, `act_start_time`, `act_end_time`, `act_range`, `act_range_ext`, `act_min_amount`, `act_max_amount`, `act_type`, `act_type_ext`, `ext`) VALUES
+(1, '1,2', 0, 1547618907, 3, '14', '0.00', '0.00', 0, '2', 'a:2:{s:7:\"gift_id\";a:1:{i:0;s:1:\"1\";}s:10:\"gift_price\";a:1:{i:0;s:1:\"0\";}}');
 
 -- --------------------------------------------------------
 
