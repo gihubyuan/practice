@@ -48,16 +48,17 @@ class FlowController extends \Home\Controller\HomeController
 	 	2 => '指定品牌',
 	 	3 => '指定商品',
 	 );
-	  $cart_items = M('carts')->where(['user_id'=>$user_id])->select();
-	  foreach ($cart_items as $key => $value)
+
+	  $cart_items = cart_goods();
+	  $this->assign('cart_items', $cart_items['goods']);
+	  $this->assign('saving_mark', sprintf('您的购买价格%s比市场价%s节省%s元, 优惠率%f%%', $total['amount'], $total['market_price'], $total['saving'], $total['save_rate']));
+	  $discount = compute_discount();
+	  if($discount['discount'] > 0)
 	  {
-	  	if($value['parent_id'] > 0)
-	  	{
-	  		$cart_items[$key]['good_name'] .= ' [配件]';
-	  	}
-	  	$cart_items[$key]['total'] = sprintf('￥%d元', round(floatval($value['good_number'] * $value['good_price']),2));
+	  	$this->assign('your_discount', sprintf('从优惠活动%s抵扣%s', $discount['favor_name'], $discount['discount']));
 	  }
 	  $good_ids = M('carts')->field(['good_id'])->where(['user_id'=>$user_id])->select();
+	  			get_fittings();
 
 	  foreach($good_ids as $k => $good_id)
 	  {
@@ -66,15 +67,52 @@ class FlowController extends \Home\Controller\HomeController
 	  $group_goods =  get_fittings($good_ids);
 	  $this->assign('group_goods', $group_goods);
 
-	  $good_price_total = M('carts')->getField('SUM(good_price * good_number)');
-	  $market_price_total = M('carts')->getField('SUM(market_price * good_number)');
-	  $saving = $market_price_total - $good_price_total;
-	  $saving_ratio = round($saving / $market_price_total * 100, 2) ;
-	  $this->assign('saving_mark', sprintf('您的购买价格比市场价节省%d元, 优惠率%f%%', $saving, $saving_ratio));
-	  $this->assign('cart_items', $cart_items);
+	  
 	  $this->display();
 	}
 
+}
+
+function cart_goods()
+{
+	$uid = session('user_auth.uid');
+	$goods = M('carts')
+	  ->alias('c')
+	  ->field(['IF(c.parent_id, c.parent_id, c.good_id)' => 'pid', 'c.*'])
+	  ->join('goods g on c.good_id=g.id', 'left')
+	  ->where(['user_id'=>$uid, 'rec_type'=>1])
+	  ->order('pid, c.parent_id')
+	  ->select();
+	 $total = array(
+	 	'amount' => 0.00,
+	 	'market_price' => 0.00,
+	 );
+	 $real_num = 0;
+	 $virtual_num = 0;
+	foreach($goods as $k => $good)
+	{
+		$total['amount'] += $good['good_number'] * $good['good_price'];
+		$total['market_price'] += $good['good_number'] * $good['market_price'];
+		$goods[$k]['subtotal'] = price_format($good['good_number'] * $good['good_price']);
+
+		if($good['is_real'] == 1)
+		{
+			$real_num++;
+		}
+		else
+		{
+			$virtual_num++;
+		}
+	}
+	$total['amount'] = price_format($total['amount']);
+	if($total['market_price'] > 0)
+	{
+		$total['saving'] = $total['market_price'] - $total['amount'];
+		$total['save_rate'] = round($total['saving'] / $total['market_price'], 2);
+	}
+	$total['real_num'] = $real_num;
+	$total['virtual_num'] = $virtual_num;
+	return array(['total'=>$total, 'goods'=>$goods]);
 }
 
 function get_fittings($parent_id)
@@ -87,6 +125,11 @@ function get_fittings($parent_id)
    				->where(db_create_in($parent_id, 'gp.parent_id'))
    				->select();
    return $group_goods;
+}
+
+function price_format($price)
+{
+	return sprintf('￥%s元', round($price, 2));
 }
 
 function favourable_list()
@@ -243,5 +286,85 @@ function favourable_range($favor)
 	 return $desc;
 }
 
+function compute_discount()
+{
+	$uid = session('user_auth.uid');
+	$now = time();
+	$favors = M('favourableActivity')
+	  ->where("concat(',', act_recipient, ',') like ',$uid,' AND act_start_time <= $now AND act_end_time >= $now AND act_type IN ('1', '2')");
+	$goods = M('carts')
+	  ->alias('c')
+	  ->field(['SUM(c.good_price * c.good_number) as subtotal', 'c.*', 'g.cat_id', 'g.brand_id'])
+	  ->join('goods g on c.good_id=g.id', 'left')
+	  ->where(['user_id' => $uid, 'rec_type' => 1, 'is_gift' => 0])
+	  ->select();
+
+	$discount = 0;
+	$favors = [];
+	foreach($favors as $key => $favor)
+	{
+		$total = 0;
+		if($favor['act_range'] == 0)
+		{
+			foreach($goods as $good)
+			{
+				$total += $good['subtotal'];
+			}
+		}
+		elseif ($favor['act_range'] == 1)
+		{
+			$id_list = array();
+			$range_ids = explode(',', $favor['act_range_ext']);
+			foreach ($range_ids as $key => $value) {
+				$id_list = array_merge($id_list, array_keys(getCategories($value)));
+			}
+			$id_list = array_unique($id_list);
+			foreach ($goods as  $good) {
+				if(in_array($id_list, $good['cat_id']))
+				{
+					$total += $good['subtotal'];;
+				}
+			}
+		}
+		elseif ($favor['act_range'] == 2)
+		{
+			$range_ids = explode(',', $favor['act_range_ext']);
+			foreach ($goods as  $good) {
+				if(in_array($range_ids, $good['brand_id']))
+				{
+					$total += $good['subtotal'];;
+				}
+			}
+		}
+		elseif($favor['act_range'] == 3)
+		{
+			$range_ids = explode(',', $favor['act_range_ext']);
+			foreach ($goods as  $good) {
+				if(in_array($range_ids, $good['good_id']))
+				{
+					$total += $good['subtotal'];;
+				}
+			}
+		}
+		else
+		{
+			continue;
+		}
+		if($total > 0 && $total >= $favor['act_min_amount'] && ($total <= $favor['act_max_amount'] || $favor['act_max_amount'] ==0 ))
+		{
+			if($favor['act_type'] == 1)
+			{
+				$discount += $total - round($total * $favor['act_type_ext'] / 100, 2);
+			}
+			else
+			{
+				$discount += round($total - $favor['act_type_ext'], 2);
+			}
+			$favors[] = $favor['act_name'];
+		}
+		
+	}
+	return ['discount' => $discount, 'favor_name' => implode(',', $favors)];
+}
 
 
